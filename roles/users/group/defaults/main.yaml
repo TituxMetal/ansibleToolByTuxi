@@ -1,0 +1,3 @@
+# ansible_path/roles/users/group/defaults/main.yaml
+
+userGroup: debian

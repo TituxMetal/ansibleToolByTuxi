@@ -1,0 +1,8 @@
+# ansible_path/roles/users/user/defaults/main.yaml
+
+userName: debian
+userGroup: debian
+createHome: no
+userHome: "/home/debian"
+userSsh: no
+userShell: /bin/false

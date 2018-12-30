@@ -1,0 +1,15 @@
+# ansible_path/roles/users/user/tasks/main.yaml
+
+---
+
+- name: USER | Create the user {{ userName }}
+  user:
+    name: "{{ userName }}"
+    password: "{{ userPassword }}"
+    group: "{{ userGroup }}"
+    create_home: "{{ userCreateHome }}"
+    home: "{{ userHome }}"
+    shell: "{{ userShell }}"
+    generate_ssh_key: "{{ userSsh }}"
+    state: present
+  tags: [users, user, create-user]

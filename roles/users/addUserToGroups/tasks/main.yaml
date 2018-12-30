@@ -1,0 +1,15 @@
+# ansible_path/roles/users/addUserToGroups/tasks/main.yaml
+
+---
+
+- name: ADD USER TO GROUPS | Add the user {{ userName }} to the groups {{ userGroups }}
+  user:
+    name: "{{ userName }}"
+    groups: "{{ userGroups }}"
+    state: present
+    append: yes
+  tags: [users, add-user-to-groups]
+
+- name: ADD USER TO GROUPS | Reset ssh connection to allow user changes to affect current logged in user
+  meta: reset_connection
+  tags: [users, add-user-to-groups, resetSshConnection]
