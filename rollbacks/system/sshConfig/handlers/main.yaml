@@ -1,0 +1,8 @@
+# ansible_path/rollbacks/system/sshConfig/handlers/main.yml
+---
+
+- name: restart ssh
+  service:
+    name: ssh
+    state: restarted
+    enabled: yes

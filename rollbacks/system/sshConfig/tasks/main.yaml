@@ -1,0 +1,26 @@
+# ansible_path/rollbacks/system/sshConfig/tasks/main.yaml
+
+---
+
+- name: ROLLBACK SYSTEM SSHCONFIG | Check if there is a backup file for default ssh config
+  stat:
+    path: /etc/ssh/sshd_config.backup
+  register: fileExists
+  tags: [rollback, ssh-config, backup-config, file-exists]
+
+- name: ROLLBACK SYSTEM SSHCONFIG | Restore the default ssh config
+  copy:
+    src: /etc/ssh/sshd_config.backup
+    dest: /etc/ssh/sshd_config
+    remote_src: yes
+  register: isRestored
+  when: fileExists.stat.exists is defined and fileExists.stat.exists == True
+  tags: [rollback, ssh-config, restore-config]
+
+- name: ROLLBACK SYSTEM SSHCONFIG | Remove the backup file
+  file:
+    path: /etc/ssh/sshd_config.backup
+    state: absent
+  when: isRestored is success and isRestored is not skipped
+  notify: restart ssh
+  tags: [rollback, ssh-config, remove-backup]
