@@ -1,0 +1,35 @@
+# ansible_path/roles/apt/repository/tasks/main.yaml
+
+---
+
+- name: APT REPOSITORY | Check if there is a backup file for default sources.list file
+  stat:
+    path: "/etc/apt/{{ aptRepoName }}.list.backup"
+  register: fileExists
+  when: aptRepoName == "sources"
+  tags: [apt, apt-repository, backup-default]
+
+- name: APT REPOSITORY | Copy the default {{ aptRepoName }}.list in a backup file
+  copy:
+    src: "/etc/apt/{{ aptRepoName }}.list"
+    dest: "/etc/apt/{{ aptRepoName }}.list.backup"
+    remote_src: yes
+  register: isCopyed
+  when: aptRepoName == "sources" and fileExists is defined and fileExists.stat.exists == False
+  tags: [apt, apt-repository, backup-default]
+
+- name: APT REPOSITORY | Remove the default sources.list file
+  file:
+    path: "/etc/apt/{{ aptRepoName }}.list"
+    state: absent
+  when: isCopyed is success
+  tags: [apt, apt-repository, remove-default]
+
+- name: APT REPOSITORY | Add {{ aptRepoName }} apt repository file
+  get_url:
+    url: "{{ aptRepoUrl }}"
+    dest: "/etc/apt/sources.list.d/{{ aptRepoName }}.list"
+    group: root
+    owner: root
+    backup: yes
+  tags: [apt, apt-repository, add-repository]
