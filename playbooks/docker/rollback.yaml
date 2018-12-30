@@ -1,0 +1,38 @@
+# ansible_path/playbooks/docker/rollback.yaml
+
+---
+
+- hosts: docker
+  become: yes
+  roles:
+    # Remove Docker packages and dependencies
+    - {
+      role: ../../rollbacks/apt/remove,
+        aptPackages: "{{ dockerDepsPackages + dockerPackage }}"
+    }
+
+    # Remove Docker apt repository
+    - {
+      role: ../../rollbacks/apt/repository,
+        aptRepoName: "{{ dockerAptRepoName }}"
+    }
+
+    # Remove Docker Gpg key
+    - {
+      role: ../../rollbacks/apt/keys,
+        aptKeyUri: "{{ dockerKeyUri }}",
+        aptKeyId: "{{ dockerKeyId }}"
+    }
+
+    # Remove admin user from Docker group
+    - {
+      role: ../../rollbacks/users/removeUserFromGroups,
+        userName: "{{ sshAdminUserName }}",
+        userGroups: [ "docker" ]
+    }
+
+    # Remove Docker group
+    - {
+      role: ../../rollbacks/users/group,
+        userGroup: docker
+    }
