@@ -1,0 +1,14 @@
+# ansible_path/roles/system/openNtp/tasks/main.yaml
+
+---
+
+- name: SYSTEM OPENNTP | Copy OpenNtp configuration file
+  get_url:
+    url: "{{ openNtpConfigUri }}"
+    dest: /etc/openntpd/ntpd.conf
+    mode: 0644
+    group: root
+    owner: root
+    backup: yes
+  notify: restart openntpd
+  tags: [system, openNtp, config]

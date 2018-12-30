@@ -1,0 +1,8 @@
+# ansible_path/roles/system/hostname/handlers/main.yaml
+---
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes

@@ -1,0 +1,8 @@
+# ansible_path/roles/system/openNtp/handlers/main.yaml
+---
+
+- name: restart openntpd
+  service:
+    name: openntpd
+    state: restarted
+    enabled: yes

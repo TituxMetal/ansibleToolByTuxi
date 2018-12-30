@@ -1,0 +1,49 @@
+# ansible_path/roles/system/sshConfig/defaults/main.yaml
+
+sshConfig: [
+  {
+    action: "Allow only user {{ sshAdminUserName }} to login",
+    regexp: "^AllowUsers",
+    line: "AllowUsers {{ sshAdminUserName }}"
+  },
+  {
+    action: "Disallow password authentication",
+    regexp: "^PasswordAuthentication",
+    line: "PasswordAuthentication no"
+  },
+  {
+    action: "Add the ListenAddress",
+    regexp: "^ListenAddress",
+    line: "ListenAddress {{ ansible_ssh_host }}"
+  },
+  {
+    action: "Disallow the PermitRootLogin",
+    regexp: "^PermitRootLogin",
+    line: "PermitRootLogin no"
+  },
+  {
+    action: "Disallow the PasswordAuthentication",
+    regexp: "^PasswordAuthentication",
+    line: "PasswordAuthentication no"
+  },
+  {
+    action: "Disallow the X11Forwarding",
+    regexp: "^X11Forwarding",
+    line: "X11Forwarding no"
+  },
+  {
+    action: "Disallow the PrintMotd",
+    regexp: "^PrintMotd",
+    line: "PrintMotd no"
+  },
+  {
+    action: "Disallow the UsePAM",
+    regexp: "^UsePAM",
+    line: "UsePAM no"
+  }
+]
+
+sshAuthorizedKeys: [
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbDxzl1kK8rXpFNe8M8/MhxKPgFzGDHD+j/IRUE3b5O9KyT83ITa6XN/1R0YVZ/2a363LLJkz1IZ12NGLrnuRbDYDNKM2WCsfzn+WI6SU5ABMxR+TVhm0Ayz5CcA8Qe36GILoN1W60ndfRdqEMwvwdjBZrulTgEKteBiq6PcpkbWr/BzlNuLOKbBOtKF7D3YVW25EFJ0Jf3HwxhFhossouXLXnZ5Ca+wVBh+BNiycnOMZq4fW8/7+5aNz3Lg9Yl+o//FKeZh6Ow5detVRy3PUoJQSk3egxWwUBTdtWPhr6U1h14pYV02xcTHeb1uD2CyfxCYeU+zJxqjeSaqIRoJxt archpower@archpower",
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFs4hXzy68/UDZm1InmMKSZkoKH7Idea0VJS6UYjqtGjBnz01R7HqyYKlYebzMoLNVMsqbPSuFLsBy0eStfSHpZQn0xNsMvLCZ74ASpa8co4Kv7sQpv09S51EmPznbfLHCUUh6wew7MEKtVQeb1Dd5KO2FpXKwlJTVdyFF5E5r1tHsrcWuH6pS0gYSkfzCP/HDF26Y17M3r6hPKJUI6nO77eF3ZOF8hFN7b4aAHKfB41ZRaOWoxV4aV6j55W7cluyEiBCWpO6s1ICGXgfRHx1LXe+Ghdvr9FanJwLiOSrCs3D6o3LWvQDKG+rxAImHPVz/6IQoOqhCsLi8ZMdQk7/t lang.guillaume@gmail.com"
+]

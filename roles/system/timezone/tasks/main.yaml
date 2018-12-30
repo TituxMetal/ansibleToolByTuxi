@@ -1,0 +1,23 @@
+# ansible_path/roles/system/timezone/tasks/main.yaml
+
+---
+
+- name: SYSTEM TIMEZONE | Set default timezone
+  copy:
+    content: "{{ serverTimezone }}\n"
+    dest: /etc/timezone
+    group: root
+    owner: root
+    mode: 0644
+  tags: [system, timezone, config]
+
+- name: SYSTEM TIMEZONE | Set /etc/localtime to {{ serverTimezone }}
+  file:
+    src: "/usr/share/zoneinfo/{{ serverTimezone }}"
+    dest: /etc/localtime
+    state: link
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  tags: [system, timezone, config]
