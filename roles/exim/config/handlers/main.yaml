@@ -1,0 +1,7 @@
+# ansible_path/roles/exim/config/handlers/main.yml
+---
+
+- name: restart exim4
+  service:
+    name: exim4
+    state: restarted

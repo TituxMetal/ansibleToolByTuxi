@@ -1,0 +1,3 @@
+# ansible_path/roles/exim/config/defaults/main.yaml
+
+eximConfigFileUri: https://raw.githubusercontent.com/TituxMetal/cffa/master/exim/update-exim4.conf.conf
