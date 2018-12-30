@@ -1,0 +1,33 @@
+# ansible_path/playbooks/docker/install.yaml
+
+---
+
+- hosts: docker
+  become: yes
+  roles:
+    # Add Docker apt repository
+    - {
+      role: ../../roles/apt/repository,
+        aptRepoUrl: "{{ dockerAptRepoUri }}",
+        aptRepoName: "{{ dockerAptRepoName }}"
+    }
+
+    # Add docker Gpg key
+    - {
+      role: ../../roles/apt/keys,
+        aptKeyUri: "{{ dockerAptKeyUri }}",
+        aptKeyId: "{{ dockerAptKeyId }}"
+    }
+
+    # Install Docker package
+    - {
+      role: ../../roles/apt/install,
+        aptPackages: "{{ dockerPackage + dockerDepsPackages }}"
+    }
+
+    # Add admin user to Docker group
+    - {
+      role: ../../roles/users/addUserToGroups,
+        userName: "{{ sshAdminUserName }}",
+        userGroups: docker
+    }
