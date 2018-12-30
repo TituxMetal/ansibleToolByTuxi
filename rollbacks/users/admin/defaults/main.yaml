@@ -1,0 +1,4 @@
+# ansible_path/rollbacks/users/admin/defaults/main.yaml
+
+userName: debian
+userHome: "/home/debian"

@@ -1,0 +1,17 @@
+# ansible_path/rollbacks/users/user/tasks/main.yaml
+
+---
+
+- name: ROLLBACK USER | Remove the user {{ userName }}
+  user:
+    name: "{{ userName }}"
+    groups: null
+    force: yes
+    state: absent
+  register: removedUser
+  tags: [rollback, user, remove-user]
+
+- name: ROLLBACK USER | Find and remove all files/directories with nogroup/nouser
+  shell: "find /home -nouser -nogroup -type d -print0 | xargs -0 -r rm -rf"
+  when: removedUser is changed
+  tags: [rollback, user, remove-user]

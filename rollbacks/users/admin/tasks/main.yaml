@@ -1,0 +1,17 @@
+# ansible_path/rollbacks/users/admin/tasks/main.yaml
+
+---
+
+- name: ROLLBACK USER ADMIN | Remove .bashrc file from user {{ userName }} home dir
+  file:
+    path: "{{ userHome }}/.bashrc"
+    state: absent
+  when: userIsAdmin
+  tags: [rollback, users, user-admin, bashrc-file]
+
+- name: ROLLBACK USER ADMIN | Remove the user {{ userName }} from sudoers
+  file:
+    path: /etc/sudoers.d/{{ userName }}
+    state: absent
+  when: userName != "root"
+  tags: [rollback, users, user-admin, sudoers-file]

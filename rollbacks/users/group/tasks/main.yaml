@@ -1,0 +1,10 @@
+# ansible_path/rollbacks/users/group/tasks/main.yaml
+
+---
+
+# Create the group if not present
+- name: ROLLBACK USER GROUP | Remove the user group {{ userGroup }}
+  group:
+    name: "{{ userGroup }}"
+    state: absent
+  tags: [rollback, user-group, remove-group]
