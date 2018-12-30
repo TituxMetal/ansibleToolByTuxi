@@ -1,0 +1,14 @@
+# ansible_path/rollbacks/apt/remove/tasks/main.yaml
+
+---
+
+- name: ROLLBACK APT INSTALL | Remove and purge packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+    update_cache: yes
+    autoclean: yes
+    autoremove: yes
+    purge: yes
+  with_items: "{{ aptPackages }}"
+  tags: [rollback, apt, apt-remove, purge-packages]

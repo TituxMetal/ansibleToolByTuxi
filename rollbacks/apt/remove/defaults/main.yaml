@@ -1,0 +1,3 @@
+# ansible_path/rollbacks/apt/remove/defaults/main.yaml
+
+aptPackages: [ "curl", "wget", "tree", "htop", "rsync", "dbus", "zip", "unzip" ]

@@ -1,0 +1,33 @@
+# ansible_path/rollbacks/apt/repository/tasks/main.yaml
+
+---
+
+- name: ROLLBACK APT REPOSITORY | Check if there is a backup file for default sources.list file
+  stat:
+    path: "/etc/apt/sources.list.backup"
+  register: fileExists
+  when: aptRepoName == "sources"
+  tags: [rollback, apt-repository, check-defaults]
+
+- name: ROLLBACK APT REPOSITORY | Restore the default apt sources.list file
+  copy:
+    src: "/etc/apt/sources.list.backup"
+    dest: "/etc/apt/sources.list"
+    remote_src: yes
+  register: isRestored
+  when: fileExists is defined and fileExists is not skipped
+  tags: [rollback, apt-repository, restore-defaults]
+
+- name: ROLLBACK APT REPOSITORY | Remove the sources.list backup file
+  file:
+    path: "/etc/apt/sources.list.backup"
+    state: absent
+  when: isRestored is success and isRestored is not skipped
+  tags: [rollback, apt-repository, remove-backup]
+
+- name: ROLLBACK APT REPOSITORY | Remove {{ aptRepoName }} apt repository file
+  file:
+    path: "/etc/apt/sources.list.d/{{ aptRepoName }}.list"
+    state: absent
+    force: yes
+  tags: [rollback, apt-repository, remove-repository]
