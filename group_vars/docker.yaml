@@ -1,0 +1,12 @@
+# ansible_path/group_vars/docker.yaml
+
+# Docker installation
+dockerAptRepoUri: "https://github.com/TituxMetal/cffa/blob/master/apt/docker.list"
+dockerAptRepoName: docker
+dockerDepsPackages: [ "software-properties-common", "python-docker" ]
+dockerPackage: [ "docker-ce" ]
+dockerAptKeyUri: https://download.docker.com/linux/debian/gpg
+dockerAptKeyId: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+# Docker service Fail2ban
+dockerServiceFail2banDestNotifEmail: "{{ vaultDockerServiceFail2banDestNotifEmail }}"
