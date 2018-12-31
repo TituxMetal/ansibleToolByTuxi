@@ -1,0 +1,11 @@
+# ansible_path/rollbacks/docker/image/tasks/main.yaml
+
+---
+
+- name: ROLLBACK DOCKER IMAGE PULL | Remove {{ projectAppImageName }} image
+  docker_image:
+    name: "{{ projectAppImageName }}"
+    state: absent
+    rm: yes
+    force: yes
+  tags: [rollback, docker, removeImage]
