@@ -1,0 +1,17 @@
+# ansible_path/roles/dockerServices/letsencrypt/tasks/main.yaml
+
+---
+
+- name: DOCKER SERVICES LETSENCRYPT | Pull letsencrypt-companion image
+  docker_image:
+    name: "{{ letsencryptImage }}"
+  tags: [dockerServices, pullImage, letsencrypt]
+
+- name: DOCKER SERVICES LETSENCRYPT | Run the letsencrypt-companion container
+  docker_container:
+    name: nginx-letsencrypt
+    image: "{{ letsencryptImage }}"
+    state: started
+    volumes_from: "{{ nginxProxyContainer }}"
+    volumes: "{{ letsencryptVolumes }}"
+  tags: [dockerServices, runContainer, letsencrypt]

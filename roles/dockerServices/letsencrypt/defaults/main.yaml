@@ -1,0 +1,10 @@
+# ansible_path/roles/dockerServices/letsencrypt/defaults/main.yaml
+
+letsencryptImage: jrcs/letsencrypt-nginx-proxy-companion
+letsencryptVolumes: [
+  "/srv/cert:/etc/nginx/certs:rw",
+  "/var/run/docker.sock:/var/run/docker.sock:ro",
+  "/etc/localtime:/etc/localtime:ro",
+  "/etc/timezone:/etc/timezone:ro"
+]
+nginxProxyContainer: [ "nginx-proxy" ]
