@@ -1,0 +1,17 @@
+# ansible_path/playbooks/webserver/rollback.yaml
+
+---
+
+- hosts: docker
+  roles:
+    # Stop and clean nginx-proxy docker container
+    - ../../rollbacks/dockerServices/fail2ban
+
+    # Stop and clean nginx-proxy docker container
+    - ../../rollbacks/dockerServices/nginx-proxy
+
+    # Stop and clean letsencrypt docker container
+    - ../../rollbacks/dockerServices/letsencrypt
+
+    # Stop and clean mongodb docker container
+    - ../../rollbacks/dockerServices/mongo
