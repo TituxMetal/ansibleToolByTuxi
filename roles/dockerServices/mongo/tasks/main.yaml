@@ -1,0 +1,42 @@
+# ansible_path/roles/dockerServices/mongo/tasks/main.yaml
+
+---
+
+- name: DOCKER SERVICES MONGO | Pull mongo image
+  docker_image:
+    name: "{{ mongoImage }}"
+  tags: [dockerServices, pullImage, mongodb]
+
+- name: DOCKER SERVICES MONGO | Run the mongodb container
+  docker_container:
+    name: mongodb
+    image: "{{ mongoImage }}"
+    state: started
+    env: "{{ mongoEnvVars }}"
+    volumes: "{{ mongoVolumes }}"
+    command: --smallfiles --bind_ip_all
+  tags: [dockerServices, runContainer, mongodb]
+
+- name: DOCKER SERVICES MONGO | Create mongo user database
+  docker_container:
+    name: mongodbcreateuser
+    image: "{{ mongoImage }}"
+    cleanup: yes
+    detach: no
+    tty: yes
+    links:
+      - "mongodb:mongo"
+    command: "mongo --quiet --host mongo -u {{ mongodbAdminUsername }} -p {{ mongodbAdminPassword }} --authenticationDatabase admin --eval \"db = db.getSiblingDB('{{ appDbName }}');db.createUser({user: '{{ appDbUsername }}', pwd: '{{ appDbPassword }}', roles: [{role: 'readWrite', db: '{{ appDbName }}'}]});\""
+  ignore_errors: True
+  register: createmongouserdatabase
+  when: createUserDatabase is defined
+  tags: [dockerServices, runContainer, createMongoUserDatabase, mongodb]
+
+- name: DOCKER SERVICES MONGO | Clear create mongo user database container
+  docker_container:
+    name: mongodbcreateuser
+    image: "{{ mongoImage }}"
+    state: absent
+    purge_networks: yes
+  when: createUserDatabase is defined and createmongouserdatabase is not success
+  tags: [dockerServices, clearContainer, createMongoUserDatabase, mongodb]
