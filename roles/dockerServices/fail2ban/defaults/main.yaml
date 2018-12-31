@@ -1,0 +1,68 @@
+# ansible_path/roles/dockerServices/fail2ban/defaults/main.yaml
+
+# Main variable definition
+fail2banConfigDirectory: "/data/fail2ban"
+fail2banImage: "crazymax/fail2ban:latest"
+fail2banLogVolume: "/var/log:/var/log:ro"
+fail2banTypeContainer: { host: "fail2banHost", docker: "fail2banDocker" }
+fail2banDestNotifEmail: "{{ dockerServiceFail2banDestNotifEmail }}"
+
+# Config variables
+fail2banConfigFiles: [
+  {
+    uri: "https://raw.githubusercontent.com/TituxMetal/cffa/master/fail2ban/nginx-noscript.conf",
+    dest: "{{ fail2banConfigDirectory }}/docker/filter.d/nginx-noscript.conf"
+  },
+  {
+    uri: "https://raw.githubusercontent.com/TituxMetal/cffa/master/fail2ban/defaults-debian.conf",
+    dest: "{{ fail2banConfigDirectory }}/host/jail.d/defaults-debian.conf"
+  },
+  {
+    uri: "https://raw.githubusercontent.com/TituxMetal/cffa/master/fail2ban/docker-nginx.conf",
+    dest: "{{ fail2banConfigDirectory }}/docker/jail.d/docker-nginx.conf"
+  }
+]
+
+# Containers variables
+fail2banCapabilities: [
+  "NET_ADMIN",
+  "NET_RAW"
+]
+fail2banContainers: [
+  {
+    containerName: "{{ fail2banTypeContainer.host }}",
+    containerEnvVars: {
+      TZ: "Europe/Paris",
+      SSMTP_HOST: "smtp.gmail.com",
+      SSMTP_PORT: "587",
+      SSMTP_USER: "{{ eximAccountEmail }}",
+      SSMTP_PASSWORD: "{{ eximAccountPassword }}",
+      SSMTP_TLS: "YES",
+      F2B_DEST_EMAIL: "{{ fail2banDestNotifEmail }}",
+      F2B_ACTION: "%(action_mw)s",
+      F2B_IPTABLES_CHAIN: "INPUT"
+    },
+    containerVolumes: [
+      "{{ fail2banConfigDirectory }}/host:/data",
+      "{{ fail2banLogVolume }}"
+    ]
+  },
+  {
+    containerName: "{{ fail2banTypeContainer.docker }}",
+    containerEnvVars: {
+      TZ: "Europe/Paris",
+      SSMTP_HOST: "smtp.gmail.com",
+      SSMTP_PORT: "587",
+      SSMTP_USER: "{{ eximAccountEmail }}",
+      SSMTP_PASSWORD: "{{ eximAccountPassword }}",
+      SSMTP_TLS: "YES",
+      F2B_DEST_EMAIL: "{{ fail2banDestNotifEmail }}",
+      F2B_ACTION: "%(action_mw)s",
+      F2B_IPTABLES_CHAIN: "DOCKER-USER"
+    },
+    containerVolumes: [
+      "{{ fail2banConfigDirectory }}/docker:/data",
+      "{{ fail2banLogVolume }}"
+    ]
+  }
+]

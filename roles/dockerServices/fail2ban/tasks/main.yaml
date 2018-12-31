@@ -1,0 +1,44 @@
+# ansible_path/roles/dockerServices/fail2ban/tasks/main.yaml
+
+---
+
+- name: DOCKER SERVICES FAIL2BAN | Create config directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "/data/fail2ban/docker/filter.d"
+    - "/data/fail2ban/docker/jail.d"
+    - "/data/fail2ban/host/jail.d"
+  tags: [dockerServices, configDir, fail2ban]
+
+- name: DOCKER SERVICES FAIL2BAN | Get config files
+  become: yes
+  get_url:
+    url: "{{ item.uri }}"
+    dest: "{{ item.dest }}"
+    group: root
+    owner: root
+    force: yes
+  with_items: "{{ fail2banConfigFiles }}"
+  tags: [dockerServices, config, fail2ban]
+
+
+- name: DOCKER SERVICES FAIL2BAN | Pull fail2ban image
+  docker_image:
+    name: "{{ fail2banImage }}"
+  tags: [dockerServices, pullImage, fail2ban]
+
+- name: DOCKER SERVICES FAIL2BAN | Run the fail2ban container
+  docker_container:
+    name: "{{ item.containerName }}"
+    image: "{{ fail2banImage }}"
+    state: started
+    restart_policy: always
+    network_mode: host
+    capabilities: "{{ fail2banCapabilities }}"
+    volumes: "{{ item.containerVolumes }}"
+    env: "{{ item.containerEnvVars }}"
+  with_items: "{{ fail2banContainers }}"
+  tags: [dockerServices, runContainer, fail2ban]
