@@ -1,0 +1,7 @@
+# ansible_path/vault/reactapp1/default.yaml
+
+vaultReactapp1EnvVars: {
+  LETSENCRYPT_EMAIL: "Your email for Letsencrypt",
+  LETSENCRYPT_HOST: "Your host for Letsencrypt",
+  VIRTUAL_HOST: "Your host for Nginx"
+}

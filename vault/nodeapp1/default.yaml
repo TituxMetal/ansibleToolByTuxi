@@ -1,0 +1,11 @@
+# ansible_path/vault/nodeapp1/default.yaml
+
+vaultNodeapp1DbUsername: "Your db username"
+vaultNodeapp1DbPassword: "Your db password"
+vaultNodeapp1DbName: "Your db name"
+vaultNodeapp1EnvVars: {
+  LETSENCRYPT_EMAIL: "Your email for Letsencrypt",
+  LETSENCRYPT_HOST: "Your host for Letsencrypt",
+  VIRTUAL_HOST: "Your host for Nginx",
+  MONGO_URI: "mongodb://{{ vaultNodeapp1DbUsername }}:{{ vaultNodeapp1DbPassword }}@mongo/{{ vaultNodeapp1DbName }}"
+}
