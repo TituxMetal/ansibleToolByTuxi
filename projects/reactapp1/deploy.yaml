@@ -1,0 +1,31 @@
+# ansible_path/projects/reactapp1/deploy.yaml
+
+---
+
+- hosts: lenny
+  vars:
+    reactapp1ContainerName: reactapp1
+    reactapp1ImageName: tuximetal/reactapp1
+    reactapp1ImageVersion: 0.0.1
+    reactapp1EnvVars: "{{ vaultReactapp1EnvVars }}"
+    reactapp1Volumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/reactapp1/vault.yaml
+  roles:
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ reactapp1ImageName }}:{{ reactapp1ImageVersion }}"
+    }
+
+    # Run reactapp1 container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ reactapp1ContainerName }}",
+        projectAppImageName: "{{ reactapp1ImageName }}:{{ reactapp1ImageVersion }}",
+        projectAppEnvVars: "{{ reactapp1EnvVars }}",
+        projectAppVolumes: "{{ reactapp1Volumes }}"
+    }

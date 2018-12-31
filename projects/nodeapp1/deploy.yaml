@@ -1,0 +1,40 @@
+# ansible_path/projects/nodeapp1/deploy.yaml
+
+---
+
+- hosts: lenny
+  vars:
+    createUserDatabase: yes
+    appDbUsername: "{{ vaultNodeapp1DbUsername }}"
+    appDbPassword: "{{ vaultNodeapp1DbPassword }}"
+    appDbName: "{{ vaultNodeapp1DbName }}"
+    nodeapp1ContainerName: nodeapp1
+    nodeapp1ImageName: tuximetal/nodeapp1
+    nodeapp1ImageVersion: 0.0.1
+    nodeapp1Links: [ "mongodb:mongo" ]
+    nodeapp1EnvVars: "{{ vaultNodeapp1EnvVars }}"
+    nodeapp1Volumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/nodeapp1/vault.yaml
+  roles:
+    # Create the mongo user and database for nodeapp1 project
+    - ../../roles/dockerServices/mongo
+
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ nodeapp1ImageName }}:{{ nodeapp1ImageVersion }}"
+    }
+
+    # Run nodeapp1 container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ nodeapp1ContainerName }}",
+        projectAppImageName: "{{ nodeapp1ImageName }}:{{ nodeapp1ImageVersion }}",
+        projectAppLinks: "{{ nodeapp1Links }}",
+        projectAppEnvVars: "{{ nodeapp1EnvVars }}",
+        projectAppVolumes: "{{ nodeapp1Volumes }}"
+    }

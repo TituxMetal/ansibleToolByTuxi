@@ -1,0 +1,22 @@
+# ansible_path/projects/reactapp1/rollback.yaml
+
+---
+
+- hosts: lenny
+  vars:
+    reactapp1ContainerName: reactapp1
+    reactapp1ImageName: tuximetal/reactapp1
+    reactapp1ImageVersion: 0.0.1
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ reactapp1ContainerName }}",
+        projectAppImageName: "{{ reactapp1ImageName }}:{{ reactapp1ImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ reactapp1ImageName }}:{{ reactapp1ImageVersion }}"
+    }
