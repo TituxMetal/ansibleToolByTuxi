@@ -1,0 +1,17 @@
+# ansible_path/playbooks/webserver/mainServices.yaml
+
+---
+
+- hosts: docker
+  roles:
+    # Start nginx-proxy docker container
+    - ../../roles/dockerServices/fail2ban
+
+    # Start nginx-proxy docker container
+    - ../../roles/dockerServices/nginx-proxy
+
+    # Start letsencrypt docker container
+    - ../../roles/dockerServices/letsencrypt
+
+    # Start mongo docker container
+    - ../../roles/dockerServices/mongo
