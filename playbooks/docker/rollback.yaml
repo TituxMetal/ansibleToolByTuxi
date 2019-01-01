@@ -20,8 +20,8 @@
     # Remove Docker Gpg key
     - {
       role: ../../rollbacks/apt/keys,
-        aptKeyUri: "{{ dockerKeyUri }}",
-        aptKeyId: "{{ dockerKeyId }}"
+        aptKeyUri: "{{ dockerAptKeyUri }}",
+        aptKeyId: "{{ dockerAptKeyId }}"
     }
 
     # Remove admin user from Docker group
