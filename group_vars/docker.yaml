@@ -1,7 +1,7 @@
 # ansible_path/group_vars/docker.yaml
 
 # Docker installation
-dockerAptRepoUri: "https://github.com/TituxMetal/cffa/blob/master/apt/docker.list"
+dockerAptRepoUri: "https://raw.githubusercontent.com/TituxMetal/cffa/master/apt/docker.list"
 dockerAptRepoName: docker
 dockerDepsPackages: [ "software-properties-common", "python-docker" ]
 dockerPackage: [ "docker-ce" ]
