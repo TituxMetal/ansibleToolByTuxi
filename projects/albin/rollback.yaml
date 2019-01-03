@@ -1,0 +1,22 @@
+# ansible_path/projects/albin/rollback.yaml
+
+---
+
+- hosts: docker
+  vars:
+    albinContainerName: albin
+    albinImageName: tuximetal/albin
+    albinImageVersion: 0.0.1
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ albinContainerName }}",
+        projectAppImageName: "{{ albinImageName }}:{{ albinImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ albinImageName }}:{{ albinImageVersion }}"
+    }

@@ -1,0 +1,31 @@
+# ansible_path/projects/albin/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    albinContainerName: albin
+    albinImageName: tuximetal/albin
+    albinImageVersion: 0.0.1
+    albinEnvVars: "{{ vaultAlbinEnvVars }}"
+    albinVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/albin/vault.yaml
+  roles:
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ albinImageName }}:{{ albinImageVersion }}"
+    }
+
+    # Run albin container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ albinContainerName }}",
+        projectAppImageName: "{{ albinImageName }}:{{ albinImageVersion }}",
+        projectAppEnvVars: "{{ albinEnvVars }}",
+        projectAppVolumes: "{{ albinVolumes }}"
+    }
