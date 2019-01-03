@@ -1,0 +1,22 @@
+# ansible_path/projects/portfolio/rollback.yaml
+
+---
+
+- hosts: docker
+  vars:
+    portfolioContainerName: portfolio
+    portfolioImageName: tuximetal/portfolio
+    portfolioImageVersion: 0.0.1
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ portfolioContainerName }}",
+        projectAppImageName: "{{ portfolioImageName }}:{{ portfolioImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ portfolioImageName }}:{{ portfolioImageVersion }}"
+    }

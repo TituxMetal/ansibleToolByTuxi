@@ -1,0 +1,31 @@
+# ansible_path/projects/portfolio/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    portfolioContainerName: portfolio
+    portfolioImageName: tuximetal/portfolio
+    portfolioImageVersion: 0.0.1
+    portfolioEnvVars: "{{ vaultPortfolioEnvVars }}"
+    portfolioVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/portfolio/vault.yaml
+  roles:
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ portfolioImageName }}:{{ portfolioImageVersion }}"
+    }
+
+    # Run portfolio container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ portfolioContainerName }}",
+        projectAppImageName: "{{ portfolioImageName }}:{{ portfolioImageVersion }}",
+        projectAppEnvVars: "{{ portfolioEnvVars }}",
+        projectAppVolumes: "{{ portfolioVolumes }}"
+    }
