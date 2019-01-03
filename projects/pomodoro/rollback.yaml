@@ -1,0 +1,22 @@
+# ansible_path/projects/pomodoro/rollback.yaml
+
+---
+
+- hosts: docker
+  vars:
+    pomodoroContainerName: pomodoro
+    pomodoroImageName: tuximetal/pomodoro
+    pomodoroImageVersion: 0.0.1
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ pomodoroContainerName }}",
+        projectAppImageName: "{{ pomodoroImageName }}:{{ pomodoroImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ pomodoroImageName }}:{{ pomodoroImageVersion }}"
+    }

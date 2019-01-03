@@ -1,0 +1,31 @@
+# ansible_path/projects/pomodoro/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    pomodoroContainerName: pomodoro
+    pomodoroImageName: tuximetal/pomodoro
+    pomodoroImageVersion: 0.0.1
+    pomodoroEnvVars: "{{ vaultPomodoroEnvVars }}"
+    pomodoroVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/pomodoro/vault.yaml
+  roles:
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ pomodoroImageName }}:{{ pomodoroImageVersion }}"
+    }
+
+    # Run pomodoro container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ pomodoroContainerName }}",
+        projectAppImageName: "{{ pomodoroImageName }}:{{ pomodoroImageVersion }}",
+        projectAppEnvVars: "{{ pomodoroEnvVars }}",
+        projectAppVolumes: "{{ pomodoroVolumes }}"
+    }
