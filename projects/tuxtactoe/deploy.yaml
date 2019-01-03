@@ -1,0 +1,31 @@
+# ansible_path/projects/tuxtactoe/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    tuxtactoeContainerName: tuxtactoe
+    tuxtactoeImageName: tuximetal/tuxtactoe
+    tuxtactoeImageVersion: 0.0.1
+    tuxtactoeEnvVars: "{{ vaultTuxtactoeEnvVars }}"
+    tuxtactoeVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/tuxtactoe/vault.yaml
+  roles:
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ tuxtactoeImageName }}:{{ tuxtactoeImageVersion }}"
+    }
+
+    # Run tuxtactoe container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ tuxtactoeContainerName }}",
+        projectAppImageName: "{{ tuxtactoeImageName }}:{{ tuxtactoeImageVersion }}",
+        projectAppEnvVars: "{{ tuxtactoeEnvVars }}",
+        projectAppVolumes: "{{ tuxtactoeVolumes }}"
+    }

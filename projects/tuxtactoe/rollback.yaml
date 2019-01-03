@@ -1,0 +1,22 @@
+# ansible_path/projects/tuxtactoe/rollback.yaml
+
+---
+
+- hosts: docker
+  vars:
+    tuxtactoeContainerName: tuxtactoe
+    tuxtactoeImageName: tuximetal/tuxtactoe
+    tuxtactoeImageVersion: 0.0.1
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ tuxtactoeContainerName }}",
+        projectAppImageName: "{{ tuxtactoeImageName }}:{{ tuxtactoeImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ tuxtactoeImageName }}:{{ tuxtactoeImageVersion }}"
+    }
