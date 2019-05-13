@@ -2,7 +2,7 @@
 
 ---
 
-- hosts: lenny
+- hosts: lisa
   vars:
     createUserDatabase: yes
     appDbUsername: "{{ vaultNodeapp1DbUsername }}"

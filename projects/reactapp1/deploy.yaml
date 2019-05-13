@@ -2,7 +2,7 @@
 
 ---
 
-- hosts: lenny
+- hosts: lisa
   vars:
     reactapp1ContainerName: reactapp1
     reactapp1ImageName: tuximetal/reactapp1
