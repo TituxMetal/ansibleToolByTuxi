@@ -1,0 +1,23 @@
+# ansible_path/projects/taskManager/rollback.yaml
+
+---
+
+- hosts: docker
+  become: yes
+  vars:
+    taskManagerContainerName: taskManager
+    taskManagerImageName: tuximetal/task-manager
+    taskManagerImageVersion: 0.0.2
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ taskManagerContainerName }}",
+        projectAppImageName: "{{ taskManagerImageName }}:{{ taskManagerImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ taskManagerImageName }}:{{ taskManagerImageVersion }}"
+    }
