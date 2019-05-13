@@ -1,13 +1,9 @@
 all:
   hosts:
-    lenny:
-      ansible_ssh_host: 51.75.254.76
-      ansible_user: root
     lisa:
       ansible_ssh_host: 164.132.49.79
       ansible_user: root
   children:
     docker:
       hosts:
-        lenny:
         lisa:
