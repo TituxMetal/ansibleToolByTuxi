@@ -10,7 +10,7 @@
     appDbName: "{{ vaultTaskManagerDbName }}"
     taskManagerContainerName: taskManager
     taskManagerImageName: tuximetal/task-manager
-    taskManagerImageVersion: 0.0.2
+    taskManagerImageVersion: latest
     taskManagerLinks: [ "mongodb:mongo" ]
     taskManagerEnvVars: "{{ vaultTaskManagerEnvVars }}"
     taskManagerVolumes: [

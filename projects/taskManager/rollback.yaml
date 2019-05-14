@@ -7,7 +7,7 @@
   vars:
     taskManagerContainerName: taskManager
     taskManagerImageName: tuximetal/task-manager
-    taskManagerImageVersion: 0.0.2
+    taskManagerImageVersion: latest
   roles:
     # Stop the project app container
     - {
