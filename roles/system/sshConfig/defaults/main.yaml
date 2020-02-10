@@ -7,11 +7,6 @@ sshConfig: [
     line: "AllowUsers {{ sshAdminUserName }}"
   },
   {
-    action: "Disallow password authentication",
-    regexp: "^PasswordAuthentication",
-    line: "PasswordAuthentication no"
-  },
-  {
     action: "Add the ListenAddress",
     regexp: "^ListenAddress",
     line: "ListenAddress {{ ansible_ssh_host }}"
