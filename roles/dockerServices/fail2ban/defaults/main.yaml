@@ -33,7 +33,7 @@ fail2banContainers: [
     containerName: "{{ fail2banTypeContainer.host }}",
     containerEnvVars: {
       TZ: "Europe/Paris",
-      SSMTP_HOST: "smtp.gmail.com",
+      SSMTP_HOST: "mail.infomaniak.com",
       SSMTP_PORT: "587",
       SSMTP_USER: "{{ eximAccountEmail }}",
       SSMTP_PASSWORD: "{{ eximAccountPassword }}",
@@ -51,7 +51,7 @@ fail2banContainers: [
     containerName: "{{ fail2banTypeContainer.docker }}",
     containerEnvVars: {
       TZ: "Europe/Paris",
-      SSMTP_HOST: "smtp.gmail.com",
+      SSMTP_HOST: "mail.infomaniak.com",
       SSMTP_PORT: "587",
       SSMTP_USER: "{{ eximAccountEmail }}",
       SSMTP_PASSWORD: "{{ eximAccountPassword }}",
