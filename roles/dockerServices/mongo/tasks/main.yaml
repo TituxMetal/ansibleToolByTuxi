@@ -12,6 +12,7 @@
     name: mongodb
     image: "{{ mongoImage }}"
     state: started
+    restart_policy: always
     env: "{{ mongoEnvVars }}"
     volumes: "{{ mongoVolumes }}"
     command: --smallfiles --bind_ip_all

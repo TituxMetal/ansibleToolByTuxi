@@ -12,6 +12,7 @@
     name: nginx-proxy
     image: "{{ nginxProxyImage }}"
     state: started
+    restart_policy: always
     ports:
       - "80:80"
       - "443:443"

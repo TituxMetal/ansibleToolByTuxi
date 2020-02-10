@@ -12,6 +12,7 @@
     name: nginx-letsencrypt
     image: "{{ letsencryptImage }}"
     state: started
+    restart_policy: always
     volumes_from: "{{ nginxProxyContainer }}"
     volumes: "{{ letsencryptVolumes }}"
   tags: [dockerServices, runContainer, letsencrypt]
