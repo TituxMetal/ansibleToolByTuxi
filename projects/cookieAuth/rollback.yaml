@@ -1,0 +1,23 @@
+# ansible_path/projects/cookieAuth/rollback.yaml
+
+---
+
+- hosts: docker
+  become: yes
+  vars:
+    cookieAuthContainerName: cookieAuth
+    cookieAuthImageName: tuximetal/next-cookie-auth
+    cookieAuthImageVersion: latest
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ cookieAuthContainerName }}",
+        projectAppImageName: "{{ cookieAuthImageName }}:{{ cookieAuthImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ cookieAuthImageName }}:{{ cookieAuthImageVersion }}"
+    }

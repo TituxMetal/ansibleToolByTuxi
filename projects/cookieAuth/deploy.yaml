@@ -1,0 +1,40 @@
+# ansible_path/projects/cookieAuth/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    createUserDatabase: yes
+    appDbUsername: "{{ vaultCookieAuthDbUsername }}"
+    appDbPassword: "{{ vaultCookieAuthDbPassword }}"
+    appDbName: "{{ vaultCookieAuthDbName }}"
+    cookieAuthContainerName: cookieAuth
+    cookieAuthImageName: tuximetal/next-cookie-auth
+    cookieAuthImageVersion: latest
+    cookieAuthLinks: [ "mongodb:mongo" ]
+    cookieAuthEnvVars: "{{ vaultCookieAuthEnvVars }}"
+    cookieAuthVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/cookieAuth/vault.yaml
+  roles:
+    # Create the mongo user and database for cookieAuth project
+    - ../../roles/dockerServices/mongo
+
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ cookieAuthImageName }}:{{ cookieAuthImageVersion }}"
+    }
+
+    # Run cookieAuth container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ cookieAuthContainerName }}",
+        projectAppImageName: "{{ cookieAuthImageName }}:{{ cookieAuthImageVersion }}",
+        projectAppLinks: "{{ cookieAuthLinks }}",
+        projectAppEnvVars: "{{ cookieAuthEnvVars }}",
+        projectAppVolumes: "{{ cookieAuthVolumes }}"
+    }
