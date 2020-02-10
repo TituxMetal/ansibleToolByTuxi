@@ -1,0 +1,40 @@
+# ansible_path/projects/devConnector/deploy.yaml
+
+---
+
+- hosts: lisa
+  vars:
+    createUserDatabase: yes
+    appDbUsername: "{{ vaultDevConnectorDbUsername }}"
+    appDbPassword: "{{ vaultDevConnectorDbPassword }}"
+    appDbName: "{{ vaultDevConnectorDbName }}"
+    devConnectorContainerName: devConnector
+    devConnectorImageName: tuximetal/dev-connector
+    devConnectorImageVersion: latest
+    devConnectorLinks: [ "mongodb:mongo" ]
+    devConnectorEnvVars: "{{ vaultDevConnectorEnvVars }}"
+    devConnectorVolumes: [
+      "/etc/localtime:/etc/localtime:ro",
+      "/etc/timezone:/etc/timezone:ro"
+    ]
+  vars_files:
+    - ../../vault/devConnector/vault.yaml
+  roles:
+    # Create the mongo user and database for devConnector project
+    - ../../roles/dockerServices/mongo
+
+    # Pull app image from docker hub
+    - {
+      role: ../../roles/docker/image,
+        projectAppImageName: "{{ devConnectorImageName }}:{{ devConnectorImageVersion }}"
+    }
+
+    # Run devConnector container image
+    - {
+      role: ../../roles/docker/container,
+        projectAppContainerName: "{{ devConnectorContainerName }}",
+        projectAppImageName: "{{ devConnectorImageName }}:{{ devConnectorImageVersion }}",
+        projectAppLinks: "{{ devConnectorLinks }}",
+        projectAppEnvVars: "{{ devConnectorEnvVars }}",
+        projectAppVolumes: "{{ devConnectorVolumes }}"
+    }

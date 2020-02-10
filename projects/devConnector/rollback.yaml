@@ -1,0 +1,23 @@
+# ansible_path/projects/devConnector/rollback.yaml
+
+---
+
+- hosts: docker
+  become: yes
+  vars:
+    devConnectorContainerName: devConnector
+    devConnectorImageName: tuximetal/dev-connector
+    devConnectorImageVersion: latest
+  roles:
+    # Stop the project app container
+    - {
+      role: ../../rollbacks/docker/container,
+        projectAppContainerName: "{{ devConnectorContainerName }}",
+        projectAppImageName: "{{ devConnectorImageName }}:{{ devConnectorImageVersion }}"
+    }
+
+    # Remove app image
+    - {
+      role: ../../rollbacks/docker/image,
+        projectAppImageName: "{{ devConnectorImageName }}:{{ devConnectorImageVersion }}"
+    }
