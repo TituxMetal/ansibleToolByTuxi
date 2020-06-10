@@ -5,6 +5,7 @@
 - name: DOCKER SERVICES MONGO | Pull mongo image
   docker_image:
     name: "{{ mongoImage }}"
+    source: pull
   tags: [dockerServices, pullImage, mongodb]
 
 - name: DOCKER SERVICES MONGO | Run the mongodb container
