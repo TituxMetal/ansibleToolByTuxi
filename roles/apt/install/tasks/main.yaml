@@ -4,8 +4,7 @@
 
 - name: APT INSTALL | Install packages
   apt:
-    name: "{{ item }}"
+    name: "{{ aptPackages }}"
     update_cache: yes
     state: latest
-  with_items: "{{ aptPackages }}"
   tags: [apt, apt-install]
