@@ -5,6 +5,7 @@
 - name: DOCKER SERVICES LETSENCRYPT | Pull letsencrypt-companion image
   docker_image:
     name: "{{ letsencryptImage }}"
+    source: pull
   tags: [dockerServices, pullImage, letsencrypt]
 
 - name: DOCKER SERVICES LETSENCRYPT | Run the letsencrypt-companion container
