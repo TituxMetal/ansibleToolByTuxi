@@ -5,6 +5,7 @@
 - name: DOCKER SERVICES NGINX PROXY | Pull nginx-proxy image
   docker_image:
     name: "{{ nginxProxyImage }}"
+    source: pull
   tags: [dockerServices, pullImage, nginxProxy]
 
 - name: DOCKER SERVICES NGINX PROXY | Run the nginx-proxy container
