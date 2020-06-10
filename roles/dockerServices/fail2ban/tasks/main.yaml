@@ -28,6 +28,7 @@
 - name: DOCKER SERVICES FAIL2BAN | Pull fail2ban image
   docker_image:
     name: "{{ fail2banImage }}"
+    source: pull
   tags: [dockerServices, pullImage, fail2ban]
 
 - name: DOCKER SERVICES FAIL2BAN | Run the fail2ban container
