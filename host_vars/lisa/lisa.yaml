@@ -1,15 +1,19 @@
 # ansible_path/host_vars/lisa/lisa.yaml
 
-rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512', vaultHashSalt) }}"
+rootUserPassword:
+  "{{ vaultRootUserPassword | password_hash('sha512', vaultHashSalt) }}"
 
-sshAdminUserName: "{{ vaultSshAdminUserName }}"
-sshAdminUserGroup: "{{ vaultSshAdminUserGroup }}"
-sshAdminUserPassword: "{{ vaultSshAdminUserPassword | password_hash('sha512', vaultHashSalt) }}"
+sshAdminUserName: '{{ vaultSshAdminUserName }}'
+sshAdminUserGroup: '{{ vaultSshAdminUserGroup }}'
+sshAdminUserPassword:
+  "{{ vaultSshAdminUserPassword | password_hash('sha512', vaultHashSalt) }}"
 sshAdminUserCreateHome: yes
 sshAdminUserShell: /bin/bash
 
-eximAccountEmail: "{{ vaultEximAccountEmail }}"
-eximAccountPassword: "{{ vaultEximAccountPassword }}"
+eximAccountEmail: '{{ vaultEximAccountEmail }}'
+eximAccountPassword: '{{ vaultEximAccountPassword }}'
 
-mongodbAdminUsername: "{{ vaultMongodbAdminUsername }}"
-mongodbAdminPassword: "{{ vaultMongodbAdminPassword }}"
+mongodbAdminUsername: '{{ vaultMongodbAdminUsername }}'
+mongodbAdminPassword: '{{ vaultMongodbAdminPassword }}'
+
+ansible_python_interpreter: /usr/bin/python
