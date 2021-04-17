@@ -1,13 +1,12 @@
 # ansible_path/roles/docker/container/tasks/main.yaml
-
 ---
-
 - name: DOCKER CONTAINER RUN | Run {{ projectAppContainerName }} container
   docker_container:
-    name: "{{ projectAppContainerName }}"
-    image: "{{ projectAppImageName }}"
+    name: '{{ projectAppContainerName }}'
+    image: '{{ projectAppImageName }}'
     state: started
-    volumes: "{{ projectAppVolumes }}"
-    links: "{{ projectAppLinks }}"
-    env: "{{ projectAppEnvVars }}"
+    restart_policy: always
+    volumes: '{{ projectAppVolumes }}'
+    links: '{{ projectAppLinks }}'
+    env: '{{ projectAppEnvVars }}'
   tags: [docker, runContainer]
