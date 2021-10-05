@@ -3,8 +3,9 @@
 ---
 
 - name: ROLLBACK DOCKER CONTAINER | Stop the {{ projectAppContainerName }} container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ projectAppContainerName }}"
     state: absent
+    container_default_behavior: compatibility
     purge_networks: yes
   tags: [rollback, docker, stopContainer]

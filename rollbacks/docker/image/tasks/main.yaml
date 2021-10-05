@@ -3,7 +3,7 @@
 ---
 
 - name: ROLLBACK DOCKER IMAGE PULL | Remove {{ projectAppImageName }} image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ projectAppImageName }}"
     state: absent
     force_absent: yes

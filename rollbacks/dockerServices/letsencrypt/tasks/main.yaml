@@ -3,14 +3,15 @@
 ---
 
 - name: ROLLBACK DOCKER SERVICES LETSENCRYPT | Stop the letsencrypt-companion container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ letsencryptContainerName }}"
     state: absent
+    container_default_behavior: compatibility
     purge_networks: yes
   tags: [rollback, dockerServices, stopContainer, letsencrypt]
 
 - name: ROLLBACK DOCKER SERVICES LETSENCRYPT | Remove letsencrypt-companion image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ letsencryptImage }}"
     state: absent
     rm: yes

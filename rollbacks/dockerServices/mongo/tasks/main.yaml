@@ -3,14 +3,15 @@
 ---
 
 - name: ROLLBACK DOCKER SERVICES MONGO | Stop the mongodb container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ mongoContainerName }"
     state: absent
+    container_default_behavior: compatibility
     purge_networks: yes
   tags: [rollbacks, dockerServices, stopContainer, mongodb]
 
 - name: ROLLBACK DOCKER SERVICES MONGO | Remove mongodb image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ mongoImage }}"
     state: absent
     rm: yes

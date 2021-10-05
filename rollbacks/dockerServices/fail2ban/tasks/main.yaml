@@ -3,15 +3,16 @@
 ---
 
 - name: ROLLBACK DOCKER SERVICES FAIL2BAN | Stop the fail2ban container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item }}"
     state: absent
     purge_networks: yes
+    container_default_behavior: compatibility
   with_items: "{{ fail2banContainerName }}"
   tags: [rollbacks, dockerServices, stopContainer, fail2ban]
 
 - name: ROLLBACK DOCKER SERVICES FAIL2BAN | Remove fail2ban image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ fail2banImage }}"
     state: absent
     rm: yes
