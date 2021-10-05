@@ -37,7 +37,8 @@ fail2banContainers: [
       SSMTP_PORT: "587",
       SSMTP_USER: "{{ eximAccountEmail }}",
       SSMTP_PASSWORD: "{{ eximAccountPassword }}",
-      SSMTP_TLS: "YES",
+      SSMTP_TLS: "NO",
+      SSMTP_STARTTLS: "YES",
       F2B_DEST_EMAIL: "{{ fail2banDestNotifEmail }}",
       F2B_ACTION: "%(action_mw)s",
       F2B_IPTABLES_CHAIN: "INPUT"
@@ -55,7 +56,8 @@ fail2banContainers: [
       SSMTP_PORT: "587",
       SSMTP_USER: "{{ eximAccountEmail }}",
       SSMTP_PASSWORD: "{{ eximAccountPassword }}",
-      SSMTP_TLS: "YES",
+      SSMTP_TLS: "NO",
+      SSMTP_STARTTLS: "YES",
       F2B_DEST_EMAIL: "{{ fail2banDestNotifEmail }}",
       F2B_ACTION: "%(action_mw)s",
       F2B_IPTABLES_CHAIN: "DOCKER-USER"
