@@ -26,16 +26,17 @@
 
 
 - name: DOCKER SERVICES FAIL2BAN | Pull fail2ban image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ fail2banImage }}"
     source: pull
   tags: [dockerServices, pullImage, fail2ban]
 
 - name: DOCKER SERVICES FAIL2BAN | Run the fail2ban container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item.containerName }}"
     image: "{{ fail2banImage }}"
     state: started
+    container_default_behavior: compatibility
     restart_policy: always
     network_mode: host
     capabilities: "{{ fail2banCapabilities }}"

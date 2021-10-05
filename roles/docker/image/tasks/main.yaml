@@ -3,7 +3,7 @@
 ---
 
 - name: DOCKER IMAGE PULL | Pull {{ projectAppImageName }} image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ projectAppImageName }}"
     source: pull
   tags: [docker, pullImage]

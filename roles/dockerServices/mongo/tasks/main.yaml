@@ -3,16 +3,17 @@
 ---
 
 - name: DOCKER SERVICES MONGO | Pull mongo image
-  docker_image:
+  community.docker.docker_image:
     name: "{{ mongoImage }}"
     source: pull
   tags: [dockerServices, pullImage, mongodb]
 
 - name: DOCKER SERVICES MONGO | Run the mongodb container
-  docker_container:
+  community.docker.docker_container:
     name: mongodb
     image: "{{ mongoImage }}"
     state: started
+    container_default_behavior: compatibility
     restart_policy: always
     env: "{{ mongoEnvVars }}"
     volumes: "{{ mongoVolumes }}"
@@ -20,9 +21,10 @@
   tags: [dockerServices, runContainer, mongodb]
 
 - name: DOCKER SERVICES MONGO | Create mongo user database
-  docker_container:
+  community.docker.docker_container:
     name: mongodbcreateuser
     image: "{{ mongoImage }}"
+    container_default_behavior: compatibility
     cleanup: yes
     detach: no
     tty: yes
@@ -35,9 +37,10 @@
   tags: [dockerServices, runContainer, createMongoUserDatabase, mongodb]
 
 - name: DOCKER SERVICES MONGO | Clear create mongo user database container
-  docker_container:
+  community.docker.docker_container:
     name: mongodbcreateuser
     image: "{{ mongoImage }}"
+    container_default_behavior: compatibility
     state: absent
     purge_networks: yes
   when: createUserDatabase is defined and createmongouserdatabase is not success
