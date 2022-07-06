@@ -1,10 +1,19 @@
 # ansible_path/group_vars/all.yaml
 
-serverHostname: "{{ vaultServerHostname }}"
+serverHostname: '{{ vaultServerHostname }}'
 
-utilsAptPackages: [
-  "tzdata", "openntpd", "locales-all", "mailutils", "bash-completion", "ufw", "exim4" ]
+systemAptPackages:
+  [
+    'curl',
+    'dbus',
+    'apt-transport-https',
+    'gnupg',
+    'ca-certificates',
+    'curl',
+    'locales-all',
+    'tzdata'
+  ]
 
-defaultAptPackages: [
-  "curl", "wget", "tree", "htop", "rsync", "dbus", "zip", "unzip", "apt-transport-https", "gnupg2"
-]
+utilsAptPackages: ['openntpd', 'mailutils', 'bash-completion', 'ufw', 'exim4']
+
+defaultAptPackages: ['wget', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
