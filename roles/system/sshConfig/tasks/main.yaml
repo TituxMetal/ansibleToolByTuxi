@@ -1,7 +1,5 @@
 # ansible_path/roles/system/sshConfig/tasks/main.yaml
-
 ---
-
 - name: SYSTEM SSHCONFIG | Check if there is a backup file for default ssh config
   stat:
     path: /etc/ssh/sshd_config.backup
@@ -20,19 +18,19 @@
 - name: SYSTEM SSHCONFIG | Edit ssh config file
   lineinfile:
     dest: /etc/ssh/sshd_config
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
     state: present
     backup: yes
-  with_items: "{{ sshConfig }}"
+  with_items: '{{ sshConfig }}'
   when: isCopyed is success or isCopyed is skipped
   tags: [system, ssh, ssh-config]
   notify: restartSsh
 
 - name: SYSTEM SSHCONFIG | Add "{{ sshAdminUserName }}" authorized_keys file
   authorized_key:
-    user: "{{ sshAdminUserName }}"
+    user: '{{ sshAdminUserName }}'
     state: present
     key: '{{ item }}'
-  with_items: "{{ sshAuthorizedKeys }}"
+  with_items: '{{ sshAuthorizedKeys }}'
   tags: [system, ssh, ssh-config, ssh-authorizedKeys]
