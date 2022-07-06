@@ -1,4 +1,4 @@
 # ansible_path/roles/apt/repository/defaults/main.yaml
 
-aptRepoUrl: https://raw.githubusercontent.com/TituxMetal/cffa/master/apt/sources.list
+aptRepoUrl: https://raw.githubusercontent.com/TituxMetal/cffa/main/apt/sources.list
 aptRepoName: sources
