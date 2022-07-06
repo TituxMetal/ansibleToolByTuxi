@@ -1,13 +1,11 @@
 # ansible_path/roles/firewall/allow/tasks/main.yaml
-
 ---
-
 - name: FIREWALL ALLOW RULE | Allow all access to tcp ports {{ firewallPorts }}
   become: yes
   ufw:
     state: enabled
     rule: allow
-    port: "{{ item }}"
-    proto: tcp
-  with_items: "{{ firewallPorts }}"
+    port: '{{ item.port }}'
+    proto: '{{ item.proto }}'
+  with_items: '{{ firewallPorts }}'
   tags: [firewall, ufw-alow]

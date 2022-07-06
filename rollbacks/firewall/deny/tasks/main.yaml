@@ -1,0 +1,10 @@
+# ansible_path/rollbacks/firewall/deny/tasks/main.yaml
+---
+- name: FIREWALL DENY RULE | Deny access to ports {{ firewallPorts }}
+  become: yes
+  ufw:
+    rule: deny
+    port: '{{ item.port }}'
+    proto: '{{ item.proto }}'
+  with_items: '{{ firewallPorts }}'
+  tags: [firewall, ufw-deny]

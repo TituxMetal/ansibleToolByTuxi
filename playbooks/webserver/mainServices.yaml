@@ -1,11 +1,19 @@
 # ansible_path/playbooks/webserver/mainServices.yaml
-
 ---
-
 - hosts: docker
+  vars:
+    dockerNetworkName: 'nginx-proxy'
+    letsencryptDefaultEmail: me@lgdweb.fr
+    webPorts: [{ port: 'http', proto: 'tcp' }, { port: 'https', proto: 'tcp' }]
+    eximDestEmail: me@lgdweb.fr
+    eximEmailSubject: 'Ansible webserver task done on server'
+    eximEmailBody: 'All mainServices tasks are done successfully'
   roles:
     # Start nginx-proxy docker container
     - ../../roles/dockerServices/fail2ban
+
+    # Create nginx-proxy docker network
+    - { role: ../../roles/docker/network, projectAppNetworkName: '{{ dockerNetworkName }}' }
 
     # Start nginx-proxy docker container
     - ../../roles/dockerServices/nginx-proxy
@@ -14,4 +22,10 @@
     - ../../roles/dockerServices/letsencrypt
 
     # Start mongo docker container
-    - ../../roles/dockerServices/mongo
+    # - ../../roles/dockerServices/mongo
+
+    # Allow http and https ports in firewall
+    - { role: ../../roles/firewall/allow, firewallPorts: '{{ webPorts }}' }
+
+    # Sending Notification email
+    - ../../roles/exim/sendemail

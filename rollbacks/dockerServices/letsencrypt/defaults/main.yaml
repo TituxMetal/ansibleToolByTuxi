@@ -1,4 +1,4 @@
 # ansible_path/rollbacks/dockerServices/letsencrypt/defaults/main.yaml
 
-letsencryptImage: jrcs/letsencrypt-nginx-proxy-companion
+letsencryptImage: nginxproxy/acme-companion
 letsencryptContainerName: nginx-letsencrypt

@@ -1,0 +1,10 @@
+# ansible_path/rollbacks/docker/network/tasks/main.yaml
+---
+- name:
+    DOCKER NETWORK ROLLBACK | Delete {{ projectAppNetworkName }} network and disconnect all
+    containers
+  community.docker.docker_network:
+    name: '{{ projectAppNetworkName }}'
+    state: absent
+    force: yes
+  tags: [docker, networkDelete]

@@ -1,33 +1,40 @@
 # ansible_path/playbooks/docker/install.yaml
-
 ---
-
 - hosts: docker
   become: yes
+  vars:
+    dockerPorts:
+      [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
+    eximDestEmail: me@lgdweb.fr
+    eximEmailSubject: 'Ansible docker install task done on server'
+    eximEmailBody: 'All docker install tasks are done successfully'
   roles:
     # Add Docker apt repository
     - {
-      role: ../../roles/apt/repository,
-        aptRepoUrl: "{{ dockerAptRepoUri }}",
-        aptRepoName: "{{ dockerAptRepoName }}"
-    }
+        role: ../../roles/apt/repository,
+        aptRepoUrl: '{{ dockerAptRepoUri }}',
+        aptRepoName: '{{ dockerAptRepoName }}'
+      }
 
     # Add docker Gpg key
     - {
-      role: ../../roles/apt/keys,
-        aptKeyUri: "{{ dockerAptKeyUri }}",
-        aptKeyId: "{{ dockerAptKeyId }}"
-    }
+        role: ../../roles/apt/keys,
+        aptKeyUri: '{{ dockerAptKeyUri }}',
+        aptKeyId: '{{ dockerAptKeyId }}'
+      }
 
     # Install Docker package
-    - {
-      role: ../../roles/apt/install,
-        aptPackages: "{{ dockerPackage + dockerDepsPackages }}"
-    }
+    - { role: ../../roles/apt/install, aptPackages: '{{ dockerPackages }}' }
 
     # Add admin user to Docker group
     - {
-      role: ../../roles/users/addUserToGroups,
-        userName: "{{ sshAdminUserName }}",
+        role: ../../roles/users/addUserToGroups,
+        userName: '{{ sshAdminUserName }}',
         userGroups: docker
-    }
+      }
+
+    # Allow ports in firewall
+    - { role: ../../roles/firewall/allow, firewallPorts: '{{ dockerPorts }}' }
+
+    # Sending Notification email
+    - ../../roles/exim/sendemail

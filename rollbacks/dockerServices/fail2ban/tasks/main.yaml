@@ -1,20 +1,17 @@
 # ansible_path/rollbacks/dockerServices/fail2ban/tasks/main.yaml
-
 ---
-
 - name: ROLLBACK DOCKER SERVICES FAIL2BAN | Stop the fail2ban container
   community.docker.docker_container:
-    name: "{{ item }}"
+    name: '{{ item }}'
     state: absent
     purge_networks: yes
     container_default_behavior: compatibility
-  with_items: "{{ fail2banContainerName }}"
+  with_items: '{{ fail2banContainerName }}'
   tags: [rollbacks, dockerServices, stopContainer, fail2ban]
 
 - name: ROLLBACK DOCKER SERVICES FAIL2BAN | Remove fail2ban image
   community.docker.docker_image:
-    name: "{{ fail2banImage }}"
+    name: '{{ fail2banImage }}'
     state: absent
-    rm: yes
-    force: yes
+    force_absent: yes
   tags: [rollbacks, dockerServices, removeImage, fail2ban]

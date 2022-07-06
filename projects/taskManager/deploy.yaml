@@ -1,22 +1,17 @@
 # ansible_path/projects/taskManager/deploy.yaml
-
 ---
-
 - hosts: lisa
   vars:
     createUserDatabase: yes
-    appDbUsername: "{{ vaultTaskManagerDbUsername }}"
-    appDbPassword: "{{ vaultTaskManagerDbPassword }}"
-    appDbName: "{{ vaultTaskManagerDbName }}"
+    appDbUsername: '{{ vaultTaskManagerDbUsername }}'
+    appDbPassword: '{{ vaultTaskManagerDbPassword }}'
+    appDbName: '{{ vaultTaskManagerDbName }}'
     taskManagerContainerName: taskManager
     taskManagerImageName: tuximetal/task-manager
     taskManagerImageVersion: latest
-    taskManagerLinks: [ "mongodb:mongo" ]
-    taskManagerEnvVars: "{{ vaultTaskManagerEnvVars }}"
-    taskManagerVolumes: [
-      "/etc/localtime:/etc/localtime:ro",
-      "/etc/timezone:/etc/timezone:ro"
-    ]
+    taskManagerLinks: ['mongodb:mongo']
+    taskManagerEnvVars: '{{ vaultTaskManagerEnvVars }}'
+    taskManagerVolumes: ['/etc/localtime:/etc/localtime:ro', '/etc/timezone:/etc/timezone:ro']
   vars_files:
     - ../../vault/taskManager/vault.yaml
   roles:
@@ -25,16 +20,16 @@
 
     # Pull app image from docker hub
     - {
-      role: ../../roles/docker/image,
-        projectAppImageName: "{{ taskManagerImageName }}:{{ taskManagerImageVersion }}"
-    }
+        role: ../../roles/docker/image,
+        projectAppImageName: '{{ taskManagerImageName }}:{{ taskManagerImageVersion }}'
+      }
 
     # Run taskManager container image
     - {
-      role: ../../roles/docker/container,
-        projectAppContainerName: "{{ taskManagerContainerName }}",
-        projectAppImageName: "{{ taskManagerImageName }}:{{ taskManagerImageVersion }}",
-        projectAppLinks: "{{ taskManagerLinks }}",
-        projectAppEnvVars: "{{ taskManagerEnvVars }}",
-        projectAppVolumes: "{{ taskManagerVolumes }}"
-    }
+        role: ../../roles/docker/container,
+        projectAppContainerName: '{{ taskManagerContainerName }}',
+        projectAppImageName: '{{ taskManagerImageName }}:{{ taskManagerImageVersion }}',
+        projectAppLinks: '{{ taskManagerLinks }}',
+        projectAppEnvVars: '{{ taskManagerEnvVars }}',
+        projectAppVolumes: '{{ taskManagerVolumes }}'
+      }

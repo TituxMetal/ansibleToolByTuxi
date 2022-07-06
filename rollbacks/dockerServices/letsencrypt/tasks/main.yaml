@@ -1,10 +1,8 @@
 # ansible_path/rollbacks/dockerServices/letsencrypt/tasks/main.yaml
-
 ---
-
 - name: ROLLBACK DOCKER SERVICES LETSENCRYPT | Stop the letsencrypt-companion container
   community.docker.docker_container:
-    name: "{{ letsencryptContainerName }}"
+    name: '{{ letsencryptContainerName }}'
     state: absent
     container_default_behavior: compatibility
     purge_networks: yes
@@ -12,8 +10,7 @@
 
 - name: ROLLBACK DOCKER SERVICES LETSENCRYPT | Remove letsencrypt-companion image
   community.docker.docker_image:
-    name: "{{ letsencryptImage }}"
+    name: '{{ letsencryptImage }}'
     state: absent
-    rm: yes
-    force: yes
+    force_absent: yes
   tags: [rollback, dockerServices, removeImage, letsencrypt]

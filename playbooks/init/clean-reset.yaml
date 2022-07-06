@@ -1,19 +1,17 @@
 # ansible_path/playbooks/init/clean-reset.yaml
-
 ---
-
 - hosts: all
   vars:
     userIsAdmin: yes
-    userName: "{{ sshAdminUserName }}"
-    userGroup: "{{ sshAdminUserGroup }}"
-    userHome: "/home/{{ sshAdminUserName }}"
+    userName: '{{ sshAdminUserName }}'
+    userGroup: '{{ sshAdminUserGroup }}'
+    userHome: '/home/{{ sshAdminUserName }}'
   roles:
-  # 1: Remove ssh admin user configuration
+    # 1: Remove ssh admin user configuration
     - ../../rollbacks/users/admin
 
-  # 2: Remove ssh admin user
+    # 2: Remove ssh admin user
     - ../../rollbacks/users/user
 
-  # 3: Remove ssh admin user group
+    # 3: Remove ssh admin user group
     - ../../rollbacks/users/group
