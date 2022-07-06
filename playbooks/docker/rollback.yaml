@@ -1,38 +1,33 @@
 # ansible_path/playbooks/docker/rollback.yaml
-
 ---
-
 - hosts: docker
   become: yes
+  vars:
+    dockerPorts:
+      [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
   roles:
     # Remove Docker packages and dependencies
-    - {
-      role: ../../rollbacks/apt/remove,
-        aptPackages: "{{ dockerDepsPackages + dockerPackage }}"
-    }
+    - { role: ../../rollbacks/apt/remove, aptPackages: '{{ dockerPackages }}' }
 
     # Remove Docker apt repository
-    - {
-      role: ../../rollbacks/apt/repository,
-        aptRepoName: "{{ dockerAptRepoName }}"
-    }
+    - { role: ../../rollbacks/apt/repository, aptRepoName: '{{ dockerAptRepoName }}' }
 
     # Remove Docker Gpg key
     - {
-      role: ../../rollbacks/apt/keys,
-        aptKeyUri: "{{ dockerAptKeyUri }}",
-        aptKeyId: "{{ dockerAptKeyId }}"
-    }
+        role: ../../rollbacks/apt/keys,
+        aptKeyUri: '{{ dockerAptKeyUri }}',
+        aptKeyId: '{{ dockerAptKeyId }}'
+      }
 
     # Remove admin user from Docker group
     - {
-      role: ../../rollbacks/users/removeUserFromGroups,
-        userName: "{{ sshAdminUserName }}",
-        userGroups: [ "docker" ]
-    }
+        role: ../../rollbacks/users/removeUserFromGroups,
+        userName: '{{ sshAdminUserName }}',
+        userGroups: ['docker']
+      }
 
     # Remove Docker group
-    - {
-      role: ../../rollbacks/users/group,
-        userGroup: docker
-    }
+    - { role: ../../rollbacks/users/group, userGroup: docker }
+
+    # Deny ports in firewall
+    - { role: ../../rollbacks/firewall/deny, firewallPorts: '{{ dockerPorts }}' }
