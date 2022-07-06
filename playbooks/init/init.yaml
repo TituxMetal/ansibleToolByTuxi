@@ -1,67 +1,68 @@
 # ansible_path/playbooks/init/init.yaml
-
 ---
-
 - hosts: all
   become: yes
   vars:
     userSsh: yes
     userShell: /bin/bash
     userIsAdmin: yes
-    aptPackages: "{{ defaultAptPackages + utilsAptPackages }}"
+    aptPackages: '{{ systemAptPackages + defaultAptPackages + utilsAptPackages }}'
+    eximDestEmail: me@lgdweb.fr
+    eximEmailSubject: 'Ansible init task done on server'
+    eximEmailBody: 'All init tasks are done successfully'
   roles:
-  # 1: Add default apt repository
+    # 1: Add default apt repository
     - ../../roles/apt/repository
 
-  # 2: Install default and utils packages
+    # 2: Install default and utils packages
     - ../../roles/apt/install
 
-  # 3: Firewall init configuration
+    # 3: Firewall init configuration
     - ../../roles/firewall/init
-  # 3.1: Allow defaults ports in firewall
+    # 3.1: Allow defaults ports in firewall
     - ../../roles/firewall/allow
 
-  # 4: Root user configuration
+    # 4: Root user configuration
     - ../../roles/users/admin
 
-  # 5: Timezone configuration
+    # 5: Timezone configuration
     - ../../roles/system/timezone
 
-  # 6: Hostname configuration
+    # 6: Hostname configuration
     - ../../roles/system/hostname
 
-  # 7: Open ntp configuration
+    # 7: Open ntp configuration
     - ../../roles/system/openNtp
 
-  # 8: Locales configuration
+    # 8: Locales configuration
     - ../../roles/system/locales
 
-  # 9: Add default admin user group
-    - {
-      role: ../../roles/users/group,
-        userGroup: "{{ sshAdminUserGroup }}"
-    }
+    # 9: Add default admin user group
+    - { role: ../../roles/users/group, userGroup: '{{ sshAdminUserGroup }}' }
 
-  # 10: Add default admin user
+    # 10: Add default admin user
     - {
-      role: ../../roles/users/user,
-        userName: "{{ sshAdminUserName }}",
-        userGroup: "{{ sshAdminUserGroup }}",
-        userHome: "/home/{{ sshAdminUserName }}",
-        userCreateHome: "{{ sshAdminUserCreateHome }}",
-        userPassword: "{{ sshAdminUserPassword }}"
-    }
+        role: ../../roles/users/user,
+        userName: '{{ sshAdminUserName }}',
+        userGroup: '{{ sshAdminUserGroup }}',
+        userHome: '/home/{{ sshAdminUserName }}',
+        userCreateHome: '{{ sshAdminUserCreateHome }}',
+        userPassword: '{{ sshAdminUserPassword }}'
+      }
 
-  # 11: Add default admin user configuration
+    # 11: Add default admin user configuration
     - {
-      role: ../../roles/users/admin,
-        userName: "{{ sshAdminUserName }}",
-        userGroup: "{{ sshAdminUserGroup }}",
-        userHome: "/home/{{ sshAdminUserName }}"
-    }
+        role: ../../roles/users/admin,
+        userName: '{{ sshAdminUserName }}',
+        userGroup: '{{ sshAdminUserGroup }}',
+        userHome: '/home/{{ sshAdminUserName }}'
+      }
 
-  # 12: Exim configuration
+    # 12: Exim configuration
     - ../../roles/exim/config
 
-  # 13: Ssh configuration
+    # 13: Ssh configuration
     - ../../roles/system/sshConfig
+
+    # 14: Sending Notification email
+    - ../../roles/exim/sendemail
