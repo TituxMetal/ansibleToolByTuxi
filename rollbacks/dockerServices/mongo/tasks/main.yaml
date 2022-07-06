@@ -1,10 +1,8 @@
 # ansible_path/rollbacks/dockerServices/mongo/tasks/main.yaml
-
 ---
-
 - name: ROLLBACK DOCKER SERVICES MONGO | Stop the mongodb container
   community.docker.docker_container:
-    name: "{{ mongoContainerName }"
+    name: '{{ mongoContainerName }}'
     state: absent
     container_default_behavior: compatibility
     purge_networks: yes
@@ -12,8 +10,7 @@
 
 - name: ROLLBACK DOCKER SERVICES MONGO | Remove mongodb image
   community.docker.docker_image:
-    name: "{{ mongoImage }}"
+    name: '{{ mongoImage }}'
     state: absent
-    rm: yes
-    force: yes
+    force_absent: yes
   tags: [rollbacks, dockerServices, removeImage, mongodb]

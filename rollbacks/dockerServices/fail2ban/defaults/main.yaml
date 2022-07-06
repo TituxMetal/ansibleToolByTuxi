@@ -1,4 +1,5 @@
 # ansible_path/rollbacks/dockerServices/fail2ban/defaults/main.yaml
 
 fail2banImage: crazymax/fail2ban:latest
-fail2banContainerName: [ "{{ fail2banTypeContainer.host }}", "{{ fail2banTypeContainer.docker }}" ]
+fail2banTypeContainer: { host: 'fail2banHost', docker: 'fail2banDocker' }
+fail2banContainerName: ['{{ fail2banTypeContainer.host }}', '{{ fail2banTypeContainer.docker }}']
