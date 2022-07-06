@@ -1,10 +1,8 @@
 # ansible_path/roles/apt/install/tasks/main.yaml
-
 ---
-
 - name: APT INSTALL | Install packages
   apt:
-    name: "{{ aptPackages }}"
+    name: '{{ aptPackages }}'
     update_cache: yes
     state: latest
   tags: [apt, apt-install]
