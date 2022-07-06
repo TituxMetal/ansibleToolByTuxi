@@ -1,0 +1,10 @@
+# ansible_path/roles/docker/network/tasks/main.yaml
+---
+- name: DOCKER NETWORK CREATE | Create {{ projectAppNetworkName }} network
+  community.docker.docker_network:
+    name: '{{ projectAppNetworkName }}'
+    driver: overlay
+    attachable: yes
+    state: present
+  when: ('swarmmanager' in group_names)
+  tags: [docker, networkCreate]
