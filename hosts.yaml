@@ -3,7 +3,26 @@ all:
     lisa:
       ansible_ssh_host: 164.132.49.79
       ansible_user: root
+    alice:
+      ansible_ssh_host: 193.70.113.138
+      ansible_user: debian
+    almanzo:
+      ansible_ssh_host: 193.70.113.102
+      ansible_user: debian
+    laura:
+      ansible_ssh_host: 37.187.180.215
+      ansible_user: debian
+    mary:
+      ansible_ssh_host: 151.80.155.178
+      ansible_user: debian
   children:
     docker:
       hosts:
         lisa:
+        alice:
+        almanzo:
+        laura:
+        mary:
+    swarmmanager:
+      hosts:
+        almanzo:
