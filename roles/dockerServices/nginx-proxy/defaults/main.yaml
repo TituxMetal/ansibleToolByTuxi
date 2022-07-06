@@ -1,12 +1,14 @@
 # ansible_path/roles/dockerServices/nginx-proxy/defaults/main.yaml
 
-nginxProxyImage: jwilder/nginx-proxy:alpine
-nginxProxyVolumes: [
-  "/srv/cert:/etc/nginx/certs:ro",
-  "/var/log/nginx:/var/log/nginx",
-  "/var/run/docker.sock:/tmp/docker.sock:ro",
-  "/usr/share/nginx/html",
-  "/etc/nginx/vhost.d",
-  "/etc/localtime:/etc/localtime:ro",
-  "/etc/timezone:/etc/timezone:ro"
-]
+nginxProxyImage: nginxproxy/nginx-proxy:alpine
+nginxProxyVolumes:
+  [
+    '/srv/cert:/etc/nginx/certs:ro',
+    '/var/log/nginx:/var/log/nginx',
+    '/var/run/docker.sock:/tmp/docker.sock:ro',
+    '/usr/share/nginx/html',
+    '/etc/nginx/vhost.d',
+    '/etc/localtime:/etc/localtime:ro',
+    '/etc/timezone:/etc/timezone:ro'
+  ]
+nginxProxyNetworkName: 'nginx-proxy'

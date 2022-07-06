@@ -1,10 +1,14 @@
 # ansible_path/roles/dockerServices/letsencrypt/defaults/main.yaml
 
-letsencryptImage: jrcs/letsencrypt-nginx-proxy-companion
-letsencryptVolumes: [
-  "/srv/cert:/etc/nginx/certs:rw",
-  "/var/run/docker.sock:/var/run/docker.sock:ro",
-  "/etc/localtime:/etc/localtime:ro",
-  "/etc/timezone:/etc/timezone:ro"
-]
-nginxProxyContainer: [ "nginx-proxy" ]
+letsencryptImage: nginxproxy/acme-companion
+letsencryptVolumes:
+  [
+    '/srv/cert:/etc/nginx/certs:rw',
+    '/var/run/docker.sock:/var/run/docker.sock:ro',
+    'acme:/etc/acme.sh',
+    '/etc/localtime:/etc/localtime:ro',
+    '/etc/timezone:/etc/timezone:ro'
+  ]
+letsencryptEnvVars: { LETSENCRYPT_DEFAULT_EMAIL: '{{ letsencryptDefaultEmail }}' }
+nginxProxyContainer: ['nginx-proxy']
+nginxProxyNetworkName: nginx-proxy
