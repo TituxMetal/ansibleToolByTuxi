@@ -1,3 +1,3 @@
 # ansible_path/roles/firewall/allow/defaults/main.yaml
 
-firewallPorts: [ "ssh" ]
+firewallPorts: [{ port: 'ssh', proto: 'any' }]
