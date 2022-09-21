@@ -1,0 +1,4 @@
+# ansible_path/roles/dockerServices/dataStructure/defaults/main.yaml
+
+dataStructureRepo: 'https://github.com/lgdweb/docker-data-server-infra.git'
+mainDataDirectory: '/srv'
