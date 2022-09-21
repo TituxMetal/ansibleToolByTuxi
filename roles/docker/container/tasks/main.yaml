@@ -5,9 +5,14 @@
     name: '{{ projectAppContainerName }}'
     image: '{{ projectAppImageName }}'
     state: started
-    container_default_behavior: compatibility
-    restart_policy: always
+    container_default_behavior: '{{ projectAppCompatibility }}'
+    network_mode: '{{ projectAppNetworkMode }}'
+    restart_policy: '{{ projectAppRestartPolicy }}'
+    privileged: '{{ projectAppPrivileged }}'
+    capabilities: '{{ projectAppCapAdd }}'
     volumes: '{{ projectAppVolumes }}'
     links: '{{ projectAppLinks }}'
+    ports: '{{ projectAppPorts }}'
     env: '{{ projectAppEnvVars }}'
+    networks: '{{ projectAppNetworks }}'
   tags: [docker, runContainer]
