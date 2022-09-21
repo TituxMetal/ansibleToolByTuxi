@@ -1,20 +1,19 @@
 # ansible_path/playbooks/webserver/rollback.yaml
 ---
-- hosts: docker
-  vars:
-    dockerNetworkName: 'nginx-proxy'
+- hosts: docker:&f2b
+  gather_facts: false
   roles:
-    # Stop and clean nginx-proxy docker container
-    - ../../rollbacks/dockerServices/fail2ban
+    # Stop fail2ban docker container
+    - {
+        role: ../../rollbacks/docker/container,
+        projectAppContainerName: '{{ dockerServiceFail2banContainerName }}'
+      }
 
-    # Stop and clean nginx-proxy docker container
-    - ../../rollbacks/dockerServices/nginx-proxy
+    # Clean fail2ban docker image
+    - {
+        role: ../../rollbacks/docker/image,
+        projectAppImageName: '{{ dockerServiceFail2banImage }}'
+      }
 
-    # Stop and clean letsencrypt docker container
-    - ../../rollbacks/dockerServices/letsencrypt
-
-    # Delete nginx-proxy docker network
-    - { role: ../../rollbacks/docker/network, projectAppNetworkName: '{{ dockerNetworkName }}' }
-
-    # Stop and clean mongodb docker container
-    - ../../rollbacks/dockerServices/mongo
+    # Remove docker service data structure
+    - ../../rollbacks/dockerServices/dataStructure
