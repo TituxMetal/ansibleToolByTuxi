@@ -1,4 +1,0 @@
-# ansible_path/rollbacks/dockerServices/mongo/defaults/main.yaml
-
-mongoImage: mongo:4.0.4
-mongoContainerName: mongodb

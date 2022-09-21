@@ -1,4 +1,0 @@
-# ansible_path/rollbacks/dockerServices/nginx-proxy/defaults/main.yaml
-
-nginxProxyImage: nginxproxy/nginx-proxy:alpine
-nginxProxyContainerName: nginx-proxy

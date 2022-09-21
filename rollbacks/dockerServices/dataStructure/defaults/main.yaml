@@ -1,0 +1,3 @@
+# ansible_path/rollbacks/dockerServices/dataStructure/defaults/main.yaml
+
+mainDataDirectory: '/srv'
