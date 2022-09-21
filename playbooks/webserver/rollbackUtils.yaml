@@ -1,0 +1,43 @@
+# ansible_path/playbooks/webserver/rollbackUtils.yaml
+---
+- hosts: docker:&standalone
+  gather_facts: false
+  roles:
+    # Stop Poratiner agent docker container
+    - {
+        role: ../../rollbacks/docker/container,
+        projectAppContainerName: '{{ dockerServicePortainerContainerName }}'
+      }
+
+    # Remove Poratiner agent image
+    - {
+        role: ../../rollbacks/docker/image,
+        projectAppImageName: '{{ dockerServicePortainerImage }}'
+      }
+
+    # Stop Nginx Proxy Manager docker container
+    - {
+        role: ../../rollbacks/docker/container,
+        projectAppContainerName: '{{ dockerServiceProxyContainerName }}'
+      }
+
+    # Remove Nginx Proxy Manager image
+    - { role: ../../rollbacks/docker/image, projectAppImageName: '{{ dockerServiceProxyImage }}' }
+
+    # Stop Main Site docker container
+    - {
+        role: ../../rollbacks/docker/container,
+        projectAppContainerName: '{{ dockerServiceMainSiteContainerName }}'
+      }
+
+    # Remove Main Site image
+    - {
+        role: ../../rollbacks/docker/image,
+        projectAppImageName: '{{ dockerServiceMainSiteImage }}'
+      }
+
+    # Remove reverse-proxy-nw network
+    - {
+        role: ../../rollbacks/docker/network,
+        projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}'
+      }
