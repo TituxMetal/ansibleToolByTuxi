@@ -31,16 +31,19 @@
     # 6: Hostname configuration
     - ../../roles/system/hostname
 
-    # 7: Open ntp configuration
+    # 7: Logrotate configuration
+    - ../../roles/system/logrotate
+
+    # 8: Open ntp configuration
     - ../../roles/system/openNtp
 
-    # 8: Locales configuration
+    # 9: Locales configuration
     - ../../roles/system/locales
 
-    # 9: Add default admin user group
+    # 10: Add default admin user group
     - { role: ../../roles/users/group, userGroup: '{{ sshAdminUserGroup }}' }
 
-    # 10: Add default admin user
+    # 11: Add default admin user
     - {
         role: ../../roles/users/user,
         userName: '{{ sshAdminUserName }}',
@@ -50,7 +53,7 @@
         userPassword: '{{ sshAdminUserPassword }}'
       }
 
-    # 11: Add default admin user configuration
+    # 12: Add default admin user configuration
     - {
         role: ../../roles/users/admin,
         userName: '{{ sshAdminUserName }}',
@@ -58,11 +61,11 @@
         userHome: '/home/{{ sshAdminUserName }}'
       }
 
-    # 12: Exim configuration
+    # 13: Exim configuration
     - ../../roles/exim/config
 
-    # 13: Ssh configuration
+    # 14: Ssh configuration
     - ../../roles/system/sshConfig
 
-    # 14: Sending Notification email
+    # 15: Sending Notification email
     - ../../roles/exim/sendemail
