@@ -1,0 +1,55 @@
+# ansible_path/playbooks/webserver/utils.yaml
+---
+- hosts: docker:&standalone
+  gather_facts: false
+  vars:
+    eximDestEmail: me@lgdweb.fr
+    eximEmailSubject: 'Ansible webserver task done on server'
+    eximEmailBody: 'All utils tasks are done successfully'
+  roles:
+    # Create reverse-proxy-nw network
+    - {
+        role: ../../roles/docker/network,
+        projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}'
+      }
+
+    # Pull Poratiner agent image
+    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
+
+    # Start Poratiner agent docker container
+    - {
+        role: ../../roles/docker/container,
+        projectAppContainerName: '{{ dockerServicePortainerContainerName }}',
+        projectAppImageName: '{{ dockerServicePortainerImage }}',
+        projectAppPorts: '{{ dockerServicePortainerPorts }}',
+        projectAppVolumes: '{{ dockerServicePortainerVolumes }}'
+      }
+
+    # Pull Nginx Proxy Manager image
+    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceProxyImage }}' }
+
+    # Start Nginx Proxy Manager docker container
+    - {
+        role: ../../roles/docker/container,
+        projectAppContainerName: '{{ dockerServiceProxyContainerName }}',
+        projectAppImageName: '{{ dockerServiceProxyImage }}',
+        projectAppPorts: '{{ dockerServiceProxyPorts }}',
+        projectAppVolumes: '{{ dockerServiceProxyVolumes }}',
+        projectAppEnvVars: '{{ dockerServiceProxyEnvVars }}',
+        projectAppNetworks: '{{ dockerServiceProxyNetworks }}'
+      }
+
+    # Pull Main Site image
+    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceMainSiteImage }}' }
+
+    # Start Main Site docker container
+    - {
+        role: ../../roles/docker/container,
+        projectAppContainerName: '{{ dockerServiceMainSiteContainerName }}',
+        projectAppImageName: '{{ dockerServiceMainSiteImage }}',
+        projectAppVolumes: '{{ dockerServiceMainSiteVolumes }}',
+        projectAppNetworks: '{{ dockerServiceMainSiteNetworks }}'
+      }
+
+    # Sending Notification email
+    - ../../roles/exim/sendemail

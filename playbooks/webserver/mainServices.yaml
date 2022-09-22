@@ -1,28 +1,30 @@
 # ansible_path/playbooks/webserver/mainServices.yaml
 ---
-- hosts: docker
+- hosts: docker:&f2b
+  gather_facts: false
   vars:
-    dockerNetworkName: 'nginx-proxy'
-    letsencryptDefaultEmail: me@lgdweb.fr
     webPorts: [{ port: 'http', proto: 'tcp' }, { port: 'https', proto: 'tcp' }]
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible webserver task done on server'
     eximEmailBody: 'All mainServices tasks are done successfully'
   roles:
-    # Start nginx-proxy docker container
-    - ../../roles/dockerServices/fail2ban
+    # Create data structure for services
+    - ../../roles/dockerServices/dataStructure
 
-    # Create nginx-proxy docker network
-    - { role: ../../roles/docker/network, projectAppNetworkName: '{{ dockerNetworkName }}' }
+    # Pull Fail2ban image
+    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
 
-    # Start nginx-proxy docker container
-    - ../../roles/dockerServices/nginx-proxy
-
-    # Start letsencrypt docker container
-    - ../../roles/dockerServices/letsencrypt
-
-    # Start mongo docker container
-    # - ../../roles/dockerServices/mongo
+    # Start Fail2ban docker container
+    - {
+        role: ../../roles/docker/container,
+        projectAppContainerName: '{{ dockerServiceFail2banContainerName }}',
+        projectAppImageName: '{{ dockerServiceFail2banImage }}',
+        projectAppCapAdd: '{{ dockerServiceFail2banCapabilities }}',
+        projectAppNetworkMode: '{{ dockerServiceFail2banNetworkMode }}',
+        projectAppPrivileged: '{{ dockerServiceFail2banPrivileged }}',
+        projectAppVolumes: '{{ dockerServiceFail2banVolumes }}',
+        projectAppEnvVars: '{{ dockerServiceFail2banEnvVars }}'
+      }
 
     # Allow http and https ports in firewall
     - { role: ../../roles/firewall/allow, firewallPorts: '{{ webPorts }}' }

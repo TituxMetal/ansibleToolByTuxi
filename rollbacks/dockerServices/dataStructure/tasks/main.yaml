@@ -1,0 +1,8 @@
+# ansible_path/rollbacks/dockerServices/dataStructure/tasks/main.yaml
+---
+- name: DOCKER SERVICE DATA STRUCTURE ROLLBACK | Remove {{ mainDataDirectory }} directory
+  become: yes
+  file:
+    path: '{{ mainDataDirectory }}'
+    state: absent
+  tags: [rollbacks, dockerService, dataStructure]

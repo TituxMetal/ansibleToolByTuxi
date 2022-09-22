@@ -1,13 +1,7 @@
 # ansible_path/rollbacks/users/removeUserFromGroups/tasks/main.yaml
-
 ---
-
 - name: REMOVE USER FROM GROUPS | Remove the user {{ userName }} from the groups {{ userGroups }}
-  command: "gpasswd -d {{ userName }} {{ item }}"
+  command: 'gpasswd -d {{ userName }} {{ item }}'
   ignore_errors: true
-  with_items: "{{ userGroups }}"
+  with_items: '{{ userGroups }}'
   tags: [rollback, users, remove-user-from-groups]
-
-- name: REMOVE USER FROM GROUPS | Reset ssh connection to allow user changes to affect current logged in user
-  meta: reset_connection
-  tags: [rollback, users, remove-user-from-groups, restartSshConnection]

@@ -1,3 +1,12 @@
 # ansible_path/roles/docker/container/defaults/main.yaml
 
 projectAppLinks: []
+projectAppCapAdd: []
+projectAppNetworkMode: default
+projectAppRestartPolicy: unless-stopped
+projectAppPrivileged: no
+projectAppCompatibility: no_defaults
+projectAppVolumes: []
+projectAppPorts: []
+projectAppEnvVars: {}
+projectAppNetworks: []

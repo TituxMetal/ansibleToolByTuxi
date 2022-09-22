@@ -1,0 +1,7 @@
+# ansible_path/roles/system/logrotate/defaults/main.yaml
+
+logrotateConfigUri:
+  [
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/logrotate/docker-container,
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/logrotate/nginx
+  ]
