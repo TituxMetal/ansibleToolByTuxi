@@ -6,3 +6,10 @@
     path: '{{ mainDataDirectory }}'
     state: absent
   tags: [rollbacks, dockerService, dataStructure]
+
+- name: DOCKER SERVICE DATA STRUCTURE ROLLBACK | Remove {{ tempDataDirectory }} directory
+  become: yes
+  file:
+    path: '{{ tempDataDirectory }}'
+    state: absent
+  tags: [rollbacks, dockerService, dataStructure]
