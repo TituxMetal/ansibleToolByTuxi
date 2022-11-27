@@ -2,6 +2,8 @@
 ---
 - hosts: docker:&f2b
   gather_facts: false
+  vars:
+    tempDirectory: '/tmp/srv'
   roles:
     # Stop fail2ban docker container
     - {
@@ -16,4 +18,7 @@
       }
 
     # Remove docker service data structure
-    - ../../rollbacks/dockerServices/dataStructure
+    - {
+        role: ../../rollbacks/dockerServices/dataStructure,
+        tempDataDirectory: '{{ tempDirectory }}'
+      }
