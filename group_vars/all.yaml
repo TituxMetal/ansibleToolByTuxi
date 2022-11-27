@@ -14,6 +14,6 @@ systemAptPackages:
     'tzdata'
   ]
 
-utilsAptPackages: ['openntpd', 'mailutils', 'bash-completion', 'ufw', 'exim4']
+utilsAptPackages: ['openntpd', 'mailutils', 'bash-completion', 'vim', 'ufw', 'exim4']
 
 defaultAptPackages: ['wget', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
