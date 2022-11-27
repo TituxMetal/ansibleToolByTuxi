@@ -1,42 +1,57 @@
 all:
   hosts:
-    alice:
-      ansible_ssh_host: 193.70.113.138 # alice.lgdweb.ovh
-      ansible_user: debian
-    almanzo:
-      ansible_ssh_host: 193.70.113.102 # almanzo.lgdweb.ovh
-      ansible_user: debian
     andrew:
       ansible_ssh_host: 89.233.108.164 # andrew.lgdweb.ovh
       ansible_user: root
+    bart:
+      ansible_ssh_host: 37.187.180.215 # bart.lgdweb.ovh
+      ansible_user: debian
+    homer:
+      ansible_ssh_host: 193.70.113.138 # homer.lgdweb.ovh
+      ansible_user: debian
     laura:
-      ansible_ssh_host: 37.187.180.215 # laura.lgdweb.ovh
+      ansible_ssh_host: 107.155.122.53 # laura.lgdweb.ovh
+      ansible_user: root
+    lisa:
+      ansible_ssh_host: 151.80.155.178 # lisa.lgdweb.ovh
+      ansible_user: debian
+    maggie:
+      ansible_ssh_host: 51.83.97.35 # maggie.lgdweb.ovh
+      ansible_user: debian
+    marge:
+      ansible_ssh_host: 193.70.113.102 # marge.lgdweb.ovh
       ansible_user: debian
     mary:
-      ansible_ssh_host: 151.80.155.178 # mary.lgdweb.ovh
-      ansible_user: debian
-    nelson:
-      ansible_ssh_host: 51.83.97.35 # nelson.lgdweb.ovh
-      ansible_user: debian
+      ansible_ssh_host: 208.87.129.64 # mary.lgdweb.ovh
+      ansible_user: root
   children:
     docker:
       hosts:
-        alice:
-        almanzo:
         andrew:
+        bart:
+        homer:
         laura:
+        lisa:
+        maggie:
+        marge:
         mary:
-        nelson:
     f2b:
       hosts:
-        alice:
-        almanzo:
         andrew:
+        bart:
+        homer:
         laura:
+        lisa:
+        maggie:
+        marge:
         mary:
-        nelson:
     standalone:
       hosts:
         andrew:
+        bart:
+        homer:
         laura:
+        lisa:
+        maggie:
+        marge:
         mary:
