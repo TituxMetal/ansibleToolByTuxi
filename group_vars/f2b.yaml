@@ -2,7 +2,7 @@
 
 # Docker service Fail2ban
 dockerServiceFail2banContainerName: 'fail2ban-{{ inventory_hostname }}'
-dockerServiceFail2banImage: 'crazymax/fail2ban:0.11.2'
+dockerServiceFail2banImage: 'crazymax/fail2ban:1.0.1'
 dockerServiceFail2banDestNotifEmail: '{{ vaultDockerServiceFail2banDestNotifEmail }}'
 dockerServiceFail2banCapabilities: ['NET_ADMIN', 'NET_RAW']
 dockerServiceFail2banPrivileged: yes
