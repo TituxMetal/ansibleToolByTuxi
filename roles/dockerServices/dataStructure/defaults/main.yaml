@@ -2,3 +2,4 @@
 
 dataStructureRepo: 'https://github.com/lgdweb/docker-data-server-infra.git'
 mainDataDirectory: '/srv'
+tempDataDirectory: '/tmp/srv'
