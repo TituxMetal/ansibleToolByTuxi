@@ -3,6 +3,25 @@
 "Ansible" roles and playbooks for installation, configuration, and reset for multi-server
 provisioning and management.
 
+# **Start up connection**
+
+When connecting the first time, this prompt appear:
+
+_This key is not known by any other names._
+
+_Are you sure you want to continue connecting (yes/no/[fingerprint])?_
+
+To not see this prompt we must first launch a command to add the fingerprint of each server to the
+known_host file.
+
+Repeat this command for each new hosts:
+
+```bash
+ssh-keyscan -H $hostName  >> .ssh/known_hosts
+```
+
+Change **$hostName** to your corresponding host name in the inventory file.
+
 # **Folders structure**
 
 The folders structure is organized as recommended in the [Ansible documentation]. Separating
