@@ -1,4 +1,4 @@
-# ansible_path/host_vars/nelson/nelson.yaml
+# ansible_path/host_vars/bart/bart.yaml
 
 rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512') }}"
 

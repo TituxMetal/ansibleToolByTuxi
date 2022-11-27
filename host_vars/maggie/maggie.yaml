@@ -1,4 +1,4 @@
-# ansible_path/host_vars/almanzo/almanzo.yaml
+# ansible_path/host_vars/maggie/maggie.yaml
 
 rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512') }}"
 

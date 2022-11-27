@@ -1,4 +1,4 @@
-# ansible_path/host_vars/alice/alice.yaml
+# ansible_path/host_vars/marge/marge.yaml
 
 rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512') }}"
 
