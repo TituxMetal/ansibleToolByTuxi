@@ -5,4 +5,4 @@
   service:
     name: ssh
     state: restarted
-    enabled: yes
+    enabled: true

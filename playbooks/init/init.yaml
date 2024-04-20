@@ -1,11 +1,10 @@
 # ansible_path/playbooks/init/init.yaml
 ---
-- hosts: all
-  become: yes
+  become: true
   vars:
-    userSsh: yes
+    userSsh: true
     userShell: /bin/bash
-    userIsAdmin: yes
+    userIsAdmin: true
     aptPackages: '{{ systemAptPackages + defaultAptPackages + utilsAptPackages }}'
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible init task done on server'

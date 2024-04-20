@@ -10,7 +10,7 @@
   copy:
     src: /etc/ssh/sshd_config
     dest: /etc/ssh/sshd_config.backup
-    remote_src: yes
+    remote_src: true
   register: isCopyed
   when: fileExists.stat.exists == False
   tags: [system, ssh, ssh-config, backup-config, copy-config-file]
@@ -21,7 +21,7 @@
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
     state: present
-    backup: yes
+    backup: true
   with_items: '{{ sshConfig }}'
   when: isCopyed is success or isCopyed is skipped
   tags: [system, ssh, ssh-config]

@@ -3,6 +3,6 @@
 - name: DOCKER NETWORK CREATE | Create {{ projectAppNetworkName }} network
   community.docker.docker_network:
     name: '{{ projectAppNetworkName }}'
-    attachable: yes
+    attachable: true
     state: present
   tags: [docker, networkCreate]

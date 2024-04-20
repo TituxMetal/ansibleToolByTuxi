@@ -2,7 +2,7 @@
 
 userName: debian
 userGroup: debian
-createHome: no
+createHome: false
 userHome: "/home/debian"
 userSsh: no
 userShell: /bin/false

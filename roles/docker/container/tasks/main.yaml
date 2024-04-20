@@ -5,6 +5,7 @@
     name: '{{ projectAppContainerName }}'
     image: '{{ projectAppImageName }}'
     state: started
+    recreate: true
     container_default_behavior: '{{ projectAppCompatibility }}'
     network_mode: '{{ projectAppNetworkMode }}'
     restart_policy: '{{ projectAppRestartPolicy }}'

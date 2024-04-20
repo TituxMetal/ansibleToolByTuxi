@@ -1,7 +1,6 @@
 # ansible_path/playbooks/docker/install.yaml
 ---
-- hosts: docker
-  become: yes
+  become: true
   vars:
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible docker install task done on server'

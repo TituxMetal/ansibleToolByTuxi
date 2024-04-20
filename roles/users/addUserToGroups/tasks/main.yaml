@@ -7,7 +7,7 @@
     name: "{{ userName }}"
     groups: "{{ userGroups }}"
     state: present
-    append: yes
+    append: true
   tags: [users, add-user-to-groups]
 
 - name: ADD USER TO GROUPS | Reset ssh connection to allow user changes to affect current logged in user

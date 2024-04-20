@@ -11,7 +11,7 @@
   copy:
     src: '/etc/apt/{{ aptRepoName }}.list'
     dest: '/etc/apt/{{ aptRepoName }}.list.backup'
-    remote_src: yes
+    remote_src: true
   register: isCopyed
   when: aptRepoName == "sources" and fileExists is defined and fileExists.stat.exists == False
   tags: [apt, apt-repository, backup-default]
@@ -29,5 +29,5 @@
     dest: '/etc/apt/sources.list.d/{{ aptRepoName }}.list'
     group: root
     owner: root
-    backup: yes
+    backup: true
   tags: [apt, apt-repository, add-repository]

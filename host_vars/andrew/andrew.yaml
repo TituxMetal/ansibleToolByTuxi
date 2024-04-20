@@ -5,7 +5,7 @@ rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512') }}"
 sshAdminUserName: '{{ vaultSshAdminUserName }}'
 sshAdminUserGroup: '{{ vaultSshAdminUserGroup }}'
 sshAdminUserPassword: "{{ vaultSshAdminUserPassword | password_hash('sha512') }}"
-sshAdminUserCreateHome: yes
+sshAdminUserCreateHome: true
 sshAdminUserShell: /bin/bash
 
 eximAccountEmail: '{{ vaultEximAccountEmail }}'

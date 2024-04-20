@@ -1,7 +1,6 @@
 # ansible_path/playbooks/docker/rollback.yaml
 ---
-- hosts: docker
-  become: yes
+  become: true
   vars:
     dockerPorts:
       [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]

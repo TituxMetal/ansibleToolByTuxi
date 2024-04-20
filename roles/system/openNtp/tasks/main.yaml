@@ -9,6 +9,6 @@
     mode: 0644
     group: root
     owner: root
-    backup: yes
+    backup: true
   notify: restart openntpd
   tags: [system, openNtp, config]

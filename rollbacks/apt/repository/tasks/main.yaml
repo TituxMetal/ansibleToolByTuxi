@@ -11,7 +11,7 @@
   copy:
     src: '/etc/apt/sources.list.backup'
     dest: '/etc/apt/sources.list'
-    remote_src: yes
+    remote_src: true
   register: isRestored
   when: fileExists is defined and fileExists is not skipped
   tags: [rollback, apt-repository, restore-defaults]
@@ -22,5 +22,5 @@
   file:
     path: '/etc/apt/sources.list.d/{{ aptRepoName }}.list'
     state: absent
-    force: yes
+    force: true
   tags: [rollback, apt-repository, remove-repository]

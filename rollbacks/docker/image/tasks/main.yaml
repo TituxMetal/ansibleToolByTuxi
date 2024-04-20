@@ -6,5 +6,5 @@
   community.docker.docker_image:
     name: "{{ projectAppImageName }}"
     state: absent
-    force_absent: yes
+    force_absent: true
   tags: [rollback, docker, removeImage]

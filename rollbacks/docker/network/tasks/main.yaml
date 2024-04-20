@@ -6,5 +6,5 @@
   community.docker.docker_network:
     name: '{{ projectAppNetworkName }}'
     state: absent
-    force: yes
+    force: true
   tags: [docker, networkDelete]

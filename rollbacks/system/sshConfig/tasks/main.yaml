@@ -4,7 +4,7 @@
   authorized_key:
     user: root
     state: present
-    exclusive: True
+    exclusive: true
     key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/authorized_keys') }}"
   tags: [rollback, ssh-config, ssh, ssh-config, ssh-authorizedKeys]
 
@@ -18,7 +18,7 @@
   copy:
     src: /etc/ssh/sshd_config.backup
     dest: /etc/ssh/sshd_config
-    remote_src: yes
+    remote_src: true
   register: isRestored
   when: fileExists is defined and fileExists.stat.exists == True
   tags: [rollback, ssh-config, restore-config]

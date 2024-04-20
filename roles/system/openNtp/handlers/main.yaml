@@ -5,4 +5,4 @@
   service:
     name: openntpd
     state: restarted
-    enabled: yes
+    enabled: true

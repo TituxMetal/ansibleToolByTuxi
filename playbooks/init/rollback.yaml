@@ -1,9 +1,8 @@
 # ansible_path/playbooks/init/rollback.yaml
 ---
-- hosts: all
-  become: yes
+  become: true
   vars:
-    userIsAdmin: yes
+    userIsAdmin: true
     aptPackages: '{{ defaultAptPackages + utilsAptPackages }}'
   roles:
     # 1: Remove default debian user, group and configuration

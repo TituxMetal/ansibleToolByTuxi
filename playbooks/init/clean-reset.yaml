@@ -2,7 +2,7 @@
 ---
 - hosts: all
   vars:
-    userIsAdmin: yes
+    userIsAdmin: true
     userName: '{{ sshAdminUserName }}'
     userGroup: '{{ sshAdminUserGroup }}'
     userHome: '/home/{{ sshAdminUserName }}'

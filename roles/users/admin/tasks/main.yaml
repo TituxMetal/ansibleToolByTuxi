@@ -8,7 +8,7 @@
     dest: "{{ userHome }}/.bashrc"
     group: "{{ userGroup }}"
     owner: "{{ userName }}"
-    backup: yes
+    backup: true
   when: userIsAdmin
   tags: [users, user-admin, bashrc-file]
 

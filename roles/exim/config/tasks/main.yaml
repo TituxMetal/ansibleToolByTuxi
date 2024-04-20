@@ -9,8 +9,8 @@
     owner: root
     group: root
     mode: 0644
-    backup: yes
-    force: yes
+    backup: true
+    force: true
   tags: [exim, config, update-exim.conf]
 
 - name: EXIM CONFIG | Add passwd.client file

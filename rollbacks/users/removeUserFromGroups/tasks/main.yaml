@@ -1,7 +1,4 @@
 # ansible_path/rollbacks/users/removeUserFromGroups/tasks/main.yaml
 ---
-- name: REMOVE USER FROM GROUPS | Remove the user {{ userName }} from the groups {{ userGroups }}
-  command: 'gpasswd -d {{ userName }} {{ item }}'
-  ignore_errors: true
-  with_items: '{{ userGroups }}'
+  changed_when: true
   tags: [rollback, users, remove-user-from-groups]

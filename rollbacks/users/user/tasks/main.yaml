@@ -6,7 +6,7 @@
   user:
     name: "{{ userName }}"
     groups: null
-    force: yes
+    force: true
     state: absent
   register: removedUser
   tags: [rollback, user, remove-user]

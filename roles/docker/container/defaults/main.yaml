@@ -4,7 +4,7 @@ projectAppLinks: []
 projectAppCapAdd: []
 projectAppNetworkMode: default
 projectAppRestartPolicy: unless-stopped
-projectAppPrivileged: no
+projectAppPrivileged: false
 projectAppCompatibility: no_defaults
 projectAppVolumes: []
 projectAppPorts: []

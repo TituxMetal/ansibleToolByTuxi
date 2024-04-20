@@ -4,8 +4,8 @@
   apt:
     name: '{{ item }}'
     state: absent
-    autoclean: yes
-    autoremove: yes
-    purge: yes
+    autoclean: true
+    autoremove: true
+    purge: true
   with_items: '{{ aptPackages }}'
   tags: [rollback, apt, apt-remove, purge-packages]

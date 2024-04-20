@@ -15,7 +15,7 @@
     owner: root
     group: root
     mode: 0644
-    backup: yes
+    backup: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Deploy default locale
@@ -25,23 +25,19 @@
     owner: root
     group: root
     mode: 0644
-    backup: yes
+    backup: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Uncomment necessary lines in /etc/locale.gen
   lineinfile:
     dest: /etc/locale.gen
-    regexp: "^# (en_US.UTF-8 UTF-8) (.*)$"
-    line: "en_US.UTF-8 UTF-8 \\1"
-    backrefs: yes
+    backrefs: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Comment necessary lines in /etc/locale.gen
   lineinfile:
     dest: /etc/locale.gen
-    regexp: "^ (fr_FR.UTF-8 UTF-8) (.*)$"
-    line: "# fr_FR.UTF-8 UTF-8 \\1"
-    backrefs: yes
+    backrefs: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Locales generation

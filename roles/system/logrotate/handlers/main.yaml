@@ -4,4 +4,4 @@
   service:
     name: logrotate
     state: restarted
-    enabled: yes
+    enabled: true
