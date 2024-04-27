@@ -1,54 +1,59 @@
 # ansible_path/roles/dockerServices/dataStructure/tasks/main.yaml
 ---
-- name: DOCKER SERVICE DATA STRUCTURE | Create {{ mainDataDirectory }} directory
+- name: DOCKER SERVICE DATA STRUCTURE | Create main data directory {{ mainDataDirectory }}
   become: true
-  file:
+  ansible.builtin.file:
     path: '{{ mainDataDirectory }}'
     state: directory
     owner: 1000
     group: 1000
+    mode: '0755'
   tags: [dockerService, dataStructure]
 
-- name: DOCKER SERVICE DATA STRUCTURE | Create {{ tempDataDirectory }} directory
+- name: DOCKER SERVICE DATA STRUCTURE | Create tmp data directory {{ tempDataDirectory }}
   become: true
-  file:
+  ansible.builtin.file:
     path: '{{ tempDataDirectory }}'
     state: directory
     owner: 1000
     group: 1000
+    mode: '0755'
   tags: [dockerService, dataStructure]
 
 - name: DOCKER SERVICE DATA STRUCTURE | Get data directory structure from Github
-  git:
+  ansible.builtin.git:
     dest: '{{ tempDataDirectory }}'
     force: true
     repo: '{{ dataStructureRepo }}'
     update: true
+    version: main
   tags: [dockerServices, dataStructure, git]
 
 - name:
     DOCKER SERVICE DATA STRUCTURE | Copy data directory structure for Fail2Ban service from {{
-    tempDataDirectory }}/fail2ban/data/
-  copy:
+    tempDataDirectory }}
+  ansible.builtin.copy:
     src: '{{ tempDataDirectory }}/fail2ban/data/'
     dest: '{{ mainDataDirectory }}/fail2ban/data/'
     remote_src: true
+    mode: '0644'
   tags: [dockerServices, dataStructure, git]
 
 - name:
     DOCKER SERVICE DATA STRUCTURE | Copy data directory structure for nginx-proxy-manager service
-    from {{ tempDataDirectory }}/nginx-proxy-manager/data/
-  copy:
+    from {{ tempDataDirectory }}
+  ansible.builtin.copy:
     src: '{{ tempDataDirectory }}/nginx-proxy-manager/data/'
     dest: '{{ mainDataDirectory }}/nginx-proxy-manager/data/'
     remote_src: true
     force: false
+    mode: '0644'
   tags: [dockerServices, dataStructure, git]
 
 - name:
     DOCKER SERVICE DATA STRUCTURE | Copy logs data directory structure for utils services from {{
     tempDataDirectory }}
-  copy:
+  ansible.builtin.copy:
     src: '{{ tempDataDirectory }}/logs'
     dest: '{{ mainDataDirectory }}/'
     remote_src: true
@@ -57,5 +62,15 @@
     owner: 1000
     group: 1000
   tags: [dockerServices, dataStructure, git]
+
+- name:
+    DOCKER SERVICE DATA STRUCTURE | Copy data directory structure for portainer server service from
+    {{ tempDataDirectory }}
+  ansible.builtin.copy:
+    src: '{{ tempDataDirectory }}/portainer/data/'
+    dest: '{{ mainDataDirectory }}/portainer/data/'
     remote_src: true
+    mode: '0644'
     force: false
+  when: inventory_hostname in groups['master']
+  tags: [dockerServices, dataStructure, git]
