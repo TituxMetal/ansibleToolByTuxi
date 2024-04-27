@@ -1,6 +1,7 @@
 # ansible_path/playbooks/webserver/mainServices.yaml
 ---
-- hosts: docker:&f2b
+- name: MAIN SERVICES | Main services for webserver
+  hosts: docker:&f2b
   gather_facts: false
   vars:
     webPorts: [{ port: 'http', proto: 'tcp' }, { port: 'https', proto: 'tcp' }]
@@ -9,14 +10,14 @@
     eximEmailBody: 'All mainServices tasks are done successfully'
   roles:
     # Create data structure for services
-    - ../../roles/dockerServices/dataStructure
+    - roles/dockerServices/dataStructure
 
     # Pull Fail2ban image
-    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
+    - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
 
     # Start Fail2ban docker container
     - {
-        role: ../../roles/docker/container,
+        role: roles/docker/container,
         projectAppContainerName: '{{ dockerServiceFail2banContainerName }}',
         projectAppImageName: '{{ dockerServiceFail2banImage }}',
         projectAppCapAdd: '{{ dockerServiceFail2banCapabilities }}',
@@ -27,7 +28,7 @@
       }
 
     # Allow http and https ports in firewall
-    - { role: ../../roles/firewall/allow, firewallPorts: '{{ webPorts }}' }
+    - { role: roles/firewall/allow, firewallPorts: '{{ webPorts }}' }
 
     # Sending Notification email
-    - ../../roles/exim/sendemail
+    - roles/exim/sendemail
