@@ -1,4 +1,18 @@
 # ansible_path/rollbacks/users/removeUserFromGroups/tasks/main.yaml
 ---
+- name: REMOVE USER FROM GROUPS | Check if user is already removed from groups
+  ansible.builtin.getent:
+    database: group
+    key: '{{ item }}'
+  loop: '{{ userGroups }}'
+  register: groupInfo
+  tags: [rollback, users, remove-user-from-groups]
+
+- name: REMOVE USER FROM GROUPS | Remove user from groups {{ userGroups }}
+  ansible.builtin.user:
+    name: '{{ userName }}'
+    groups: '{{ item.item }}'
+    state: absent
+  loop: '{{ groupInfo.results }}'
   changed_when: true
   tags: [rollback, users, remove-user-from-groups]
