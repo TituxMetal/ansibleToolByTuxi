@@ -1,10 +1,8 @@
 # ansible_path/rollbacks/apt/keys/tasks/main.yaml
-
 ---
-
 - name: ROLLBACK APT KEYS | Remove a GPG key
-  apt_key:
-    url: "{{ aptKeyUri }}"
-    id: "{{ aptKeyId }}"
+  ansible.builtin.apt_key:
+    url: '{{ aptKeyUri }}'
+    id: '{{ aptKeyId }}'
     state: absent
   tags: [rollback, apt, key]
