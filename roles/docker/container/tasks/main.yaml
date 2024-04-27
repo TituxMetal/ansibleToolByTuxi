@@ -1,6 +1,6 @@
 # ansible_path/roles/docker/container/tasks/main.yaml
 ---
-- name: DOCKER CONTAINER RUN | Run {{ projectAppContainerName }} container
+- name: DOCKER CONTAINER RUN | Run container {{ projectAppContainerName }}
   community.docker.docker_container:
     name: '{{ projectAppContainerName }}'
     image: '{{ projectAppImageName }}'
@@ -16,4 +16,5 @@
     ports: '{{ projectAppPorts }}'
     env: '{{ projectAppEnvVars }}'
     networks: '{{ projectAppNetworks }}'
+    image_name_mismatch: ignore
   tags: [docker, runContainer]

@@ -1,9 +1,7 @@
 # ansible_path/roles/docker/image/tasks/main.yaml
-
 ---
-
-- name: DOCKER IMAGE PULL | Pull {{ projectAppImageName }} image
+- name: 'DOCKER IMAGE PULL | Pull image {{ projectAppImageName }}'
   community.docker.docker_image:
-    name: "{{ projectAppImageName }}"
+    name: '{{ projectAppImageName }}'
     source: pull
   tags: [docker, pullImage]
