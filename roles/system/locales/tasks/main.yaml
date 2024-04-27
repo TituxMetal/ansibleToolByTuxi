@@ -1,45 +1,51 @@
 # ansible_path/roles/system/locales/tasks/main.yaml
-
 ---
-
-- name: SYSTEM LOCALES | Add locales
-  locale_gen:
-    name: "en_US.UTF-8"
-    state: present
-  tags: [system, locales, config]
-
 - name: SYSTEM LOCALES | Config the locales
-  copy:
+  ansible.builtin.copy:
     content: "LC_ALL=en_US.UTF-8\nLANG=en_US.UTF-8\nLANGUAGE=en_US.UTF-8\n"
     dest: /etc/environment
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     backup: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Deploy default locale
-  copy:
+  ansible.builtin.copy:
     content: "LC_ALL=en_US.UTF-8\nLANG=en_US.UTF-8\nLANGUAGE=en_US.UTF-8\n"
     dest: /etc/default/locale
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     backup: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Uncomment necessary lines in /etc/locale.gen
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/locale.gen
+    regexp: '^#\s*(en_US.UTF-8\s+UTF-8)\s*(.*)$'
+    line: "\\1 \\2"
+    state: present
     backrefs: true
   tags: [system, locales, config]
 
 - name: SYSTEM LOCALES | Comment necessary lines in /etc/locale.gen
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/locale.gen
+    regexp: '^(fr_FR.UTF-8\s+UTF-8)\s*(.*)$'
+    line: "# \\1 \\2"
+    state: present
     backrefs: true
   tags: [system, locales, config]
 
-- name: SYSTEM LOCALES | Locales generation
-  command: locale-gen
+- name: SYSTEM LOCALES | Locales en_US.UTF-8 generation
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+  tags: [system, locales, generation]
+
+- name: SYSTEM LOCALES | Remove locales fr_FR.UTF-8
+  community.general.locale_gen:
+    name: fr_FR.UTF-8
+    state: absent
   tags: [system, locales, generation]

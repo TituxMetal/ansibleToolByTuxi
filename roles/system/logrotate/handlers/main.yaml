@@ -1,7 +1,7 @@
 # ansible_path/roles/system/logrotate/handlers/main.yaml
 ---
-- name: restart logrotate
-  service:
+- name: Restart logrotate
+  ansible.builtin.service:
     name: logrotate
     state: restarted
     enabled: true

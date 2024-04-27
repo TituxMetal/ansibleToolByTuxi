@@ -1,8 +1,13 @@
 # ansible_path/roles/system/hostname/handlers/main.yaml
 ---
-
-- name: restart rsyslog
-  service:
+- name: Restart rsyslog
+  ansible.builtin.service:
     name: rsyslog
     state: restarted
     enabled: true
+
+- name: Cleanup /etc/hosts
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: '0644'

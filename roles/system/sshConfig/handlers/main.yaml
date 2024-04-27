@@ -1,8 +1,7 @@
 # ansible_path/roles/system/sshConfig/handlers/main.yml
 ---
-
-- name: restartSsh
-  service:
+- name: RestartSsh
+  ansible.builtin.service:
     name: sshd
     state: restarted
     enabled: true

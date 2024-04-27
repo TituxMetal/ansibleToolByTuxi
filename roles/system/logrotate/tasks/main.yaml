@@ -1,13 +1,13 @@
 # ansible_path/roles/system/logrotate/tasks/main.yaml
 ---
 - name: SYSTEM LOGROTATE | Copy Logrotate configuration files
-  get_url:
+  ansible.builtin.get_url:
     url: '{{ item }}'
     dest: /etc/logrotate.d/
-    mode: 0644
+    mode: '0644'
     group: root
     owner: root
     backup: true
-  notify: restart logrotate
+  notify: Restart logrotate
   with_items: '{{ logrotateConfigUri }}'
   tags: [system, logrotate, config]
