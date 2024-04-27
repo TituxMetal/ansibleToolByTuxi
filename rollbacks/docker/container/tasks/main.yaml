@@ -1,11 +1,9 @@
 # ansible_path/rollbacks/docker/container/tasks/main.yaml
-
 ---
-
-- name: ROLLBACK DOCKER CONTAINER | Stop the {{ projectAppContainerName }} container
+- name: ROLLBACK DOCKER CONTAINER | Stop docker container {{ projectAppContainerName }}
   community.docker.docker_container:
-    name: "{{ projectAppContainerName }}"
+    name: '{{ projectAppContainerName }}'
     state: absent
     container_default_behavior: compatibility
-    purge_networks: yes
+    networks: []
   tags: [rollback, docker, stopContainer]
