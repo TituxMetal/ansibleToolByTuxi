@@ -1,6 +1,7 @@
 # ansible_path/playbooks/webserver/utils.yaml
 ---
-- hosts: docker:&standalone
+- name: UTILITY SERVICES | Utility services for webserver
+  hosts: docker:&standalone
   gather_facts: false
   vars:
     eximDestEmail: me@lgdweb.fr
@@ -8,17 +9,14 @@
     eximEmailBody: 'All utils tasks are done successfully'
   roles:
     # Create reverse-proxy-nw network
-    - {
-        role: ../../roles/docker/network,
-        projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}'
-      }
+    - { role: roles/docker/network, projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}' }
 
     # Pull Poratiner agent image
-    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
+    - { role: roles/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
 
     # Start Poratiner agent docker container
     - {
-        role: ../../roles/docker/container,
+        role: roles/docker/container,
         projectAppContainerName: '{{ dockerServicePortainerContainerName }}',
         projectAppImageName: '{{ dockerServicePortainerImage }}',
         projectAppPorts: '{{ dockerServicePortainerPorts }}',
@@ -26,11 +24,11 @@
       }
 
     # Pull Nginx Proxy Manager image
-    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceProxyImage }}' }
+    - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceProxyImage }}' }
 
     # Start Nginx Proxy Manager docker container
     - {
-        role: ../../roles/docker/container,
+        role: roles/docker/container,
         projectAppContainerName: '{{ dockerServiceProxyContainerName }}',
         projectAppImageName: '{{ dockerServiceProxyImage }}',
         projectAppPorts: '{{ dockerServiceProxyPorts }}',
@@ -39,12 +37,29 @@
         projectAppNetworks: '{{ dockerServiceProxyNetworks }}'
       }
 
+    # Pull Portainer Server image
+    - role: roles/docker/image
+      vars:
+        projectAppImageName: '{{ dockerServicePortainerServerImage }}'
+      when: inventory_hostname in groups['master']
+
+    # Start Portainer Server docker container
+    - role: roles/docker/container
+      vars:
+        projectAppContainerName: '{{ dockerServicePortainerServerContainerName }}'
+        projectAppImageName: '{{ dockerServicePortainerServerImage }}'
+        projectAppVolumes: '{{ dockerServicePortainerServerVolumes }}'
+        projectAppEnvVars: '{{ dockerServicePortainerServerEnvVars }}'
+        projectAppPorts: '{{ dockerServicePortainerServerPorts }}'
+        projectAppNetworks: '{{ dockerServicePortainerServerNetworks }}'
+      when: inventory_hostname in groups['master']
+
     # Pull Main Site image
-    - { role: ../../roles/docker/image, projectAppImageName: '{{ dockerServiceMainSiteImage }}' }
+    - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceMainSiteImage }}' }
 
     # Start Main Site docker container
     - {
-        role: ../../roles/docker/container,
+        role: roles/docker/container,
         projectAppContainerName: '{{ dockerServiceMainSiteContainerName }}',
         projectAppImageName: '{{ dockerServiceMainSiteImage }}',
         projectAppVolumes: '{{ dockerServiceMainSiteVolumes }}',
@@ -52,4 +67,4 @@
       }
 
     # Sending Notification email
-    - ../../roles/exim/sendemail
+    - roles/exim/sendemail
