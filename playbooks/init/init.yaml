@@ -1,5 +1,7 @@
 # ansible_path/playbooks/init/init.yaml
 ---
+- name: INITIAL SERVER SETUP | Init server
+  hosts: all
   become: true
   vars:
     userSsh: true
@@ -11,40 +13,40 @@
     eximEmailBody: 'All init tasks are done successfully'
   roles:
     # 1: Add default apt repository
-    - ../../roles/apt/repository
+    - roles/apt/repository
 
     # 2: Install default and utils packages
-    - ../../roles/apt/install
+    - roles/apt/install
 
     # 3: Firewall init configuration
-    - ../../roles/firewall/init
+    - roles/firewall/init
     # 3.1: Allow defaults ports in firewall
-    - ../../roles/firewall/allow
+    - roles/firewall/allow
 
     # 4: Root user configuration
-    - ../../roles/users/admin
+    - roles/users/admin
 
     # 5: Timezone configuration
-    - ../../roles/system/timezone
+    - roles/system/timezone
 
     # 6: Hostname configuration
-    - ../../roles/system/hostname
+    - roles/system/hostname
 
     # 7: Logrotate configuration
-    - ../../roles/system/logrotate
+    - roles/system/logrotate
 
     # 8: Open ntp configuration
-    - ../../roles/system/openNtp
+    - roles/system/openNtp
 
     # 9: Locales configuration
-    - ../../roles/system/locales
+    - roles/system/locales
 
     # 10: Add default admin user group
-    - { role: ../../roles/users/group, userGroup: '{{ sshAdminUserGroup }}' }
+    - { role: roles/users/group, userGroup: '{{ sshAdminUserGroup }}' }
 
     # 11: Add default admin user
     - {
-        role: ../../roles/users/user,
+        role: roles/users/user,
         userName: '{{ sshAdminUserName }}',
         userGroup: '{{ sshAdminUserGroup }}',
         userHome: '/home/{{ sshAdminUserName }}',
@@ -54,17 +56,17 @@
 
     # 12: Add default admin user configuration
     - {
-        role: ../../roles/users/admin,
+        role: roles/users/admin,
         userName: '{{ sshAdminUserName }}',
         userGroup: '{{ sshAdminUserGroup }}',
         userHome: '/home/{{ sshAdminUserName }}'
       }
 
     # 13: Exim configuration
-    - ../../roles/exim/config
+    - roles/exim/config
 
     # 14: Ssh configuration
-    - ../../roles/system/sshConfig
+    - roles/system/sshConfig
 
     # 15: Sending Notification email
-    - ../../roles/exim/sendemail
+    - roles/exim/sendemail

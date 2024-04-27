@@ -1,6 +1,7 @@
 # ansible_path/playbooks/init/clean-reset.yaml
 ---
-- hosts: all
+- name: INIT | Clean reset
+  hosts: all
   vars:
     userIsAdmin: true
     userName: '{{ sshAdminUserName }}'
@@ -8,10 +9,10 @@
     userHome: '/home/{{ sshAdminUserName }}'
   roles:
     # 1: Remove ssh admin user configuration
-    - ../../rollbacks/users/admin
+    - rollbacks/users/admin
 
     # 2: Remove ssh admin user
-    - ../../rollbacks/users/user
+    - rollbacks/users/user
 
     # 3: Remove ssh admin user group
-    - ../../rollbacks/users/group
+    - rollbacks/users/group

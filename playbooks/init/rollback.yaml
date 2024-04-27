@@ -1,20 +1,22 @@
 # ansible_path/playbooks/init/rollback.yaml
 ---
+- name: ROLLBACK | Rollback the system to its initial state
+  hosts: all
   become: true
   vars:
     userIsAdmin: true
     aptPackages: '{{ defaultAptPackages + utilsAptPackages }}'
   roles:
     # 1: Remove default debian user, group and configuration
-    - ../../rollbacks/users/admin
-    - ../../rollbacks/users/user
-    - ../../rollbacks/users/group
+    - rollbacks/users/admin
+    - rollbacks/users/user
+    - rollbacks/users/group
 
     # 2: Remove default and utils packages
-    - ../../rollbacks/apt/remove
+    - rollbacks/apt/remove
 
     # 4: Restore default sources.list file
-    - ../../rollbacks/apt/repository
+    - rollbacks/apt/repository
 
     # 5: Restore default ssh configuration
-    - ../../rollbacks/system/sshConfig
+    - rollbacks/system/sshConfig
