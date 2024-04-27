@@ -3,6 +3,6 @@
 userName: debian
 userGroup: debian
 createHome: false
-userHome: "/home/debian"
-userSsh: no
+userHome: '/home/debian'
+userSsh: false
 userShell: /bin/false

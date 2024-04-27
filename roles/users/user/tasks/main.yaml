@@ -1,15 +1,21 @@
 # ansible_path/roles/users/user/tasks/main.yaml
-
 ---
+- name: USER | Check if the user exists
+  ansible.builtin.getent:
+    database: passwd
+    key: '{{ userName }}'
+  register: userExists
+  tags: [users, user, check-user]
 
 - name: USER | Create the user {{ userName }}
-  user:
-    name: "{{ userName }}"
-    password: "{{ userPassword }}"
-    group: "{{ userGroup }}"
-    create_home: "{{ userCreateHome }}"
-    home: "{{ userHome }}"
-    shell: "{{ userShell }}"
-    generate_ssh_key: "{{ userSsh }}"
+  ansible.builtin.user:
+    name: '{{ userName }}'
+    password: '{{ userPassword }}'
+    group: '{{ userGroup }}'
+    create_home: '{{ userCreateHome }}'
+    home: '{{ userHome }}'
+    shell: '{{ userShell }}'
+    generate_ssh_key: '{{ userSsh }}'
     state: present
+  when: not userExists
   tags: [users, user, create-user]

@@ -1,23 +1,22 @@
 # ansible_path/roles/users/admin/tasks/main.yaml
-
 ---
-
-- name: USER ADMIN | Copy .bashrc file in user {{ userName }} home dir
-  get_url:
-    url: "{{ bashrcUri }}"
-    dest: "{{ userHome }}/.bashrc"
-    group: "{{ userGroup }}"
-    owner: "{{ userName }}"
+- name: USER ADMIN | Copy .bashrc file in user home dir {{ userName }}
+  ansible.builtin.get_url:
+    url: '{{ bashrcUri }}'
+    dest: '{{ userHome }}/.bashrc'
+    group: '{{ userGroup }}'
+    owner: '{{ userName }}'
+    mode: '0644'
     backup: true
   when: userIsAdmin
   tags: [users, user-admin, bashrc-file]
 
-- name: USER ADMIN | Set {{ userName }} in sudoers file
-  copy:
+- name: USER ADMIN | Add user in sudoers file {{ userName }}
+  ansible.builtin.copy:
     content: "{{ userName }} ALL=(ALL) NOPASSWD:ALL\n"
     dest: /etc/sudoers.d/{{ userName }}
     group: root
     owner: root
-    mode: 0440
-  when: userIsAdmin and userName != "root"
+    mode: '0440'
+  when: userIsAdmin and not userName == "root"
   tags: [users, user-admin, sudoers-file]

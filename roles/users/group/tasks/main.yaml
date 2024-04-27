@@ -1,9 +1,7 @@
 # ansible_path/roles/users/group/tasks/main.yaml
-
 ---
-
 - name: USER GROUP | Create the user group {{ userGroup }}
-  group:
-    name: "{{ userGroup }}"
+  ansible.builtin.group:
+    name: '{{ userGroup }}'
     state: present
   tags: [users, group, create-group]
