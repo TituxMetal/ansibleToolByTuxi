@@ -2,7 +2,7 @@
 ---
 - name: FIREWALL ALLOW RULE | Allow all access to tcp ports {{ firewallPorts }}
   become: true
-  ufw:
+  community.general.ufw:
     state: enabled
     rule: allow
     port: '{{ item.port }}'

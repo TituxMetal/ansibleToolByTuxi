@@ -1,9 +1,7 @@
 # ansible_path/roles/firewall/init/tasks/main.yaml
-
 ---
-
 - name: FIREWALL INIT RESET | Reset all firewall rules and set default policy to deny all
-  ufw:
+  community.general.ufw:
     state: reset
     policy: deny
   tags: [firewall, ufw-init, reset-defaults]
