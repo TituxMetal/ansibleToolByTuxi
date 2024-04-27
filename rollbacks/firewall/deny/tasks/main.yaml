@@ -2,7 +2,7 @@
 ---
 - name: FIREWALL DENY RULE | Deny access to ports {{ firewallPorts }}
   become: true
-  ufw:
+  community.general.ufw:
     rule: deny
     port: '{{ item.port }}'
     proto: '{{ item.proto }}'
