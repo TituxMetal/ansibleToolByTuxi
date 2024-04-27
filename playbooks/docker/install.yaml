@@ -1,5 +1,7 @@
 # ansible_path/playbooks/docker/install.yaml
 ---
+- name: DOCKER INSTALL | Install Docker
+  hosts: docker
   become: true
   vars:
     eximDestEmail: me@lgdweb.fr
@@ -8,27 +10,19 @@
   roles:
     # Add Docker apt repository
     - {
-        role: ../../roles/apt/repository,
+        role: roles/apt/repository,
         aptRepoUrl: '{{ dockerAptRepoUri }}',
         aptRepoName: '{{ dockerAptRepoName }}'
       }
 
     # Add docker Gpg key
-    - {
-        role: ../../roles/apt/keys,
-        aptKeyUri: '{{ dockerAptKeyUri }}',
-        aptKeyId: '{{ dockerAptKeyId }}'
-      }
+    - { role: roles/apt/keys, aptKeyUri: '{{ dockerAptKeyUri }}', aptKeyId: '{{ dockerAptKeyId }}' }
 
     # Install Docker package
-    - { role: ../../roles/apt/install, aptPackages: '{{ dockerPackages }}' }
+    - { role: roles/apt/install, aptPackages: '{{ dockerPackages }}' }
 
     # Add admin user to Docker group
-    - {
-        role: ../../roles/users/addUserToGroups,
-        userName: '{{ sshAdminUserName }}',
-        userGroups: docker
-      }
+    - { role: roles/users/addUserToGroups, userName: '{{ sshAdminUserName }}', userGroups: docker }
 
     # Sending Notification email
-    - ../../roles/exim/sendemail
+    - roles/exim/sendemail
