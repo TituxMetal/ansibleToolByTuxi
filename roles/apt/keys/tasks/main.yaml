@@ -1,10 +1,8 @@
 # ansible_path/roles/apt/keys/tasks/main.yaml
-
 ---
-
 - name: APT KEYS | Add a GPG key
-  apt_key:
-    url: "{{ aptKeyUri }}"
-    id: "{{ aptKeyId }}"
+  ansible.builtin.apt_key:
+    url: '{{ aptKeyUri }}'
+    id: '{{ aptKeyId }}'
     state: present
   tags: [apt, key]

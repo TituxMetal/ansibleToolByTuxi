@@ -1,6 +1,14 @@
 # ansible_path/roles/apt/install/tasks/main.yaml
 ---
+- name: APT INSTALL | Install packages if not already installed
+  ansible.builtin.apt:
+    name: '{{ aptPackages }}'
     update_cache: true
+    state: present
+  tags: [apt, apt-install]
+
+- name: APT INSTALL | Upgrade packages to latest version
+  ansible.builtin.apt:
     name: '{{ aptPackages }}'
     update_cache: true
     state: latest
