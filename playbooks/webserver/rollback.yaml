@@ -1,24 +1,19 @@
 # ansible_path/playbooks/webserver/rollback.yaml
 ---
-- hosts: docker:&f2b
+- name: ROLLBACK MAIN SERVICES | Main services for webserver
+  hosts: docker:&f2b
   gather_facts: false
   vars:
     tempDirectory: '/tmp/srv'
   roles:
     # Stop fail2ban docker container
     - {
-        role: ../../rollbacks/docker/container,
+        role: rollbacks/docker/container,
         projectAppContainerName: '{{ dockerServiceFail2banContainerName }}'
       }
 
     # Clean fail2ban docker image
-    - {
-        role: ../../rollbacks/docker/image,
-        projectAppImageName: '{{ dockerServiceFail2banImage }}'
-      }
+    - { role: rollbacks/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
 
     # Remove docker service data structure
-    - {
-        role: ../../rollbacks/dockerServices/dataStructure,
-        tempDataDirectory: '{{ tempDirectory }}'
-      }
+    - { role: rollbacks/dockerServices/dataStructure, tempDataDirectory: '{{ tempDirectory }}' }
