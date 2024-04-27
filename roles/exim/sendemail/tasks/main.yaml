@@ -1,11 +1,9 @@
 # ansible_path/roles/exim/sendmail/tasks/main.yaml
-
 ---
-
 - name: EXIM SEND EMAIL | Sending notification to {{ eximDestEmail }}
-  mail:
-    to: "{{ eximDestEmail }}"
-    subject: "{{ eximEmailSubject }}"
-    body: "{{ eximEmailBody }}"
-    from: "{{ eximAccountEmail }}"
+  community.general.mail:
+    to: '{{ eximDestEmail }}'
+    subject: '{{ eximEmailSubject }}'
+    body: '{{ eximEmailBody }}'
+    from: '{{ eximAccountEmail }}'
   tags: [exim, sendemail]

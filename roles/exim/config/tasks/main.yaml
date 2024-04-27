@@ -1,25 +1,23 @@
 # ansible_path/roles/exim/config/tasks/main.yaml
-
 ---
-
 - name: EXIM CONFIG | Add exim configuration file
-  get_url:
-    url: "{{ eximConfigFileUri }}"
+  ansible.builtin.get_url:
+    url: '{{ eximConfigFileUri }}'
     dest: /etc/exim4/update-exim4.conf.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     backup: true
     force: true
   tags: [exim, config, update-exim.conf]
 
 - name: EXIM CONFIG | Add passwd.client file
-  template:
+  ansible.builtin.template:
     src: passwd.client.j2
     dest: /etc/exim4/passwd.client
     owner: root
     group: Debian-exim
-    mode: 0640
+    mode: '0640'
   notify:
-    - restart exim4
+    - Restart exim4
   tags: [exim, config, passwd.client]
