@@ -1,32 +1,33 @@
 # ansible_path/rollbacks/system/sshConfig/tasks/main.yaml
 ---
 - name: ROLLBACK SYSTEM SSHCONFIG | Add root authorized_keys file
-  authorized_key:
+  ansible.posix.authorized_key:
     user: root
     state: present
     exclusive: true
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/authorized_keys') }}"
-  tags: [rollback, ssh-config, ssh, ssh-config, ssh-authorizedKeys]
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/authorized_keys') }}"
+  tags: [rollback, ssh-config, ssh, ssh-authorizedKeys]
 
 - name: ROLLBACK SYSTEM SSHCONFIG | Check if there is a backup file for default ssh config
-  stat:
+  ansible.builtin.stat:
     path: /etc/ssh/sshd_config.backup
   register: fileExists
   tags: [rollback, ssh-config, backup-config, file-exists]
 
 - name: ROLLBACK SYSTEM SSHCONFIG | Restore the default ssh config
-  copy:
+  ansible.builtin.copy:
     src: /etc/ssh/sshd_config.backup
     dest: /etc/ssh/sshd_config
+    mode: '0644'
     remote_src: true
   register: isRestored
-  when: fileExists is defined and fileExists.stat.exists == True
+  when: fileExists is defined and fileExists.stat.exists
   tags: [rollback, ssh-config, restore-config]
 
 - name: ROLLBACK SYSTEM SSHCONFIG | Remove the backup file
-  file:
+  ansible.builtin.file:
     path: /etc/ssh/sshd_config.backup
     state: absent
   when: isRestored is success and isRestored is not skipped
-  notify: restart ssh
+  notify: Restart ssh
   tags: [rollback, ssh-config, remove-backup]
