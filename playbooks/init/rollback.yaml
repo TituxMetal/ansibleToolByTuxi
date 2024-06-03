@@ -18,5 +18,8 @@
     # 4: Restore default sources.list file
     - rollbacks/apt/repository
 
-    # 5: Restore default ssh configuration
+    # 5: Cleanup exim4 configuration
+    - rollbacks/exim/config
+
+    # 6: Restore default ssh configuration
     - rollbacks/system/sshConfig
