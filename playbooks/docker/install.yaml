@@ -4,6 +4,8 @@
   hosts: docker
   become: true
   vars:
+    dockerPorts:
+      [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible docker install task done on server'
     eximEmailBody: 'All docker install tasks are done successfully'
@@ -23,6 +25,9 @@
 
     # Add admin user to Docker group
     - { role: roles/users/addUserToGroups, userName: '{{ sshAdminUserName }}', userGroups: docker }
+
+    # Allow ports in firewall
+    - { role: roles/firewall/allow, firewallPorts: '{{ dockerPorts }}' }
 
     # Sending Notification email
     - roles/exim/sendemail
