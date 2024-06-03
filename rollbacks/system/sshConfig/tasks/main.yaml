@@ -14,15 +14,23 @@
   register: fileExists
   tags: [rollback, ssh-config, backup-config, file-exists]
 
-- name: ROLLBACK SYSTEM SSHCONFIG | Restore the default ssh config
+- name: ROLLBACK SYSTEM SSHCONFIG | Restore the original ssh config from backup
   ansible.builtin.copy:
     src: /etc/ssh/sshd_config.backup
     dest: /etc/ssh/sshd_config
     mode: '0644'
     remote_src: true
-  register: isRestored
   when: fileExists is defined and fileExists.stat.exists
+  register: isRestored
   tags: [rollback, ssh-config, restore-config]
+
+- name: ROLLBACK SYSTEM SSHCONFIG | Remove the ansible ssh config
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/ansible.conf
+    state: absent
+  register: isRestored
+  when: isRestored is success or fileExists.stat.exists
+  tags: [rollback, ssh-config, remove-config]
 
 - name: ROLLBACK SYSTEM SSHCONFIG | Remove the backup file
   ansible.builtin.file:
