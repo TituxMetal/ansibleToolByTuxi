@@ -1,0 +1,26 @@
+# ansible_path/rollbacks/exim/config/tasks/main.yaml
+---
+- name: ROLLBACK EXIM | Remove exim update-exim4.conf.conf file
+  ansible.builtin.file:
+    path: /etc/exim4/update-exim4.conf.conf
+    state: absent
+  tags: [rollback, exim, remove-exim-config]
+
+- name: ROLLBACK EXIM | Remove exim passwd.client file
+  ansible.builtin.file:
+    path: /etc/exim4/passwd.client
+    state: absent
+  tags: [rollback, exim, remove-exim-passwd-client]
+
+- name: ROLLBACK EXIM | Remove exim log file
+  ansible.builtin.file:
+    path: /var/log/exim4/mainlog
+    state: absent
+  tags: [rollback, exim, remove-exim-logs]
+
+- name: ROLLBACK EXIM | Stop exim4 service
+  ansible.builtin.service:
+    name: exim4
+    state: stopped
+    enabled: false
+  tags: [rollback, exim, stop-exim-service]
