@@ -1,0 +1,15 @@
+# ansible_path/host_vars/vm3/vm3.yaml
+
+rootUserPassword: "{{ vaultRootUserPassword | password_hash('sha512') }}"
+
+sshAdminUserName: "{{ vaultSshAdminUserName }}"
+sshAdminUserGroup: "{{ vaultSshAdminUserGroup }}"
+sshAdminUserPassword: "{{ vaultSshAdminUserPassword | password_hash('sha512') }}"
+sshAdminUserCreateHome: true
+sshAdminUserShell: /bin/bash
+
+eximAccountEmail: "{{ vaultEximAccountEmail }}"
+eximAccountPassword: "{{ vaultEximAccountPassword }}"
+
+mongodbAdminUsername: "{{ vaultMongodbAdminUsername }}"
+mongodbAdminPassword: "{{ vaultMongodbAdminPassword }}"
