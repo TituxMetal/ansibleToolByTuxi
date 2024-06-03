@@ -6,13 +6,19 @@
     key: '{{ item }}'
   loop: '{{ userGroups }}'
   register: groupInfo
-  tags: [rollback, users, remove-user-from-groups]
+  failed_when: false
+  tags: [rollback, users, remove-user-from-groups, check-group]
+
+- name: Gather the facts again
+  ansible.builtin.setup:
+  tags: [rollback, users, remove-user-from-groups, gether-facts]
 
 - name: REMOVE USER FROM GROUPS | Remove user from groups {{ userGroups }}
-  ansible.builtin.user:
-    name: '{{ userName }}'
-    groups: '{{ item.item }}'
-    state: absent
-  loop: '{{ groupInfo.results }}'
-  changed_when: true
+  ansible.builtin.command:
+    cmd: 'gpasswd -d {{ userName }} {{ item }}'
+  loop: '{{ userGroups }}'
+  when:
+    - userGroups is defined
+    - ansible_facts['groups'][item] is defined
+  changed_when: groupInfo is defined and groupInfo is not failed
   tags: [rollback, users, remove-user-from-groups]
