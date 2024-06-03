@@ -1,0 +1,29 @@
+# This file is managed by Ansible. Do not edit manually.
+
+# Allow only the specific admin user
+AllowUsers {{ sshAdminUserName }}
+
+# Network settings
+ListenAddress {{ ansible_default_ipv4.address }}
+
+# Security settings
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+X11Forwarding no
+PrintMotd no
+UsePAM no
+Protocol 2
+AllowTcpForwarding no
+MaxAuthTries 3
+PermitEmptyPasswords no
+ClientAliveInterval 300
+ClientAliveCountMax 0
+LoginGraceTime 60
+Banner /etc/issue.net
+
+# Cryptographic settings
+Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+MACs hmac-sha2-512,hmac-sha2-256
+KexAlgorithms diffie-hellman-group-exchange-sha256

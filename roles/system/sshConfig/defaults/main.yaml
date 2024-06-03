@@ -1,32 +1,5 @@
 # ansible_path/roles/system/sshConfig/defaults/main.yaml
 
-sshConfig:
-  [
-    {
-      action: 'Allow only user {{ sshAdminUserName }} to login',
-      regexp: '^AllowUsers',
-      line: 'AllowUsers {{ sshAdminUserName }}'
-    },
-    {
-      action: 'Add the ListenAddress',
-      regexp: '^ListenAddress',
-      line: 'ListenAddress {{ ansible_ssh_host }}'
-    },
-    {
-      action: 'Disallow the PermitRootLogin',
-      regexp: '^PermitRootLogin',
-      line: 'PermitRootLogin no'
-    },
-    {
-      action: 'Disallow the PasswordAuthentication',
-      regexp: '^PasswordAuthentication',
-      line: 'PasswordAuthentication no'
-    },
-    { action: 'Disallow the X11Forwarding', regexp: '^X11Forwarding', line: 'X11Forwarding no' },
-    { action: 'Disallow the PrintMotd', regexp: '^PrintMotd', line: 'PrintMotd no' },
-    { action: 'Disallow the UsePAM', regexp: '^UsePAM', line: 'UsePAM no' }
-  ]
-
 sshAuthorizedKeys:
   [
     'ssh-rsa
