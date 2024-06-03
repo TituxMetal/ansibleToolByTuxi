@@ -4,4 +4,13 @@
   ansible.builtin.hostname:
     name: '{{ serverHostname }}'
   register: changeHostname
+  notify: Restart rsyslog
+  tags: [system, hostname]
+
+- name: SYSTEM HOSTNAME | Add the hostname in /etc/hosts
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: '0644'
+  # when: changeHostname.changed
   tags: [system, hostname]
