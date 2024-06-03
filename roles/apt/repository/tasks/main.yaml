@@ -3,9 +3,22 @@
 - name: APT REPOSITORY | Check if there is a backup file for default sources.list file
   ansible.builtin.stat:
     path: '/etc/apt/{{ aptRepoName }}.list.backup'
-  register: fileExists
+  register: backupFileExists
   when: aptRepoName == "sources"
-  tags: [apt, apt-repository, backup-default]
+  tags: [apt, apt-repository, check-backup]
+
+- name: APT REPOSITORY | Check if there is a debian.list file in sources.list.d folder
+  ansible.builtin.stat:
+    path: '/etc/apt/sources.list.d/debian.list'
+  register: debianFileExists
+  tags: [apt, apt-repository, check-debian]
+
+- name: APT REPOSITORY | Check if sources.list file exists
+  ansible.builtin.stat:
+    path: '/etc/apt/{{ aptRepoName }}.list'
+  register: defaultFileExists
+  when: aptRepoName == "sources"
+  tags: [apt, apt-repository, check-sources]
 
 - name: APT REPOSITORY | Copy the default .list file in a backup file {{ aptRepoName }}
   ansible.builtin.copy:
@@ -14,8 +27,20 @@
     mode: '0644'
     remote_src: true
   register: isCopyed
-  when: aptRepoName == "sources" and fileExists is defined and not fileExists.stat.exists
+  when:
+    aptRepoName == "sources" and backupFileExists is defined and not backupFileExists.stat.exists
+    and defaultFileExists.stat.exists
   tags: [apt, apt-repository, backup-default]
+
+- name: APT REPOSITORY | Copy the debian.list file in a backup file
+  ansible.builtin.copy:
+    src: '/etc/apt/sources.list.d/debian.list'
+    dest: '/etc/apt/sources.list.backup'
+    mode: '0644'
+    remote_src: true
+  register: isDebianCopyed
+  when: debianFileExists.stat.exists and not debianFileExists.stat.islnk
+  tags: [apt, apt-repository, backup-debian]
 
 - name: APT REPOSITORY | Remove the default sources.list file
   ansible.builtin.file:
@@ -23,6 +48,14 @@
     state: absent
   when: aptRepoName == "sources" and isCopyed is success
   tags: [apt, apt-repository, remove-default]
+
+- name: APT REPOSITORY | Remove the debian.list file
+  ansible.builtin.file:
+    path: '/etc/apt/sources.list.d/debian.list'
+    state: absent
+  when:
+    debianFileExists.stat.exists and not debianFileExists.stat.islnk and isDebianCopyed is success
+  tags: [apt, apt-repository, remove-debian]
 
 - name: APT REPOSITORY | Add apt repository file
   ansible.builtin.get_url:
