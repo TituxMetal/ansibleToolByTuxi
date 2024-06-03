@@ -1,0 +1,8 @@
+# ansible_path/roles/system/chrony/tasks/main.yaml
+---
+- name: SYSTEM CHRONY | Enable and start Chrony service
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true
+  tags: [system, chrony, startService]

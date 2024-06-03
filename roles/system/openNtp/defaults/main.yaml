@@ -1,3 +1,0 @@
-# ansible_path/roles/system/openNtp/defaults/main.yaml
-
-openNtpConfigUri: https://raw.githubusercontent.com/TituxMetal/cffa/master/system/ntpd.conf

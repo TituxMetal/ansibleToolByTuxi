@@ -1,7 +1,0 @@
-# ansible_path/roles/system/openNtp/handlers/main.yaml
----
-- name: Restart openntpd
-  ansible.builtin.service:
-    name: openntpd
-    state: restarted
-    enabled: true
