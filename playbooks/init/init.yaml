@@ -35,8 +35,8 @@
     # 7: Logrotate configuration
     - roles/system/logrotate
 
-    # 8: Open ntp configuration
-    - roles/system/openNtp
+    # 8: Time Sync
+    - roles/system/chrony
 
     # 9: Locales configuration
     - roles/system/locales
