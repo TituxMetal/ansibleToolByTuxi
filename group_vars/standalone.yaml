@@ -4,7 +4,7 @@ dockerServiceStandaloneNetwork: 'reverse-proxy-nw'
 
 # Docker Portainer Server service
 dockerServicePortainerServerContainerName: 'portainer-server-{{ inventory_hostname }}'
-dockerServicePortainerServerImage: 'portainer/portainer-ce:2.20.1-alpine'
+dockerServicePortainerServerImage: 'portainer/portainer-ce:2.20.2-alpine'
 dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris' }
 dockerServicePortainerServerPorts: ['9443:9443', '8000:8000']
 dockerServicePortainerServerNetworks: [{ name: '{{ dockerServiceStandaloneNetwork }}' }]
@@ -18,10 +18,16 @@ dockerServicePortainerServerVolumes:
 
 # Docker service Portainer
 dockerServicePortainerContainerName: 'portainer-agent-{{ inventory_hostname }}'
-dockerServicePortainerImage: 'portainer/agent:2.20.1-alpine'
+dockerServicePortainerImage: 'portainer/agent:2.20.2-alpine'
 dockerServicePortainerPorts: '9001:9001'
+dockerServicePortainerEnvVars: { TZ: 'Europe/Paris' }
 dockerServicePortainerVolumes:
-  ['/var/run/docker.sock:/var/run/docker.sock', '/var/lib/docker/volumes:/var/lib/docker/volumes']
+  [
+    '/var/run/docker.sock:/var/run/docker.sock',
+    '/var/lib/docker/volumes:/var/lib/docker/volumes',
+    '/etc/localtime:/etc/localtime:ro',
+    '/etc/timezone:/etc/timezone:ro'
+  ]
 
 # Docker service Nginx Proxy Manager
 dockerServiceProxyContainerName: 'nginx-proxy-manager-{{ inventory_hostname }}'
