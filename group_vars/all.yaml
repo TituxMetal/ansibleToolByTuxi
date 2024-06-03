@@ -11,9 +11,10 @@ systemAptPackages:
     'ca-certificates',
     'curl',
     'locales-all',
+    'rsyslog',
     'tzdata'
   ]
 
-utilsAptPackages: ['openntpd', 'mailutils', 'bash-completion', 'vim', 'ufw', 'exim4']
+utilsAptPackages: ['chrony', 'mailutils', 'bash-completion', 'vim', 'ufw', 'exim4']
 
-defaultAptPackages: ['wget', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
+defaultAptPackages: ['wget', 'duf', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
