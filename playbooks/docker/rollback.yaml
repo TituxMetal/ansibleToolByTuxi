@@ -20,13 +20,6 @@
         aptKeyId: '{{ dockerAptKeyId }}'
       }
 
-    # Remove admin user from Docker group
-    - {
-        role: rollbacks/users/removeUserFromGroups,
-        userName: '{{ sshAdminUserName }}',
-        userGroups: ['docker']
-      }
-
     # Remove Docker group
     - { role: rollbacks/users/group, userGroup: docker }
 
