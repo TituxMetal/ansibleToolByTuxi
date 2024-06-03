@@ -1,5 +1,8 @@
 all:
   hosts:
+    homelab:
+      ansible_ssh_host: 192.168.0.20 # homelab.lgdweb.ovh
+      ansible_user: root
     andrew:
       ansible_ssh_host: 89.233.108.164 # andrew.lgdweb.ovh
       ansible_user: root
@@ -27,6 +30,7 @@ all:
   children:
     docker:
       hosts:
+        homelab:
         andrew:
         bart:
         laura:
@@ -37,6 +41,7 @@ all:
         # marge:
     f2b:
       hosts:
+        homelab:
         andrew:
         bart:
         laura:
@@ -47,6 +52,7 @@ all:
         # marge:
     standalone:
       hosts:
+        homelab:
         andrew:
         bart:
         laura:
@@ -57,4 +63,4 @@ all:
         # marge:
     master:
       hosts:
-        bart:
+        andrew:
