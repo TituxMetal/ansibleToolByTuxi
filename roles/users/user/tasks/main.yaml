@@ -7,6 +7,10 @@
   register: userExists
   tags: [users, user, check-user]
 
+# - name: Debug userExists variable
+#   ansible.builtin.debug:
+#     var: userExists
+
 - name: USER | Create the user {{ userName }}
   ansible.builtin.user:
     name: '{{ userName }}'
@@ -17,5 +21,6 @@
     shell: '{{ userShell }}'
     generate_ssh_key: '{{ userSsh }}'
     state: present
-  when: not userExists
+  # changed_when: userExists is false
+  # when: not userExists
   tags: [users, user, create-user]
