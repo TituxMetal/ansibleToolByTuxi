@@ -6,12 +6,13 @@
     groups: null
     force: true
     state: absent
-  register: removedUser
-  changed_when: removedUser.changed
+    remove: true
+  # register: removedUser
+  # changed_when: removedUser.changed
   tags: [rollback, user, remove-user]
-
-- name: ROLLBACK USER | Find and remove all files/directories with nogroup/nouser
-  ansible.builtin.shell:
-    'set -o pipefail && find /home -nouser -nogroup -type d -print0 | xargs -0 -r rm -rf'
-  changed_when: removedUser.changed
-  tags: [rollback, user, remove-user]
+# - name: ROLLBACK USER | Find and remove all files/directories with nogroup/nouser
+#   ansible.builtin.shell:
+#     cmd: 'set -o pipefail && find /home -nouser -nogroup -type d -print0 | xargs -0 -r rm -rf'
+#   changed_when: removedUser.changed
+#   failed_when: false
+#   tags: [rollback, user, remove-user]
