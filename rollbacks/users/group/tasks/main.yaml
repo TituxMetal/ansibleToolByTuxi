@@ -1,8 +1,23 @@
 # ansible_path/rollbacks/users/group/tasks/main.yaml
 ---
-# Create the group if not present
+- name: ROLLBACK USER GROUP | Check if the user group exists {{ userGroup }}
+  ansible.builtin.getent:
+    database: group
+    key: '{{ userGroup }}'
+  register: groupInfo
+  failed_when: false
+  tags: [rollback, users, user-group, check-group]
+
+- name: ROLLBACK USER GROUP | Check if the user group is removed from all users
+  ansible.builtin.getent:
+    database: passwd
+  register: userGroupInfo
+  tags: [rollback, users, user-group, check-user-group]
+
 - name: ROLLBACK USER GROUP | Remove the user group {{ userGroup }}
   ansible.builtin.group:
     name: '{{ userGroup }}'
     state: absent
+  when: groupInfo is defined and groupInfo is not failed
+  changed_when: userGroupInfo is defined and userGroupInfo is not failed
   tags: [rollback, users, user-group, remove-group]
