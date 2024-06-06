@@ -4,12 +4,6 @@
   hosts: docker:&standalone
   gather_facts: false
   vars:
-    webPorts:
-      [
-        { port: 'http', proto: 'tcp' },
-        { port: 'https', proto: 'tcp' },
-        { ports: 9001, proto: 'tcp' }
-      ]
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible webserver task done on server'
     eximEmailBody: 'All utils tasks are done successfully'
@@ -73,6 +67,12 @@
         projectAppImageName: '{{ dockerServiceMainSiteImage }}',
         projectAppVolumes: '{{ dockerServiceMainSiteVolumes }}',
         projectAppNetworks: '{{ dockerServiceMainSiteNetworks }}'
+      }
+
+    # Allow portainer port in firewall
+    - {
+        role: roles/firewall/allow,
+        firewallPorts: '{{ dockerServicePortainerAgentFirewallPorts }}'
       }
 
     # Sending Notification email
