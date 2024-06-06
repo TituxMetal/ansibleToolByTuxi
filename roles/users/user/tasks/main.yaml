@@ -1,11 +1,11 @@
 # ansible_path/roles/users/user/tasks/main.yaml
 ---
-- name: USER | Check if the user exists
-  ansible.builtin.getent:
-    database: passwd
-    key: '{{ userName }}'
-  register: userExists
-  tags: [users, user, check-user]
+# - name: USER | Check if the user exists
+#   ansible.builtin.getent:
+#     database: passwd
+#     key: '{{ userName }}'
+#   register: userExists
+#   tags: [users, user, check-user]
 
 # - name: Debug userExists variable
 #   ansible.builtin.debug:
