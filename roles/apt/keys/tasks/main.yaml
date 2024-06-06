@@ -1,8 +1,24 @@
 # ansible_path/roles/apt/keys/tasks/main.yaml
 ---
-- name: APT KEYS | Add a GPG key
-  ansible.builtin.apt_key:
+- name: APT KEYS | Create directory for GPG keys
+  ansible.builtin.file:
+    path: '/etc/apt/keyrings'
+    state: directory
+    mode: '0755'
+  become: true
+  tags: [apt, key]
+
+- name: APT KEYS | Download and save GPG key
+  ansible.builtin.get_url:
     url: '{{ aptKeyUri }}'
-    id: '{{ aptKeyId }}'
-    state: present
+    dest: '/etc/apt/keyrings/{{ aptRepoName }}.asc'
+    mode: '0644'
+  become: true
+  tags: [apt, key]
+
+- name: APT KEYS | Set permissions for GPG key
+  ansible.builtin.file:
+    path: '/etc/apt/keyrings/{{ aptRepoName }}.asc'
+    mode: '0644'
+  become: true
   tags: [apt, key]
