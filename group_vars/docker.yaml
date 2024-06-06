@@ -4,6 +4,13 @@
 dockerAptRepoUri: 'https://raw.githubusercontent.com/TituxMetal/cffa/main/apt/docker.list'
 dockerAptRepoName: docker
 dockerPackages:
-  ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose-plugin', 'python3-docker']
+  [
+    'docker-ce',
+    'docker-ce-cli',
+    'containerd.io',
+    'docker-buildx-plugin',
+    'docker-compose-plugin',
+    'python3-docker'
+  ]
 dockerAptKeyUri: https://download.docker.com/linux/debian/gpg
-dockerAptKeyId: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+# dockerAptKeyId: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
