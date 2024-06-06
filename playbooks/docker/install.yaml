@@ -6,19 +6,16 @@
   vars:
     dockerPorts:
       [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
+    aptRepoName: '{{ dockerAptRepoName }}'
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible docker install task done on server'
     eximEmailBody: 'All docker install tasks are done successfully'
   roles:
     # Add Docker apt repository
-    - {
-        role: roles/apt/repository,
-        aptRepoUrl: '{{ dockerAptRepoUri }}',
-        aptRepoName: '{{ dockerAptRepoName }}'
-      }
+    - { role: roles/apt/repository, aptRepoUrl: '{{ dockerAptRepoUri }}' }
 
     # Add docker Gpg key
-    - { role: roles/apt/keys, aptKeyUri: '{{ dockerAptKeyUri }}', aptKeyId: '{{ dockerAptKeyId }}' }
+    - { role: roles/apt/keys, aptKeyUri: '{{ dockerAptKeyUri }}' }
 
     # Install Docker package
     - { role: roles/apt/install, aptPackages: '{{ dockerPackages }}' }
