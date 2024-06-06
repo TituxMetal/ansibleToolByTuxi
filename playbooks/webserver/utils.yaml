@@ -4,6 +4,12 @@
   hosts: docker:&standalone
   gather_facts: false
   vars:
+    webPorts:
+      [
+        { port: 'http', proto: 'tcp' },
+        { port: 'https', proto: 'tcp' },
+        { ports: 9001, proto: 'tcp' }
+      ]
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible webserver task done on server'
     eximEmailBody: 'All utils tasks are done successfully'
