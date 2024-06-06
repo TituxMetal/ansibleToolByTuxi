@@ -4,23 +4,39 @@
   ansible.builtin.file:
     path: /etc/exim4/update-exim4.conf.conf
     state: absent
+  register: eximConfigFile
   tags: [rollback, exim, remove-exim-config]
 
 - name: ROLLBACK EXIM | Remove exim passwd.client file
   ansible.builtin.file:
     path: /etc/exim4/passwd.client
     state: absent
+  register: eximPasswdClient
   tags: [rollback, exim, remove-exim-passwd-client]
 
 - name: ROLLBACK EXIM | Remove exim log file
   ansible.builtin.file:
     path: /var/log/exim4/mainlog
     state: absent
+  register: eximLogFile
   tags: [rollback, exim, remove-exim-logs]
+
+- name: ROLLBACK EXIM | Check if exim4 service exists
+  ansible.builtin.service_facts:
+  register: service_facts
+
+- name: ROLLBACK EXIM | Register exim4 service existence
+  set_fact:
+    exim4_exists: "{{ 'exim4' in service_facts.ansible_facts.services }}"
+  failed_when: false
+  changed_when: false
+  tags: [rollback, exim, check-exim4]
 
 - name: ROLLBACK EXIM | Stop exim4 service
   ansible.builtin.service:
     name: exim4
     state: stopped
     enabled: false
+  when: exim4_exists
+  failed_when: false
   tags: [rollback, exim, stop-exim-service]
