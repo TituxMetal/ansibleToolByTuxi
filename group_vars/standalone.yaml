@@ -5,7 +5,7 @@ dockerServiceStandaloneNetwork: 'reverse-proxy-nw'
 # Docker Portainer Server service
 dockerServicePortainerServerContainerName: 'portainer-server-{{ inventory_hostname }}'
 dockerServicePortainerServerImage: 'portainer/portainer-ce:2.20.2-alpine'
-dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris' }
+dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerServerPorts: ['9443:9443', '8000:8000']
 dockerServicePortainerServerNetworks: [{ name: '{{ dockerServiceStandaloneNetwork }}' }]
 dockerServicePortainerServerVolumes:
@@ -20,7 +20,7 @@ dockerServicePortainerServerVolumes:
 dockerServicePortainerContainerName: 'portainer-agent-{{ inventory_hostname }}'
 dockerServicePortainerImage: 'portainer/agent:2.20.2-alpine'
 dockerServicePortainerPorts: '9001:9001'
-dockerServicePortainerEnvVars: { TZ: 'Europe/Paris' }
+dockerServicePortainerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerVolumes:
   [
     '/var/run/docker.sock:/var/run/docker.sock',
