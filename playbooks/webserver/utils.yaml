@@ -26,7 +26,8 @@
         projectAppContainerName: '{{ dockerServicePortainerContainerName }}',
         projectAppImageName: '{{ dockerServicePortainerImage }}',
         projectAppPorts: '{{ dockerServicePortainerPorts }}',
-        projectAppVolumes: '{{ dockerServicePortainerVolumes }}'
+        projectAppVolumes: '{{ dockerServicePortainerVolumes }}',
+        projectAppRestartPolicy: 'always'
       }
 
     # Pull Nginx Proxy Manager image
@@ -40,7 +41,8 @@
         projectAppPorts: '{{ dockerServiceProxyPorts }}',
         projectAppVolumes: '{{ dockerServiceProxyVolumes }}',
         projectAppEnvVars: '{{ dockerServiceProxyEnvVars }}',
-        projectAppNetworks: '{{ dockerServiceProxyNetworks }}'
+        projectAppNetworks: '{{ dockerServiceProxyNetworks }}',
+        projectAppRestartPolicy: 'always'
       }
 
     # Pull Portainer Server image
@@ -58,6 +60,7 @@
         projectAppEnvVars: '{{ dockerServicePortainerServerEnvVars }}'
         projectAppPorts: '{{ dockerServicePortainerServerPorts }}'
         projectAppNetworks: '{{ dockerServicePortainerServerNetworks }}'
+        projectAppRestartPolicy: 'always'
       when: inventory_hostname in groups['master']
 
     # Pull Main Site image
