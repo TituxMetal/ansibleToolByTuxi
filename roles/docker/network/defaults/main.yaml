@@ -1,0 +1,3 @@
+# ansible_path/roles/docker/network/defaults/main.yaml
+
+projectAppNetworkIpamConfig: []

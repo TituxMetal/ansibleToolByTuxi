@@ -3,6 +3,7 @@
 - name: DOCKER NETWORK CREATE | Create docker network {{ projectAppNetworkName }}
   community.docker.docker_network:
     name: '{{ projectAppNetworkName }}'
+    ipam_config: '{{ projectAppNetworkIpamConfig }}'
     attachable: true
     state: present
   tags: [docker, networkCreate]
