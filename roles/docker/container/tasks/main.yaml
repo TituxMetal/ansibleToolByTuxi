@@ -16,5 +16,9 @@
     ports: '{{ projectAppPorts }}'
     env: '{{ projectAppEnvVars }}'
     networks: '{{ projectAppNetworks }}'
+    command: '{{ projectAppCommand }}'
     image_name_mismatch: ignore
+    default_host_ip: ''
+    comparisons:
+      networks: strict
   tags: [docker, runContainer]

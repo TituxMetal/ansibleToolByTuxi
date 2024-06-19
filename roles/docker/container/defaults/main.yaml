@@ -7,6 +7,7 @@ projectAppRestartPolicy: unless-stopped
 projectAppPrivileged: false
 projectAppCompatibility: no_defaults
 projectAppVolumes: []
+projectAppCommand: ''
 projectAppPorts: []
 projectAppEnvVars: {}
 projectAppNetworks: []
