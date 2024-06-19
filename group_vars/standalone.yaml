@@ -1,13 +1,24 @@
 # ansible_path/group_vars/portainer.yaml
 
 dockerServiceStandaloneNetwork: 'reverse-proxy-nw'
+# dockerServicePortainerNetwork: 'portainer_default'
+dockerServiceDefaultNetwork:
+  {
+    name: 'default-nw',
+    ipam_config:
+      [{ subnet: '192.168.10.0/24', gateway: '192.168.10.1', iprange: '192.168.10.0/26' }]
+  }
 
 # Docker Portainer Server service
 dockerServicePortainerServerContainerName: 'portainer-server-{{ inventory_hostname }}'
 dockerServicePortainerServerImage: 'portainer/portainer-ce:2.20.2-alpine'
 dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerServerPorts: ['9443:9443', '8000:8000']
-dockerServicePortainerServerNetworks: [{ name: '{{ dockerServiceStandaloneNetwork }}' }]
+dockerServicePortainerServerNetworks:
+  [
+    { name: '{{ dockerServiceDefaultNetwork.name }}' },
+    { name: '{{ dockerServiceStandaloneNetwork }}' }
+  ]
 dockerServicePortainerServerVolumes:
   [
     '/var/run/docker.sock:/var/run/docker.sock',
@@ -20,6 +31,8 @@ dockerServicePortainerServerVolumes:
 dockerServicePortainerContainerName: 'portainer-agent-{{ inventory_hostname }}'
 dockerServicePortainerImage: 'portainer/agent:2.20.2-alpine'
 dockerServicePortainerPorts: '9001:9001'
+dockerServicePortainerCommand: '-H tcp://{{ inventory_hostname }}.lgdweb.ovh:9001 --tlsskipverify'
+dockerServicePortainerNetworks: [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
 dockerServicePortainerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerVolumes:
   [
@@ -36,7 +49,11 @@ dockerServiceProxyContainerName: 'nginx-proxy-manager-{{ inventory_hostname }}'
 dockerServiceProxyImage: 'jc21/nginx-proxy-manager:2.11.1'
 dockerServiceProxyPorts: ['80:80', '443:443', '81:81']
 dockerServiceProxyEnvVars: { TZ: 'Europe/Paris' }
-dockerServiceProxyNetworks: [{ name: '{{ dockerServiceStandaloneNetwork }}' }]
+dockerServiceProxyNetworks:
+  [
+    { name: '{{ dockerServiceStandaloneNetwork }}' },
+    { name: '{{ dockerServiceDefaultNetwork.name }}' }
+  ]
 dockerServiceProxyVolumes:
   [
     '/srv/nginx-proxy-manager/data:/data',
@@ -47,7 +64,11 @@ dockerServiceProxyVolumes:
 # Docker service Main Site
 dockerServiceMainSiteContainerName: 'main-site-{{ inventory_hostname }}'
 dockerServiceMainSiteImage: 'lgdweb/nginx-test:latest'
-dockerServiceMainSiteNetworks: [{ name: '{{ dockerServiceStandaloneNetwork }}' }]
+dockerServiceMainSiteNetworks:
+  [
+    { name: '{{ dockerServiceStandaloneNetwork }}' },
+    { name: '{{ dockerServiceDefaultNetwork.name }}' }
+  ]
 dockerServiceMainSiteVolumes:
   [
     '/srv/logs/nginx:/var/log/nginx',
