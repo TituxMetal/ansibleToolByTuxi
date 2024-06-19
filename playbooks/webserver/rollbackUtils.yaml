@@ -48,3 +48,9 @@
         role: rollbacks/docker/network,
         projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}'
       }
+
+    # Remove default-nw network
+    - {
+        role: rollbacks/docker/network,
+        projectAppNetworkName: '{{ dockerServiceDefaultNetwork.name }}'
+      }
