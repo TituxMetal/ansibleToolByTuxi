@@ -11,16 +11,25 @@
     # Create reverse-proxy-nw network
     - { role: roles/docker/network, projectAppNetworkName: '{{ dockerServiceStandaloneNetwork }}' }
 
+    # Create default network
+    - {
+        role: roles/docker/network,
+        projectAppNetworkName: '{{ dockerServiceDefaultNetwork.name }}',
+        projectAppNetworkIpamConfig: '{{ dockerServiceDefaultNetwork.ipam_config }}'
+      }
+
     # Pull Poratiner agent image
     - { role: roles/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
 
-    # Start Poratiner agent docker container
+    # Start Portainer agent docker container
     - {
         role: roles/docker/container,
         projectAppContainerName: '{{ dockerServicePortainerContainerName }}',
         projectAppImageName: '{{ dockerServicePortainerImage }}',
         projectAppPorts: '{{ dockerServicePortainerPorts }}',
         projectAppVolumes: '{{ dockerServicePortainerVolumes }}',
+        projectAppNetworks: '{{ dockerServicePortainerNetworks }}',
+        projectAppEnvVars: '{{ dockerServicePortainerEnvVars }}',
         projectAppRestartPolicy: 'always'
       }
 
