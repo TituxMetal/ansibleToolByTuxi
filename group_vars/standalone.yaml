@@ -11,7 +11,7 @@ dockerServiceDefaultNetwork:
 
 # Docker Portainer Server service
 dockerServicePortainerServerContainerName: 'portainer-server-{{ inventory_hostname }}'
-dockerServicePortainerServerImage: 'portainer/portainer-ce:2.20.2-alpine'
+dockerServicePortainerServerImage: 'portainer/portainer-ce:alpine-sts'
 dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerServerPorts: ['9443:9443', '8000:8000']
 dockerServicePortainerServerNetworks:
@@ -29,7 +29,7 @@ dockerServicePortainerServerVolumes:
 
 # Docker service Portainer
 dockerServicePortainerContainerName: 'portainer-agent-{{ inventory_hostname }}'
-dockerServicePortainerImage: 'portainer/agent:2.20.2-alpine'
+dockerServicePortainerImage: 'portainer/agent:alpine-sts'
 dockerServicePortainerPorts: '9001:9001'
 dockerServicePortainerCommand: '-H tcp://{{ inventory_hostname }}.lgdweb.ovh:9001 --tlsskipverify'
 dockerServicePortainerNetworks: [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
@@ -46,7 +46,7 @@ dockerServicePortainerAgentFirewallPorts: [{ port: 9001, proto: 'tcp' }]
 
 # Docker service Nginx Proxy Manager
 dockerServiceProxyContainerName: 'nginx-proxy-manager-{{ inventory_hostname }}'
-dockerServiceProxyImage: 'jc21/nginx-proxy-manager:2.11.1'
+dockerServiceProxyImage: 'jc21/nginx-proxy-manager:2'
 dockerServiceProxyPorts: ['80:80', '443:443', '81:81']
 dockerServiceProxyEnvVars: { TZ: 'Europe/Paris' }
 dockerServiceProxyNetworks:
