@@ -3,5 +3,6 @@
 logrotateConfigUri:
   [
     https://raw.githubusercontent.com/TituxMetal/cffa/main/logrotate/docker-container,
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/logrotate/fail2ban,
     https://raw.githubusercontent.com/TituxMetal/cffa/main/logrotate/nginx
   ]
