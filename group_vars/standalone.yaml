@@ -11,7 +11,7 @@ dockerServiceDefaultNetwork:
 
 # Docker Portainer Server service
 dockerServicePortainerServerContainerName: 'portainer-server-{{ inventory_hostname }}'
-dockerServicePortainerServerImage: 'portainer/portainer-ce:alpine-sts'
+dockerServicePortainerServerImage: 'portainer/portainer-ce:lts'
 dockerServicePortainerServerEnvVars: { TZ: 'Europe/Paris', AGENT_SECRET: 'portainer' }
 dockerServicePortainerServerPorts: ['9443:9443', '8000:8000']
 dockerServicePortainerServerNetworks:
@@ -29,7 +29,7 @@ dockerServicePortainerServerVolumes:
 
 # Docker service Portainer
 dockerServicePortainerContainerName: 'portainer-agent-{{ inventory_hostname }}'
-dockerServicePortainerImage: 'portainer/agent:alpine-sts'
+dockerServicePortainerImage: 'portainer/agent:lts'
 dockerServicePortainerPorts: '9001:9001'
 dockerServicePortainerCommand: '-H tcp://{{ inventory_hostname }}.lgdweb.ovh:9001 --tlsskipverify'
 dockerServicePortainerNetworks: [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
