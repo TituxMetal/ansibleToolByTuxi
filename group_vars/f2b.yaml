@@ -8,13 +8,13 @@ dockerServiceFail2banCapabilities: ['NET_ADMIN', 'NET_RAW']
 dockerServiceFail2banPrivileged: true
 dockerServiceFail2banNetworkMode: host
 dockerServiceFail2banVolumes:
-  ['/srv/fail2ban/data:/data', '/srv/logs:/srv/logs:ro', '/var/log:/var/log:ro']
+  ['/srv/fail2ban/data:/data', '/srv/logs:/srv/logs', '/var/log:/var/log:ro']
 dockerServiceFail2banEnvVars:
   {
     TZ: 'Europe/Paris',
-    F2B_LOG_TARGET: 'STDOUT',
+    F2B_LOG_TARGET: '/srv/logs/fail2ban/fail2ban.log',
     F2B_LOG_LEVEL: 'INFO',
-    F2B_ACTION: '%(action_mw)s',
+    F2B_ACTION: '%(action_mwl)s',
     F2B_DEST_EMAIL: '{{ vaultDockerServiceFail2banDestNotifEmail }}',
     SSMTP_HOST: 'mail.infomaniak.com',
     SSMTP_PORT: '587',
