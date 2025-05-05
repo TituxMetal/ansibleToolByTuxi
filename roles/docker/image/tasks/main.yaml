@@ -4,4 +4,5 @@
   community.docker.docker_image:
     name: '{{ projectAppImageName }}'
     source: pull
+    force_source: '{{ forcePull | default(false) }}'
   tags: [docker, pullImage]
