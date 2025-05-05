@@ -23,11 +23,10 @@
 
 - name: ROLLBACK EXIM | Check if exim4 service exists
   ansible.builtin.service_facts:
-  register: service_facts
 
 - name: ROLLBACK EXIM | Register exim4 service existence
-  set_fact:
-    exim4_exists: "{{ 'exim4' in service_facts.ansible_facts.services }}"
+  ansible.builtin.set_fact:
+    exim4_exists: "{{ 'exim4' in service_facts.services }}"
   failed_when: false
   changed_when: false
   tags: [rollback, exim, check-exim4]
