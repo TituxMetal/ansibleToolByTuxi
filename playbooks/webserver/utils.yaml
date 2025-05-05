@@ -19,7 +19,11 @@
       }
 
     # Pull Poratiner agent image
-    - { role: roles/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
+    - {
+        role: roles/docker/image,
+        projectAppImageName: '{{ dockerServicePortainerImage }}',
+        forcePull: true
+      }
 
     # Start Portainer agent docker container
     - {
@@ -52,6 +56,7 @@
     - role: roles/docker/image
       vars:
         projectAppImageName: '{{ dockerServicePortainerServerImage }}'
+        forcePull: true
       when: inventory_hostname in groups['master']
 
     # Start Portainer Server docker container
