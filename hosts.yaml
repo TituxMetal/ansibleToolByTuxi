@@ -12,14 +12,14 @@ all:
     laura:
       ansible_ssh_host: 107.155.122.53 # laura.lgdweb.ovh
       ansible_user: root
-    lisa:
-      ansible_ssh_host: 162.19.249.202 # lisa.lgdweb.ovh
-      ansible_user: debian
     mary:
       ansible_ssh_host: 208.87.129.64 # mary.lgdweb.ovh
       ansible_user: root
     # homer:
     #   ansible_ssh_host: 193.70.113.138 # homer.lgdweb.ovh
+    #   ansible_user: debian
+    # lisa:
+    #   ansible_ssh_host: 162.19.249.202 # lisa.lgdweb.ovh
     #   ansible_user: debian
     # maggie:
     #   ansible_ssh_host: 51.83.97.35 # maggie.lgdweb.ovh
@@ -34,9 +34,9 @@ all:
         andrew:
         bart:
         laura:
-        lisa:
         mary:
         # homer:
+        # lisa:
         # maggie:
         # marge:
     f2b:
@@ -45,9 +45,9 @@ all:
         andrew:
         bart:
         laura:
-        lisa:
         mary:
         # homer:
+        # lisa:
         # maggie:
         # marge:
     standalone:
@@ -56,9 +56,9 @@ all:
         andrew:
         bart:
         laura:
-        lisa:
         mary:
         # homer:
+        # lisa:
         # maggie:
         # marge:
     master:
