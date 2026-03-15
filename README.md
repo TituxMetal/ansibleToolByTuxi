@@ -43,10 +43,19 @@ sensible variables that must be encrypted, like root password or database passwo
 # **_/playbooks/_**
 
 This directory contains the playbooks for server installation, configuration and resets. Each
-playbook is in a directory that contains two main files:
+playbook is in a directory that contains a main playbook and its rollback counterpart:
 
-- one to do one or more things
-- one to undo these same things
+- **init/init.yaml** -- Initial server setup (apt repos, packages, firewall, users, SSH hardening,
+  timezone, hostname, logrotate, chrony, locales, exim, admin user)
+- **init/rollback.yaml** -- Undo all init operations
+- **init/clean-reset.yaml** -- Complete server reset (removes admin user and groups)
+- **docker/install.yaml** -- Docker installation (repository, GPG key, packages, firewall ports)
+- **docker/rollback.yaml** -- Complete Docker removal
+- **webserver/mainServices.yaml** -- Deploy main web services (Fail2ban container, firewall rules)
+- **webserver/rollback.yaml** -- Rollback main web services
+- **webserver/utils.yaml** -- Deploy utility services (Docker networks, Portainer, Nginx Proxy
+  Manager, main site container)
+- **webserver/rollbackUtils.yaml** -- Rollback utility services
 
 # **_/projects_**
 
@@ -82,10 +91,10 @@ These roles are used for:
 
 These roles are used for:
 
-- configure and run the Fail2ban service container
-- run the Letsencrypt service container
-- run the Mongo service container and optionnally create a user and a database for projects
-- run the Nginx proxy service container
+- create the service data structure (directories, config files) from a GitHub repository
+
+Note: Individual services (Fail2ban, Nginx Proxy Manager, Portainer) are deployed using the generic
+`docker/image` and `docker/container` roles with service-specific variables defined in group_vars.
 
 ## _**exim**_
 
@@ -105,11 +114,12 @@ These roles are used for:
 
 These roles are used for all the system configuration like:
 
-- hostname
-- locales
-- openNtp
-- ssh
-- timezone
+- chrony (time synchronization via NTP)
+- hostname (hostname and /etc/hosts configuration)
+- locales (system localization)
+- logrotate (log rotation for Docker, Fail2ban, Nginx)
+- sshConfig (SSH daemon hardening)
+- timezone (system timezone)
 
 ## _**users**_
 
@@ -146,10 +156,13 @@ These roles are used for:
 
 These roles are used for:
 
-- properly shut down the Fail2ban container and remove its image
-- properly shut down the Letsencrypt container and remove its image
-- properly shut down the Mongo container and remove its image
-- properly shut down the Nginx proxy container and remove its image
+- remove the service data structure (directories, config files)
+
+## _**exim**_
+
+These roles are used for:
+
+- reset exim configuration
 
 ## _**firewall**_
 
