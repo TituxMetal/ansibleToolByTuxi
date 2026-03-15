@@ -12,6 +12,17 @@
     # Create data structure for services
     - roles/dockerServices/dataStructure
 
+    # Pull msmtpd image
+    - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceMsmtpdImage }}' }
+
+    # Start msmtpd docker container (mail relay for Fail2ban)
+    - {
+        role: roles/docker/container,
+        projectAppContainerName: '{{ dockerServiceMsmtpdContainerName }}',
+        projectAppImageName: '{{ dockerServiceMsmtpdImage }}',
+        projectAppEnvVars: '{{ dockerServiceMsmtpdEnvVars }}'
+      }
+
     # Pull Fail2ban image
     - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
 
