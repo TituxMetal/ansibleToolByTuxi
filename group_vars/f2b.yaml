@@ -1,8 +1,24 @@
 # ansible_path/group_vars/f2b.yaml
 
+# Docker service msmtpd (mail relay sidecar for Fail2ban)
+dockerServiceMsmtpdContainerName: 'msmtpd-{{ inventory_hostname }}'
+dockerServiceMsmtpdImage: 'crazymax/msmtpd:latest'
+dockerServiceMsmtpdEnvVars:
+  {
+    TZ: 'Europe/Paris',
+    SMTP_HOST: 'mail.infomaniak.com',
+    SMTP_PORT: '587',
+    SMTP_TLS: 'on',
+    SMTP_STARTTLS: 'on',
+    SMTP_AUTH: 'on',
+    SMTP_USER: '{{ eximAccountEmail }}',
+    SMTP_PASSWORD: '{{ eximAccountPassword }}',
+    SMTP_DOMAIN: '{{ serverHostname }}.lgdweb.ovh'
+  }
+
 # Docker service Fail2ban
 dockerServiceFail2banContainerName: 'fail2ban-{{ inventory_hostname }}'
-dockerServiceFail2banImage: 'crazymax/fail2ban:1.0.1'
+dockerServiceFail2banImage: 'crazymax/fail2ban:1.1.0'
 dockerServiceFail2banDestNotifEmail: '{{ vaultDockerServiceFail2banDestNotifEmail }}'
 dockerServiceFail2banCapabilities: ['NET_ADMIN', 'NET_RAW']
 dockerServiceFail2banPrivileged: true
@@ -16,12 +32,5 @@ dockerServiceFail2banEnvVars:
     F2B_LOG_LEVEL: 'INFO',
     F2B_ACTION: '%(action_mwl)s',
     F2B_DEST_EMAIL: '{{ vaultDockerServiceFail2banDestNotifEmail }}',
-    SSMTP_HOST: 'mail.infomaniak.com',
-    SSMTP_PORT: '587',
-    SSMTP_USER: '{{ eximAccountEmail }}',
-    SSMTP_PASSWORD: '{{ eximAccountPassword }}',
-    SSMTP_HOSTNAME: '{{ serverHostname }}',
-    SSMTP_TLS: 'NO',
-    SSMTP_STARTTLS: 'YES',
     F2B_IPTABLES_CHAIN: 'INPUT'
   }
