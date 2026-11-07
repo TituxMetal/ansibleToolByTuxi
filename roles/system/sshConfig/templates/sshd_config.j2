@@ -4,7 +4,7 @@
 AllowUsers {{ sshAdminUserName }}
 
 # Network settings
-ListenAddress {{ ansible_default_ipv4.address }}
+ListenAddress {{ ansible_facts.default_ipv4.address }}
 
 # Security settings
 PermitRootLogin no
