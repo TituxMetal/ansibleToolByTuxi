@@ -50,7 +50,7 @@ dockerServicePortainerAgentFirewallPorts: [{ port: 9001, proto: 'tcp' }]
 
 # Docker service Nginx Proxy Manager
 dockerServiceProxyContainerName: 'nginx-proxy-manager-{{ inventory_hostname }}'
-dockerServiceProxyImage: 'jc21/nginx-proxy-manager:2'
+dockerServiceProxyImage: 'jc21/nginx-proxy-manager:2.16.0'
 dockerServiceProxyPorts: ['80:80', '443:443', '81:81']
 dockerServiceProxyEnvVars: { TZ: 'Europe/Paris' }
 dockerServiceProxyNetworks:
