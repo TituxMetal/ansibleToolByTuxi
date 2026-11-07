@@ -1,0 +1,45 @@
+# ansible_path/rollbacks/docker/data/tasks/main.yaml
+---
+- name: DOCKER ROLLBACK DATA | Check if the docker data directory exists
+  ansible.builtin.stat:
+    path: '{{ dockerDataDirectories[0] }}'
+  register: dockerDataDirectoryInfo
+  tags: [rollback, docker, data]
+
+- name: DOCKER ROLLBACK DATA | Stop containers and remove docker data
+  when:
+    - dockerRollbackPurgeData | bool
+    - dockerDataDirectoryInfo.stat.exists
+  tags: [rollback, docker, data]
+  block:
+    - name: DOCKER ROLLBACK DATA | Get the list of running docker containers
+      community.docker.docker_host_info:
+        containers: true
+      register: dockerHostInfo
+      failed_when: false
+      changed_when: false
+
+    - name: DOCKER ROLLBACK DATA | Stop running docker containers gracefully
+      community.docker.docker_container:
+        name: '{{ item.Id }}'
+        state: stopped
+        stop_timeout: '{{ dockerRollbackStopTimeout }}'
+      loop: '{{ dockerHostInfo.containers | default([]) }}'
+      loop_control:
+        label: '{{ item.Names | default([item.Id]) | first | regex_replace("^/", "") }}'
+      when: dockerHostInfo.can_talk_to_docker | default(false)
+
+    - name: DOCKER ROLLBACK DATA | Stop docker socket, docker and containerd services
+      ansible.builtin.systemd_service:
+        name: '{{ item }}'
+        state: stopped
+      loop: ['docker.socket', 'docker', 'containerd']
+      failed_when: false
+
+    - name: DOCKER ROLLBACK DATA | Remove docker data directory
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: absent
+      loop: '{{ dockerDataDirectories }}'
+      loop_control:
+        label: '{{ item }}'
