@@ -6,37 +6,37 @@ all:
     vm2:
       ansible_ssh_host: 192.168.100.11
       ansible_user: root
-    vm3:
-      ansible_ssh_host: 192.168.100.12
-      ansible_user: debian
-    vm4:
-      ansible_ssh_host: 192.168.100.13
-      ansible_user: root
-    homer:
-      ansible_ssh_host: 92.222.216.54 # homer.lgdweb.ovh
+    # vm3:
+    #   ansible_ssh_host: 192.168.100.12
+    #   ansible_user: debian
+    # vm4:
+    #   ansible_ssh_host: 192.168.100.13
+    #   ansible_user: root
+    marge:
+      ansible_ssh_host: 179.237.98.3 # marge.lgdweb.ovh
       ansible_user: debian
   children:
     docker:
       hosts:
         vm1:
         vm2:
-        vm3:
-        vm4:
-        homer:
+        # vm3:
+        # vm4:
+        marge:
     f2b:
       hosts:
         vm1:
         vm2:
-        vm3:
-        vm4:
-        homer:
+        # vm3:
+        # vm4:
+        marge:
     standalone:
       hosts:
         vm1:
         vm2:
-        vm3:
-        vm4:
-        homer:
+        # vm3:
+        # vm4:
+        marge:
     master:
       hosts:
-        vm1:
+        marge:
