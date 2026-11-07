@@ -18,25 +18,6 @@
         projectAppNetworkIpamConfig: '{{ dockerServiceDefaultNetwork.ipam_config }}'
       }
 
-    # Pull Poratiner agent image
-    - {
-        role: roles/docker/image,
-        projectAppImageName: '{{ dockerServicePortainerImage }}',
-        forcePull: true
-      }
-
-    # Start Portainer agent docker container
-    - {
-        role: roles/docker/container,
-        projectAppContainerName: '{{ dockerServicePortainerContainerName }}',
-        projectAppImageName: '{{ dockerServicePortainerImage }}',
-        projectAppPorts: '{{ dockerServicePortainerPorts }}',
-        projectAppVolumes: '{{ dockerServicePortainerVolumes }}',
-        projectAppNetworks: '{{ dockerServicePortainerNetworks }}',
-        projectAppEnvVars: '{{ dockerServicePortainerEnvVars }}',
-        projectAppRestartPolicy: 'always'
-      }
-
     # Pull Nginx Proxy Manager image
     - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceProxyImage }}' }
 
@@ -52,25 +33,6 @@
         projectAppRestartPolicy: 'always'
       }
 
-    # Pull Portainer Server image
-    - role: roles/docker/image
-      vars:
-        projectAppImageName: '{{ dockerServicePortainerServerImage }}'
-        forcePull: true
-      when: inventory_hostname in groups['master']
-
-    # Start Portainer Server docker container
-    - role: roles/docker/container
-      vars:
-        projectAppContainerName: '{{ dockerServicePortainerServerContainerName }}'
-        projectAppImageName: '{{ dockerServicePortainerServerImage }}'
-        projectAppVolumes: '{{ dockerServicePortainerServerVolumes }}'
-        projectAppEnvVars: '{{ dockerServicePortainerServerEnvVars }}'
-        projectAppPorts: '{{ dockerServicePortainerServerPorts }}'
-        projectAppNetworks: '{{ dockerServicePortainerServerNetworks }}'
-        projectAppRestartPolicy: 'always'
-      when: inventory_hostname in groups['master']
-
     # Pull Main Site image
     - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceMainSiteImage }}' }
 
@@ -81,12 +43,6 @@
         projectAppImageName: '{{ dockerServiceMainSiteImage }}',
         projectAppVolumes: '{{ dockerServiceMainSiteVolumes }}',
         projectAppNetworks: '{{ dockerServiceMainSiteNetworks }}'
-      }
-
-    # Allow portainer port in firewall
-    - {
-        role: roles/firewall/allow,
-        firewallPorts: '{{ dockerServicePortainerAgentFirewallPorts }}'
       }
 
     # Sending Notification email
