@@ -13,12 +13,8 @@
     # Remove Docker apt repository
     - { role: rollbacks/apt/repository, aptRepoName: '{{ dockerAptRepoName }}' }
 
-    # Remove Docker Gpg key
-    - {
-        role: rollbacks/apt/keys,
-        aptKeyUri: '{{ dockerAptKeyUri }}',
-        aptKeyId: '{{ dockerAptKeyId }}'
-      }
+    # Remove Docker Gpg keyring file
+    - { role: rollbacks/apt/keys, aptRepoName: '{{ dockerAptRepoName }}' }
 
     # Remove Docker group
     - { role: rollbacks/users/group, userGroup: docker }
