@@ -13,3 +13,9 @@ dockerPackages:
     'python3-docker'
   ]
 dockerAptKeyUri: https://download.docker.com/linux/debian/gpg
+
+# Docker rollback behaviour: when true, the rollback stops every running container and
+# removes /var/lib/docker and /var/lib/containerd (destructive: test hosts only).
+# This value is the default; playbooks/docker/rollback.yaml redeclares it in its play vars
+# so it can be switched per run without touching the command line.
+dockerRollbackPurgeData: false

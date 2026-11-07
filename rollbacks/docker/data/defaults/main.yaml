@@ -1,0 +1,4 @@
+# ansible_path/rollbacks/docker/data/defaults/main.yaml
+
+dockerDataDirectories: ['/var/lib/docker', '/var/lib/containerd']
+dockerRollbackStopTimeout: 30

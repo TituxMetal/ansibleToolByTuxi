@@ -6,7 +6,13 @@
   vars:
     dockerPorts:
       [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
+    # Switch to true to stop every container and remove /var/lib/docker and
+    # /var/lib/containerd (destructive: test hosts only). Default comes from group_vars/docker.yaml.
+    dockerRollbackPurgeData: false
   roles:
+    # Stop containers and remove docker data when dockerRollbackPurgeData is true
+    - role: rollbacks/docker/data
+
     # Remove Docker packages and dependencies
     - { role: rollbacks/apt/remove, aptPackages: '{{ dockerPackages }}' }
 
