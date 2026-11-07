@@ -15,6 +15,6 @@ systemAptPackages:
     'tzdata'
   ]
 
-utilsAptPackages: ['chrony', 'mailutils', 'bash-completion', 'vim', 'ufw', 'exim4']
+utilsAptPackages: ['chrony', 'mailutils', 'bash-completion', 'git', 'vim', 'ufw', 'exim4']
 
 defaultAptPackages: ['wget', 'duf', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
