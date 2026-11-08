@@ -40,6 +40,13 @@
     mode: '0755'
   tags: [dockerServices, dataStructure, git]
 
+- name: DOCKER SERVICE DATA STRUCTURE | Remove the obsolete Fail2Ban docker-action
+  become: true
+  ansible.builtin.file:
+    path: '{{ mainDataDirectory }}/fail2ban/data/action.d/docker-action.conf'
+    state: absent
+  tags: [dockerServices, dataStructure, fail2ban]
+
 - name:
     DOCKER SERVICE DATA STRUCTURE | Copy data directory structure for Nginx Proxy Manager service
     from {{ tempDataDirectory }}
