@@ -9,6 +9,8 @@
     mode: '0644'
     backup: true
     force: true
+  notify:
+    - Restart exim4
   tags: [exim, config, update-exim.conf]
 
 - name: EXIM CONFIG | Add passwd.client file
@@ -21,3 +23,16 @@
   notify:
     - Restart exim4
   tags: [exim, config, passwd.client]
+
+# rollbacks/exim/config stops and disables exim4; nothing used to bring it back
+# up. On a reinstalled host the notification handler never fires (passwd.client
+# content unchanged), so the MTA stayed dead and every Fail2ban mail action
+# failed with "sendmail: can't connect to remote host (127.0.0.1)".
+# state=started (not restarted) keeps this idempotent on hosts where the
+# service is already running, like mary.
+- name: EXIM CONFIG | Ensure exim4 service is started and enabled
+  ansible.builtin.service:
+    name: exim4
+    state: started
+    enabled: true
+  tags: [exim, config, exim-service]
