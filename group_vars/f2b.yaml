@@ -31,6 +31,5 @@ dockerServiceFail2banEnvVars:
     F2B_LOG_TARGET: '/srv/logs/fail2ban/fail2ban.log',
     F2B_LOG_LEVEL: 'INFO',
     F2B_ACTION: '%(action_mwl)s',
-    F2B_DEST_EMAIL: '{{ vaultDockerServiceFail2banDestNotifEmail }}',
-    F2B_IPTABLES_CHAIN: 'INPUT'
+    F2B_DEST_EMAIL: '{{ vaultDockerServiceFail2banDestNotifEmail }}'
   }
