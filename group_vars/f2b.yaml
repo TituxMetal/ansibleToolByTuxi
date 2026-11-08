@@ -1,20 +1,17 @@
 # ansible_path/group_vars/f2b.yaml
 
-# Docker service msmtpd (mail relay sidecar for Fail2ban)
+# Docker service msmtpd — LEGACY, no longer deployed by Ansible.
+# Mail notifications leave through the host MTA (exim4) on 127.0.0.1:25, which
+# `roles/exim/config` now starts and enables. The sidecar never worked for that:
+# it published no port at all (`PortBindings={}`), so it was unreachable from
+# the host-network Fail2ban container, and its healthcheck only proved it
+# listened on 2500 inside its own container.
+# These two variables survive solely because `playbooks/webserver/rollback.yaml`
+# uses them to remove the container and the image still present on already
+# deployed hosts. Keep the image tag as ':latest' on purpose: rollback must
+# target the reference actually on disk, not a pinned tag nothing ever ran.
 dockerServiceMsmtpdContainerName: 'msmtpd-{{ inventory_hostname }}'
 dockerServiceMsmtpdImage: 'crazymax/msmtpd:latest'
-dockerServiceMsmtpdEnvVars:
-  {
-    TZ: 'Europe/Paris',
-    SMTP_HOST: 'mail.infomaniak.com',
-    SMTP_PORT: '587',
-    SMTP_TLS: 'on',
-    SMTP_STARTTLS: 'on',
-    SMTP_AUTH: 'on',
-    SMTP_USER: '{{ eximAccountEmail }}',
-    SMTP_PASSWORD: '{{ eximAccountPassword }}',
-    SMTP_DOMAIN: '{{ serverHostname }}.lgdweb.ovh'
-  }
 
 # Docker service Fail2ban
 dockerServiceFail2banContainerName: 'fail2ban-{{ inventory_hostname }}'
