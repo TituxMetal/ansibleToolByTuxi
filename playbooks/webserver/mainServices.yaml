@@ -12,16 +12,10 @@
     # Create data structure for services
     - roles/dockerServices/dataStructure
 
-    # Pull msmtpd image
-    - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceMsmtpdImage }}' }
-
-    # Start msmtpd docker container (mail relay for Fail2ban)
-    - {
-        role: roles/docker/container,
-        projectAppContainerName: '{{ dockerServiceMsmtpdContainerName }}',
-        projectAppImageName: '{{ dockerServiceMsmtpdImage }}',
-        projectAppEnvVars: '{{ dockerServiceMsmtpdEnvVars }}'
-      }
+    # Mail notifications (Fail2ban actions and this playbook) use the host MTA
+    # on 127.0.0.1:25. The msmtpd sidecar is retired: it published no port and
+    # was therefore never reachable from the host-network Fail2ban container.
+    # `roles/exim/config` (init/init) owns starting and enabling exim4.
 
     # Pull Fail2ban image
     - { role: roles/docker/image, projectAppImageName: '{{ dockerServiceFail2banImage }}' }
