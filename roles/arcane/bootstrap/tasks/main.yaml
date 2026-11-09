@@ -1,0 +1,152 @@
+# ansible_path/roles/arcane/bootstrap/tasks/main.yaml
+---
+# The agent token is never written by hand and never stored in a var file: it is
+# read back from the running agent container, or obtained from the manager API
+# when it does not exist yet. The token is a secret, so every task that carries
+# it is `no_log`.
+#
+# In check mode no container is created, so there is nothing to pair: the API
+# tasks are skipped and `arcaneAgentToken` stays empty (the agent container task
+# is a no-op in check mode anyway).
+- name: ARCANE BOOTSTRAP | Reset the values resolved for this run
+  ansible.builtin.set_fact:
+    arcaneAgentToken: ''
+    arcaneAgentEnvironmentId: ''
+    arcaneExistingTokenLine: ''
+  no_log: true
+  tags: [arcane, bootstrap]
+
+# --- token already deployed on the host -----------------------------------
+- name: ARCANE BOOTSTRAP | Read the environment of the existing agent container
+  community.docker.docker_container_info:
+    name: '{{ dockerServiceArcaneAgentContainerName }}'
+  register: arcaneExistingAgent
+  failed_when: false
+  changed_when: false
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Look for an AGENT_TOKEN already set on the container
+  ansible.builtin.set_fact:
+    arcaneExistingTokenLine: >-
+      {{ (arcaneExistingAgent.container | default({}, true))
+         .get('Config', {}).get('Env', [])
+         | select('match', '^AGENT_TOKEN=') | list | first | default('') }}
+  no_log: true
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Reuse the token already deployed on this host
+  ansible.builtin.set_fact:
+    arcaneAgentToken: "{{ arcaneExistingTokenLine | regex_replace('^AGENT_TOKEN=', '') }}"
+  when: arcaneExistingTokenLine | length > 0
+  no_log: true
+  tags: [arcane, bootstrap]
+
+# --- environments known by the manager ------------------------------------
+- name: ARCANE BOOTSTRAP | List the environments known by the manager
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments'
+    method: GET
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+  register: arcaneEnvironmentList
+  delegate_to: localhost
+  changed_when: false
+  failed_when: false
+  retries: '{{ arcaneBootstrapRetries }}'
+  delay: '{{ arcaneBootstrapDelay }}'
+  # Retrying is only useful while the answer is meaningless. A 401/403 will
+  # never turn into a 200 by waiting; a 502 means Nginx Proxy Manager cannot
+  # reach the manager (wrong forward port, or the container is restarting).
+  until: arcaneEnvironmentList.status | default(0) in [200, 401, 403]
+  when: not ansible_check_mode
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Fail fast when the manager refuses the request
+  ansible.builtin.fail:
+    msg: >-
+      {{ arcaneManagerApiUrl }}/api/environments answered
+      {{ arcaneEnvironmentList.status | default('no status') }}
+      ({{ arcaneEnvironmentList.msg | default('no message') }}).
+      401 = the admin key is not accepted. Arcane only validates keys shaped
+      'arc_' + 64 hex chars; any other value is rejected at startup with
+      "Failed to reconcile default admin API key" in the manager logs.
+      502 = Nginx Proxy Manager cannot reach the manager: check the vhost
+      forward port (3552, not 3553).
+  when:
+    - not ansible_check_mode
+    - arcaneEnvironmentList.status | default(0) != 200
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Look for an environment named after this host
+  ansible.builtin.set_fact:
+    arcaneAgentEnvironmentId: >-
+      {{ (arcaneEnvironmentList.json.data | default([])
+         | selectattr('name', 'equalto', inventory_hostname) | list
+         | first | default({}, true)).get('id', '') }}
+  when: not ansible_check_mode
+  tags: [arcane, bootstrap]
+
+# --- create the environment when it does not exist ------------------------
+# The creation response is the only place the API returns the agent key
+# ("only shown once during creation"), hence `no_log` on this task.
+- name: ARCANE BOOTSTRAP | Create the environment for this host
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments'
+    method: POST
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+    body_format: json
+    body:
+      name: '{{ inventory_hostname }}'
+      apiUrl: '{{ arcaneAgentApiUrl }}'
+      isEdge: true
+      # Mandatory: Arcane only generates the pairing key when `useApiKey` is
+      # true (EnvironmentCreate, optional, defaults to false). Without it the
+      # environment is created with no access token and no `apiKey` in the
+      # response.
+      useApiKey: true
+    status_code: [200, 201]
+  register: arcaneEnvironmentCreated
+  delegate_to: localhost
+  when:
+    - not ansible_check_mode
+    - arcaneAgentEnvironmentId | length == 0
+  no_log: true
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Keep the environment id and key returned by the manager
+  ansible.builtin.set_fact:
+    arcaneAgentEnvironmentId: '{{ arcaneEnvironmentCreated.json.data.id }}'
+    arcaneAgentToken: '{{ arcaneEnvironmentCreated.json.data.apiKey }}'
+  when: arcaneEnvironmentCreated is not skipped
+  no_log: true
+  tags: [arcane, bootstrap]
+
+# --- rotate the token when the environment exists but the agent has none ---
+# Rotating a token requires the agent container to be recreated: this is
+# expected, and is the only reason a run reports `changed` on a settled host.
+- name: ARCANE BOOTSTRAP | Rotate the agent token of an existing environment
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments/{{ arcaneAgentEnvironmentId }}/agent/pair'
+    method: POST
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+    body_format: json
+    body:
+      rotate: true
+    status_code: [200, 201]
+  register: arcaneAgentPaired
+  delegate_to: localhost
+  when:
+    - not ansible_check_mode
+    - arcaneAgentEnvironmentId | length > 0
+    - arcaneAgentToken | length == 0
+  no_log: true
+  tags: [arcane, bootstrap]
+
+- name: ARCANE BOOTSTRAP | Keep the token returned by the pairing
+  ansible.builtin.set_fact:
+    arcaneAgentToken: '{{ arcaneAgentPaired.json.data.token }}'
+  when: arcaneAgentPaired is not skipped
+  no_log: true
+  tags: [arcane, bootstrap]

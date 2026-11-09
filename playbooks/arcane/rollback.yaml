@@ -1,0 +1,23 @@
+# ansible_path/playbooks/arcane/rollback.yaml
+---
+# Order matters: the environments are deleted while the manager still answers,
+# then the containers, then the images. Named volumes survive unless
+# `arcaneRollbackRemoveVolumes` is switched on (destructive, test hosts only).
+- name: ARCANE ROLLBACK | Uninstall Arcane
+  hosts: docker
+  gather_facts: false
+  vars:
+    # Switch to true to also drop the manager database and the agent identity.
+    arcaneRollbackRemoveVolumes: false
+  roles:
+    # Delete the environment of this host from the manager
+    - role: rollbacks/arcane/environment
+      tags: [rollback, arcane, environment]
+
+    # Stop and remove the agent and manager containers
+    - role: rollbacks/arcane/container
+      tags: [rollback, arcane, container]
+
+    # Remove the pinned images
+    - role: rollbacks/arcane/image
+      tags: [rollback, arcane, image]

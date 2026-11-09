@@ -1,0 +1,42 @@
+# ansible_path/rollbacks/arcane/environment/tasks/main.yaml
+---
+# The environment must be removed while the manager is still alive: it owns the
+# agent token of this host. Idempotent by construction, the environment is
+# looked up by name and a 404 on deletion is accepted.
+- name: ROLLBACK ARCANE ENVIRONMENT | List the environments known by the manager
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments'
+    method: GET
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+    status_code: 200
+  register: arcaneRollbackEnvironmentList
+  delegate_to: localhost
+  changed_when: false
+  failed_when: false
+  when: not ansible_check_mode
+  tags: [rollback, arcane, environment]
+
+- name: ROLLBACK ARCANE ENVIRONMENT | Look for the environment named after this host
+  ansible.builtin.set_fact:
+    arcaneRollbackEnvironmentId: >-
+      {{ (arcaneRollbackEnvironmentList.json.data | default([])
+         | selectattr('name', 'equalto', inventory_hostname) | list
+         | first | default({}, true)).get('id', '') }}
+  when:
+    - not ansible_check_mode
+    - arcaneRollbackEnvironmentList.json is defined
+  tags: [rollback, arcane, environment]
+
+- name: ROLLBACK ARCANE ENVIRONMENT | Remove the environment {{ inventory_hostname }}
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments/{{ arcaneRollbackEnvironmentId }}'
+    method: DELETE
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+    status_code: [200, 202, 204, 404]
+  delegate_to: localhost
+  when:
+    - not ansible_check_mode
+    - arcaneRollbackEnvironmentId | default('') | length > 0
+  tags: [rollback, arcane, environment]

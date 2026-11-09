@@ -1,0 +1,12 @@
+# ansible_path/roles/arcane/bootstrap/defaults/main.yaml
+
+# Address handed to the manager when the environment is created. For an edge
+# agent the transport is outbound (`EDGE_TRANSPORT=poll`), so this value is
+# informational; it is still written as the inventory address rather than a
+# resolvable name, because `vm1`/`vm2` are not resolvable from the manager host.
+arcaneAgentApiUrl: >-
+  http://{{ hostvars[inventory_hostname].ansible_ssh_host | default(inventory_hostname) }}:3553
+
+# Retries while the manager API answers 5xx right after its first start.
+arcaneBootstrapRetries: 12
+arcaneBootstrapDelay: 5

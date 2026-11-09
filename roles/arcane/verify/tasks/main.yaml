@@ -1,0 +1,29 @@
+# ansible_path/roles/arcane/verify/tasks/main.yaml
+---
+# The environment is `connected` only once the agent has polled the manager. The
+# endpoint carries no secret: `GET /api/environments` never returns `apiKey`.
+- name: ARCANE VERIFY | Wait for the environment {{ inventory_hostname }} to be connected
+  ansible.builtin.uri:
+    url: '{{ arcaneManagerApiUrl }}/api/environments/{{ arcaneAgentEnvironmentId }}'
+    method: GET
+    headers:
+      X-API-Key: '{{ arcaneAdminApiKey }}'
+    status_code: 200
+  register: arcaneEnvironmentState
+  delegate_to: localhost
+  changed_when: false
+  retries: '{{ arcaneVerifyRetries }}'
+  delay: '{{ arcaneVerifyDelay }}'
+  until: arcaneEnvironmentState.json.data.connected | default(false) | bool
+  when:
+    - not ansible_check_mode
+    - arcaneAgentEnvironmentId | length > 0
+  tags: [arcane, verify]
+
+- name: ARCANE VERIFY | Report the environment state
+  ansible.builtin.debug:
+    msg: >-
+      {{ inventory_hostname }}: connected={{ arcaneEnvironmentState.json.data.connected | default(false) }}
+      status={{ arcaneEnvironmentState.json.data.status | default('unknown') }}
+  when: arcaneEnvironmentState is not skipped
+  tags: [arcane, verify]
