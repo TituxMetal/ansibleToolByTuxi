@@ -1,0 +1,78 @@
+# ansible_path/playbooks/arcane/install.yaml
+---
+# One playbook, one play: the manager and every agent are deployed by the same
+# command. Task order guarantees the manager answers before any environment is
+# created; the `when` restrictions narrow execution, they do not reorder tasks.
+#
+# Rule: `Arcane` is deployed by the generic roles (no compose file in Ansible),
+# the token is fetched from the manager API at run time (never entered by hand),
+# and the manager publishes no port (Nginx Proxy Manager is its only entry).
+- name: ARCANE INSTALL | Install the manager and the agents
+  hosts: docker
+  gather_facts: false
+  vars:
+    eximDestEmail: me@lgdweb.fr
+    eximEmailSubject: 'Ansible arcane install task done on server'
+    eximEmailBody: 'All Arcane install tasks are done successfully'
+  roles:
+    # Create default network if it does not exist yet
+    - role: roles/docker/network
+      projectAppNetworkName: '{{ dockerServiceDefaultNetwork.name }}'
+      projectAppNetworkIpamConfig: '{{ dockerServiceDefaultNetwork.ipam_config }}'
+      tags: [arcane, network]
+
+    # ------------------------------------------------------------------
+    # Manager — hosts of the `master` group only
+    # ------------------------------------------------------------------
+    - role: roles/docker/image
+      projectAppImageName: '{{ dockerServiceArcaneServerImage }}'
+      when: inventory_hostname == arcaneMasterHost
+      tags: [arcane, arcaneServer]
+
+    - role: roles/docker/container
+      projectAppContainerName: '{{ dockerServiceArcaneServerContainerName }}'
+      projectAppImageName: '{{ dockerServiceArcaneServerImage }}'
+      projectAppEnvVars: '{{ dockerServiceArcaneServerEnvVars }}'
+      projectAppVolumes: '{{ dockerServiceArcaneServerVolumes }}'
+      projectAppNetworks: '{{ dockerServiceArcaneServerNetworks }}'
+      projectAppPorts: '{{ dockerServiceArcaneServerPorts }}'
+      projectAppRestartPolicy: 'always'
+      when: inventory_hostname == arcaneMasterHost
+      # The env carries ENCRYPTION_KEY and ADMIN_STATIC_API_KEY: never printed.
+      no_log: true
+      tags: [arcane, arcaneServer]
+
+    # Wait for /api/health before touching the API
+    - role: roles/arcane/health
+      when: inventory_hostname == arcaneMasterHost
+      tags: [arcane, arcaneServer]
+
+    # ------------------------------------------------------------------
+    # Agents — every docker host, master included
+    # ------------------------------------------------------------------
+    # Resolves `arcaneAgentToken` per host: reused from the running container,
+    # or created / rotated through the API. The token never leaves the run.
+    - role: roles/arcane/bootstrap
+      tags: [arcane, arcaneAgent]
+
+    - role: roles/docker/image
+      projectAppImageName: '{{ dockerServiceArcaneAgentImage }}'
+      tags: [arcane, arcaneAgent]
+
+    - role: roles/docker/container
+      projectAppContainerName: '{{ dockerServiceArcaneAgentContainerName }}'
+      projectAppImageName: '{{ dockerServiceArcaneAgentImage }}'
+      projectAppEnvVars: '{{ dockerServiceArcaneAgentEnvVars | combine({"AGENT_TOKEN": arcaneAgentToken}) }}'
+      projectAppVolumes: '{{ dockerServiceArcaneAgentVolumes }}'
+      projectAppNetworks: '{{ dockerServiceArcaneAgentNetworks }}'
+      projectAppRestartPolicy: 'always'
+      no_log: true
+      tags: [arcane, arcaneAgent]
+
+    # Wait for the environment to be reported `connected`
+    - role: roles/arcane/verify
+      tags: [arcane, arcaneVerify]
+
+    # Sending Notification email
+    - role: roles/exim/sendemail
+      tags: [exim, sendemail]

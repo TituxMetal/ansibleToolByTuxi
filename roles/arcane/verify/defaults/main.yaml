@@ -1,0 +1,5 @@
+# ansible_path/roles/arcane/verify/defaults/main.yaml
+
+# The agent polls the manager; a freshly started agent shows up within seconds.
+arcaneVerifyRetries: 30
+arcaneVerifyDelay: 5

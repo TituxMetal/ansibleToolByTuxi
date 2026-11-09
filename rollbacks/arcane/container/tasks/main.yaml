@@ -1,0 +1,22 @@
+# ansible_path/rollbacks/arcane/container/tasks/main.yaml
+---
+- name: ROLLBACK ARCANE CONTAINER | Stop and remove the Arcane containers
+  community.docker.docker_container:
+    name: '{{ item }}'
+    state: absent
+    container_default_behavior: compatibility
+    networks: []
+  loop: '{{ arcaneRollbackContainerNames }}'
+  loop_control:
+    label: '{{ item }}'
+  tags: [rollback, arcane, stopContainer]
+
+- name: ROLLBACK ARCANE CONTAINER | Remove the Arcane named volumes
+  community.docker.docker_volume:
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ arcaneRollbackVolumeNames }}'
+  loop_control:
+    label: '{{ item }}'
+  when: arcaneRollbackRemoveVolumes | bool
+  tags: [rollback, arcane, removeVolume]

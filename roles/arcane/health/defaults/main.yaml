@@ -1,0 +1,6 @@
+# ansible_path/roles/arcane/health/defaults/main.yaml
+
+# The manager also serves the UI, its migrations run at startup. On a witness
+# 30 x 5 s is generous; the first run on a slow host may need more.
+arcaneHealthRetries: 30
+arcaneHealthDelay: 5

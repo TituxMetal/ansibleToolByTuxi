@@ -1,0 +1,42 @@
+# ansible_path/roles/arcane/health/tasks/main.yaml
+---
+# The manager publishes no port, so its API is reached on its `default-nw`
+# address from the host itself. These tasks are read-only, but they only make
+# sense once the container has been created — which check mode never does — so
+# they are skipped there instead of waiting for a container that cannot appear.
+- name: ARCANE HEALTH | Wait for the manager container to be running
+  community.docker.docker_container_info:
+    name: '{{ dockerServiceArcaneServerContainerName }}'
+  register: arcaneManagerInfo
+  until:
+    - arcaneManagerInfo.container | default({}) | length > 0
+    - arcaneManagerInfo.container.State.Running | default(false)
+  retries: '{{ arcaneHealthRetries }}'
+  delay: '{{ arcaneHealthDelay }}'
+  changed_when: false
+  when: not ansible_check_mode
+  tags: [arcane, arcaneServer, health]
+
+- name: ARCANE HEALTH | Resolve the manager address on its docker network
+  ansible.builtin.set_fact:
+    arcaneManagerContainerIp: >-
+      {{ ((arcaneManagerInfo.container.NetworkSettings.Networks | default({}) | dict2items)
+          | selectattr('key', 'equalto', dockerServiceDefaultNetwork.name) | list
+          | first | default({'value': {'IPAddress': ''}})).value.IPAddress }}
+  when: not ansible_check_mode
+  tags: [arcane, arcaneServer, health]
+
+- name: ARCANE HEALTH | Wait for the manager API to answer /api/health
+  ansible.builtin.uri:
+    url: 'http://{{ arcaneManagerContainerIp }}:3552/api/health'
+    method: GET
+    status_code: 200
+  register: arcaneManagerHealth
+  until:
+    - arcaneManagerContainerIp | length > 0
+    - arcaneManagerHealth.status | default(0) == 200
+  retries: '{{ arcaneHealthRetries }}'
+  delay: '{{ arcaneHealthDelay }}'
+  changed_when: false
+  when: not ansible_check_mode
+  tags: [arcane, arcaneServer, health]
