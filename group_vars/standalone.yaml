@@ -1,4 +1,4 @@
-# ansible_path/group_vars/portainer.yaml
+# ansible_path/group_vars/standalone.yaml
 
 dockerServiceStandaloneNetwork: 'reverse-proxy-nw'
 # dockerServicePortainerNetwork: 'portainer_default'
@@ -79,3 +79,68 @@ dockerServiceMainSiteVolumes:
     '/etc/localtime:/etc/localtime:ro',
     '/etc/timezone:/etc/timezone:ro'
   ]
+
+# ---------------------------------------------------------------------------
+# Docker service Arcane — replaces Portainer as the Docker management UI.
+# `ansible` is the source of truth; `server-lab-docker-infra` and
+# `docker-data-server-infra` keep an equivalent compose file as a fallback.
+# ---------------------------------------------------------------------------
+
+# The master host runs the manager, every docker host runs an agent.
+# The manager publishes NO port: Nginx Proxy Manager is its only entry point
+# (both containers sit on `default-nw`).
+arcaneMasterHost: "{{ (groups['master'] | default([inventory_hostname]))[0] }}"
+
+# The API is only reached through the master, so its URL and the admin API key
+# are read from the master vault whatever host is being deployed. This keeps
+# the admin key off the witness hosts. Override with
+# `-e arcaneManagerApiUrl=http://<container ip>:3552` to bootstrap a manager
+# that is not published in Nginx Proxy Manager yet.
+arcaneManagerApiUrl: '{{ hostvars[arcaneMasterHost].vaultArcaneManagerApiUrl }}'
+arcaneAdminApiKey: '{{ hostvars[arcaneMasterHost].vaultArcaneAdminApiKey }}'
+
+# Docker service Arcane (manager) — hosts of the `master` group only
+dockerServiceArcaneServerContainerName: 'arcane-manager-{{ inventory_hostname }}'
+dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v2.17.3'
+dockerServiceArcaneServerPorts: []
+dockerServiceArcaneServerNetworks:
+  [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
+dockerServiceArcaneServerVolumes:
+  [
+    '/var/run/docker.sock:/var/run/docker.sock',
+    'arcane-manager-data-{{ inventory_hostname }}:/app/data'
+  ]
+# PROJECTS_DIRECTORY is deliberately unset: Arcane falls back to its own default
+# inside /app/data. No bind mount, no `file` task, no dedicated git repository.
+dockerServiceArcaneServerEnvVars:
+  TZ: 'Europe/Paris'
+  APP_URL: '{{ vaultArcaneServerUrl }}'
+  PUID: '1000'
+  PGID: '1000'
+  ENCRYPTION_KEY: '{{ vaultArcaneEncryptionKey }}'
+  ADMIN_STATIC_API_KEY: '{{ vaultArcaneAdminApiKey }}'
+  # Nginx Proxy Manager is the only client of the API: trust it and only it, so
+  # Arcane logs the real client IP. 192.168.10.0/26 is the iprange of
+  # `default-nw`, i.e. the range docker allocates container addresses from.
+  TRUSTED_PROXIES: '192.168.10.0/26'
+
+# Docker service Arcane (agent) — every docker host
+dockerServiceArcaneAgentContainerName: 'arcane-agent-{{ inventory_hostname }}'
+dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v2.17.3'
+dockerServiceArcaneAgentVolumes:
+  [
+    '/var/run/docker.sock:/var/run/docker.sock',
+    'arcane-agent-data-{{ inventory_hostname }}:/app/data'
+  ]
+dockerServiceArcaneAgentNetworks:
+  [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
+# AGENT_TOKEN is NOT set here on purpose: it is obtained from the manager API at
+# runtime by `roles/arcane/bootstrap` and merged into the container env by
+# `playbooks/arcane/install.yaml`. The token is never written to a var file.
+dockerServiceArcaneAgentEnvVars:
+  TZ: 'Europe/Paris'
+  MANAGER_API_URL: '{{ arcaneManagerApiUrl }}'
+  EDGE_AGENT: 'true'
+  EDGE_TRANSPORT: 'poll'
+  AGENT_MODE: 'true'
+  PORT: '3553'
