@@ -4,8 +4,10 @@
   hosts: docker
   become: true
   vars:
-    dockerPorts:
-      [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
+    # No port to open for Docker itself: the Swarm trio (2377/tcp, 7946 any,
+    # 4789/udp) was opened on every host while Swarm is not in use anywhere
+    # (`Swarm: inactive`, no listener). Published container ports are handled by
+    # the DNAT rules, not by ufw. Leftover rules are removed by docker/rollback.
     aptRepoName: '{{ dockerAptRepoName }}'
     eximDestEmail: me@lgdweb.fr
     eximEmailSubject: 'Ansible docker install task done on server'
@@ -22,9 +24,6 @@
 
     # Add admin user to Docker group
     - { role: roles/users/addUserToGroups, userName: '{{ sshAdminUserName }}', userGroups: docker }
-
-    # Allow ports in firewall
-    - { role: roles/firewall/allow, firewallPorts: '{{ dockerPorts }}' }
 
     # Sending Notification email
     - roles/exim/sendemail
