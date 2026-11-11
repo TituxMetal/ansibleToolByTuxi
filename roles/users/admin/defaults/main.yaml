@@ -1,6 +1,6 @@
 # ansible_path/roles/users/admin/defaults/main.yaml
 
-bashrcUri: https://raw.githubusercontent.com/TituxMetal/cffa/master/user/.bashrc
+bashrcUri: https://raw.githubusercontent.com/TituxMetal/cffa/main/user/.bashrc
 userName: root
 userGroup: root
 userHome: "/root"
