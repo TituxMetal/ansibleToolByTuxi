@@ -4,6 +4,9 @@
   hosts: docker
   become: true
   vars:
+    # Legacy cleanup only: these three Swarm ports were opened on every host by
+    # older versions of docker/install. install.yaml no longer opens them, so
+    # keeping the deny here is what actually strips the leftover rules.
     dockerPorts:
       [{ port: 2377, proto: 'tcp' }, { port: 7946, proto: 'any' }, { port: 4789, proto: 'udp' }]
     # Switch to true to stop every container and remove /var/lib/docker and
