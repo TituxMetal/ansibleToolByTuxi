@@ -17,13 +17,11 @@
     - role: rollbacks/docker/container
       vars:
         projectAppContainerName: '{{ dockerServicePortainerServerContainerName }}'
-      when: inventory_hostname in groups['master']
 
     # Clean portainer server docker image
     - role: rollbacks/docker/image
       vars:
         projectAppImageName: '{{ dockerServicePortainerServerImage }}'
-      when: inventory_hostname in groups['master']
 
     # Stop Nginx Proxy Manager docker container
     - {
