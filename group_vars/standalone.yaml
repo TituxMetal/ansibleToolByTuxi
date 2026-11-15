@@ -9,6 +9,11 @@ dockerServiceDefaultNetwork:
       [{ subnet: '192.168.10.0/24', gateway: '192.168.10.1', iprange: '192.168.10.0/26' }]
   }
 
+# Network rollback behaviour. Not an alias of `rollbackPurgeData`: a network
+# holds no data, but removing a network that still carries a container started
+# outside Ansible disconnects it from its peers. Opt-in.
+dockerRollbackRemoveNetworks: false
+
 # Legacy Portainer variables: kept because playbooks/webserver/rollbackUtils.yaml uses them
 # to stop and remove Portainer containers and images still present on existing hosts.
 # No Portainer service is deployed anymore.

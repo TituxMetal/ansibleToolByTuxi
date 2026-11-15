@@ -1,8 +1,13 @@
 # ansible_path/rollbacks/docker/network/tasks/main.yaml
 ---
+# `force: true` disconnects every container still attached to the network,
+# including the ones no playbook created: they lose the network's name
+# resolution and can no longer reach their peers. Hence a switch of its own,
+# false by default, and not an alias of `rollbackPurgeData`.
 - name: DOCKER NETWORK ROLLBACK | Delete docker network and disconnect all containers
   community.docker.docker_network:
     name: '{{ projectAppNetworkName }}'
     state: absent
     force: true
+  when: dockerRollbackRemoveNetworks | bool
   tags: [docker, networkDelete]

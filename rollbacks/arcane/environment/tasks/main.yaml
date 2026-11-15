@@ -39,4 +39,8 @@
   when:
     - not ansible_check_mode
     - arcaneRollbackEnvironmentId | default('') | length > 0
+    # Deleting the environment drops the registration of this host against the
+    # manager: the projects keep their data, they lose their attachment. That is
+    # destructive, so it follows the same switch as the volumes.
+    - rollbackPurgeData | bool
   tags: [rollback, arcane, environment]
