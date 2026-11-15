@@ -16,6 +16,17 @@
   when: not fileExists.stat.exists
   tags: [system, ssh, ssh-config, backup-config, copy-config-file]
 
+# Without this Include, /etc/ssh/sshd_config.d/ is decorative: the drop-in
+# written below is never read. Debian ships the directive, a hand-edited
+# sshd_config may not.
+- name: SYSTEM SSHCONFIG | Make sure the drop-in directory is included
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Include\s+/etc/ssh/sshd_config\.d/\*\.conf$'
+    line: 'Include /etc/ssh/sshd_config.d/*.conf'
+    insertbefore: BOF
+  tags: [system, ssh, ssh-config, include-dropin]
+
 - name: SYSTEM SSHCONFIG | Apply sshd config template
   ansible.builtin.template:
     src: sshd_config.j2
@@ -33,3 +44,43 @@
     key: '{{ item }}'
   with_items: '{{ sshAuthorizedKeys }}'
   tags: [system, ssh, ssh-config, ssh-authorizedKeys]
+
+# `notify` fires at the end of the play: a failure in a later role would leave
+# the file on disk and sshd running the previous configuration. Validate the
+# whole configuration, then apply it now, once the admin key is in place.
+- name: SYSTEM SSHCONFIG | Validate the resulting sshd configuration
+  ansible.builtin.command:
+    cmd: sshd -t -f /etc/ssh/sshd_config
+  changed_when: false
+  register: sshdConfigTest
+  tags: [system, ssh, ssh-config, validate-config]
+
+- name: SYSTEM SSHCONFIG | Apply the sshd configuration right away
+  ansible.builtin.meta: flush_handlers
+  tags: [system, ssh, ssh-config, validate-config]
+
+# `init/rollback` writes a root key to open the factory window. Once the admin
+# user has its own key and the new configuration is valid, it has no reason to
+# stay: root must not be reachable over SSH.
+- name: SYSTEM SSHCONFIG | Check the ansible drop-in file
+  ansible.builtin.stat:
+    path: /etc/ssh/sshd_config.d/ansible.conf
+  register: sshdDropIn
+  tags: [system, ssh, ssh-config, remove-root-key]
+
+- name: SYSTEM SSHCONFIG | Check the admin user authorized_keys file
+  ansible.builtin.stat:
+    path: '/home/{{ sshAdminUserName }}/.ssh/authorized_keys'
+  register: adminAuthorizedKeys
+  tags: [system, ssh, ssh-config, remove-root-key]
+
+- name: SYSTEM SSHCONFIG | Remove the root authorized_keys file
+  ansible.builtin.file:
+    path: /root/.ssh/authorized_keys
+    state: absent
+  when:
+    - sshdDropIn.stat.exists
+    - adminAuthorizedKeys.stat.exists
+    - adminAuthorizedKeys.stat.size | default(0) > 0
+    - sshdConfigTest.rc | default(1) == 0
+  tags: [system, ssh, ssh-config, remove-root-key]
