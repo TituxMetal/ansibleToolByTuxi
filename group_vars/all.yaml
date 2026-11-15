@@ -18,3 +18,13 @@ systemAptPackages:
 utilsAptPackages: ['chrony', 'mailutils', 'bash-completion', 'git', 'vim', 'ufw', 'exim4']
 
 defaultAptPackages: ['wget', 'duf', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
+
+# Rollback behaviour, single switch.
+#
+# false (default): a rollback removes the containers, the images and, when
+# explicitly asked, the networks. It keeps the host state an install needs to
+# come back alive: /srv (proxy configuration and TLS material, ban database and
+# logs), the manager environments and the named volumes.
+# true: destructive, reserved for throwaway hosts and for a disk about to be
+# wiped. The named volumes follow the same switch.
+rollbackPurgeData: false

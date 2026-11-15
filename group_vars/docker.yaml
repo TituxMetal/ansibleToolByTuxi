@@ -14,8 +14,13 @@ dockerPackages:
   ]
 dockerAptKeyUri: https://download.docker.com/linux/debian/gpg
 
-# Docker rollback behaviour: when true, the rollback stops every running container and
-# removes /var/lib/docker and /var/lib/containerd (destructive: test hosts only).
-# This value is the default; playbooks/docker/rollback.yaml redeclares it in its play vars
-# so it can be switched per run without touching the command line.
-dockerRollbackPurgeData: false
+# Rollback switches for the docker objects. Both are aliases of the single
+# `rollbackPurgeData` decision, defined in group_vars/all.yaml: the decision is
+# taken in one place, the roles keep their own variable names.
+#
+# dockerRollbackPurgeData: stop every container, then remove /var/lib/docker
+# and /var/lib/containerd.
+# dockerRollbackRemoveVolumes: remove the named volumes handed to
+# rollbacks/docker/volume.
+dockerRollbackPurgeData: '{{ rollbackPurgeData }}'
+dockerRollbackRemoveVolumes: '{{ rollbackPurgeData }}'

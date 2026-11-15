@@ -1,3 +1,11 @@
 # ansible_path/rollbacks/dockerServices/dataStructure/defaults/main.yaml
 
 mainDataDirectory: '/srv'
+
+# Files under `mainDataDirectory` that a rollback must leave in place. They hold
+# the proxy configuration with its TLS material, and the ban database: without
+# them the next install starts from an empty state and the hostname stops
+# answering with its certificate.
+dataStructureProtectedFiles:
+  - 'nginx-proxy-manager/data/database.sqlite'
+  - 'fail2ban/data/db/fail2ban.sqlite3'
