@@ -15,7 +15,10 @@ X11Forwarding no
 PrintMotd no
 UsePAM no
 Protocol 2
-AllowTcpForwarding no
+# Local forwarding only: reaching the proxy admin interface on 127.0.0.1:81
+# goes through `ssh -L`, and a jump host needs local forwarding too. Remote and
+# dynamic forwarding stay closed.
+AllowTcpForwarding local
 MaxAuthTries 3
 PermitEmptyPasswords no
 ClientAliveInterval 300
