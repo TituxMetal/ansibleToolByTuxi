@@ -1,4 +1,0 @@
-# ansible_path/rollbacks/arcane/image/defaults/main.yaml
-
-arcaneRollbackImages:
-  ['ghcr.io/getarcaneapp/agent:v2.17.3', 'ghcr.io/getarcaneapp/manager:v2.17.3']
