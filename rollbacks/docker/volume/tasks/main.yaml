@@ -1,0 +1,13 @@
+# ansible_path/rollbacks/docker/volume/tasks/main.yaml
+---
+# Same switch name and same `loop` shape as `rollbacks/docker/container`: one
+# primitive per docker object, every playbook passes its own names.
+- name: DOCKER ROLLBACK VOLUME | Remove the named volumes
+  community.docker.docker_volume:
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ dockerRollbackVolumeNames }}'
+  loop_control:
+    label: '{{ item }}'
+  when: dockerRollbackRemoveVolumes | bool
+  tags: [rollback, docker, removeVolume]

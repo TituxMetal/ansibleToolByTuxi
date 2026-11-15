@@ -105,10 +105,14 @@ dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v2.17.3'
 dockerServiceArcaneServerPorts: []
 dockerServiceArcaneServerNetworks:
   [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
+# Named volume holding the manager database (users, settings, environments).
+# Declared on its own so the rollback removes the very volume the install
+# creates, instead of repeating the name in a second place.
+dockerServiceArcaneServerDataVolumeName: 'arcane-manager-data-{{ inventory_hostname }}'
 dockerServiceArcaneServerVolumes:
   [
     '/var/run/docker.sock:/var/run/docker.sock',
-    'arcane-manager-data-{{ inventory_hostname }}:/app/data'
+    '{{ dockerServiceArcaneServerDataVolumeName }}:/app/data'
   ]
 # PROJECTS_DIRECTORY is deliberately unset: Arcane falls back to its own default
 # inside /app/data. No bind mount, no `file` task, no dedicated git repository.
@@ -127,10 +131,13 @@ dockerServiceArcaneServerEnvVars:
 # Docker service Arcane (agent) — every docker host
 dockerServiceArcaneAgentContainerName: 'arcane-agent-{{ inventory_hostname }}'
 dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v2.17.3'
+# Named volume holding the agent identity and the projects themselves, which is
+# why it is the one that actually matters on a host carrying Arcane projects.
+dockerServiceArcaneAgentDataVolumeName: 'arcane-agent-data-{{ inventory_hostname }}'
 dockerServiceArcaneAgentVolumes:
   [
     '/var/run/docker.sock:/var/run/docker.sock',
-    'arcane-agent-data-{{ inventory_hostname }}:/app/data'
+    '{{ dockerServiceArcaneAgentDataVolumeName }}:/app/data'
   ]
 dockerServiceArcaneAgentNetworks:
   [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]

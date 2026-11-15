@@ -1,0 +1,8 @@
+# ansible_path/rollbacks/docker/volume/defaults/main.yaml
+
+# Named volumes to remove. Empty by default: the caller decides which volumes it
+# owns, a rollback never guesses a name.
+dockerRollbackVolumeNames: []
+# Removing a named volume destroys the data it holds. Opt-in only: bound to the
+# single `rollbackPurgeData` decision in group_vars/docker.yaml.
+dockerRollbackRemoveVolumes: false

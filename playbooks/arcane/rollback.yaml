@@ -1,23 +1,40 @@
 # ansible_path/playbooks/arcane/rollback.yaml
 ---
-# Order matters: the environments are deleted while the manager still answers,
-# then the containers, then the images. Named volumes survive unless
-# `arcaneRollbackRemoveVolumes` is switched on (destructive, test hosts only).
+# Order matters: the environment is unregistered while the manager still
+# answers, then the containers, then the volumes and the images.
+#
+# Containers, volumes and images are the generic docker objects: they are
+# removed by the `rollbacks/docker/*` roles, with the same names
+# `playbooks/arcane/install.yaml` uses to create them. The environment is the
+# only part that talks to the Arcane API.
 - name: ARCANE ROLLBACK | Uninstall Arcane
   hosts: docker
   gather_facts: false
-  vars:
-    # Switch to true to also drop the manager database and the agent identity.
-    arcaneRollbackRemoveVolumes: false
   roles:
-    # Delete the environment of this host from the manager
+    # Unregister the environment of this host from the manager
     - role: rollbacks/arcane/environment
-      tags: [rollback, arcane, environment]
 
-    # Stop and remove the agent and manager containers
-    - role: rollbacks/arcane/container
-      tags: [rollback, arcane, container]
+    # The agent first, the manager it depends on second
+    - role: rollbacks/docker/container
+      vars:
+        projectAppContainerName: '{{ dockerServiceArcaneAgentContainerName }}'
 
-    # Remove the pinned images
-    - role: rollbacks/arcane/image
-      tags: [rollback, arcane, image]
+    - role: rollbacks/docker/container
+      vars:
+        projectAppContainerName: '{{ dockerServiceArcaneServerContainerName }}'
+
+    # The agent volume carries the projects, the manager volume the users and
+    # the environments. Both follow `rollbackPurgeData`.
+    - role: rollbacks/docker/volume
+      vars:
+        dockerRollbackVolumeNames:
+          - '{{ dockerServiceArcaneAgentDataVolumeName }}'
+          - '{{ dockerServiceArcaneServerDataVolumeName }}'
+
+    - role: rollbacks/docker/image
+      vars:
+        projectAppImageName: '{{ dockerServiceArcaneAgentImage }}'
+
+    - role: rollbacks/docker/image
+      vars:
+        projectAppImageName: '{{ dockerServiceArcaneServerImage }}'
