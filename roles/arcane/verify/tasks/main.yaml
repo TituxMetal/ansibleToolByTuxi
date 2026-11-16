@@ -1,29 +1,98 @@
 # ansible_path/roles/arcane/verify/tasks/main.yaml
 ---
-# The environment is `connected` only once the agent has polled the manager. The
-# endpoint carries no secret: `GET /api/environments` never returns `apiKey`.
-- name: ARCANE VERIFY | Wait for the environment {{ inventory_hostname }} to be connected
-  ansible.builtin.uri:
-    url: '{{ arcaneManagerApiUrl }}/api/environments/{{ arcaneAgentEnvironmentId }}'
-    method: GET
-    headers:
-      X-API-Key: '{{ arcaneAdminApiKey }}'
-    status_code: 200
-  register: arcaneEnvironmentState
-  delegate_to: localhost
-  changed_when: false
-  retries: '{{ arcaneVerifyRetries }}'
-  delay: '{{ arcaneVerifyDelay }}'
-  until: arcaneEnvironmentState.json.data.connected | default(false) | bool
-  when:
-    - not ansible_check_mode
-    - arcaneAgentEnvironmentId | length > 0
-  tags: [arcane, verify]
+# Two checks, on purpose. Every docker host carries an agent, so every host is
+# verified through its agent environment, named after the Docker hostname the
+# agent reports on enrolment. The master is checked twice: it also holds the
+# local environment the manager creates for its own Docker socket (id `0`),
+# which proves the socket path of the manager works even if the operator works
+# on the agent. Neither call carries a secret: `GET /api/agents` returns none.
+#
+# The wait is bounded and the failure is explicit: an agent that cannot reach
+# the manager must stop the run with the reason, not hold it for minutes while
+# a 2 GB host thrashes its reverse proxy.
+- name: ARCANE VERIFY | Check the local environment of the manager
+  when: inventory_hostname == arcaneMasterHost
+  block:
+    - name: ARCANE VERIFY | Wait for the local environment of the manager
+      ansible.builtin.uri:
+        url: '{{ arcaneManagerApiUrl }}/api/agents/0'
+        method: GET
+        headers:
+          X-API-Key: '{{ arcaneAdminApiKey }}'
+      register: arcaneLocalEnvironment
+      delegate_to: localhost
+      changed_when: false
+      failed_when: false
+      retries: '{{ arcaneVerifyRetries }}'
+      delay: '{{ arcaneVerifyDelay }}'
+      until: arcaneLocalEnvironment.json.data.status | default('') == 'online'
+      when: not ansible_check_mode
+      tags: [arcane, verify]
 
-- name: ARCANE VERIFY | Report the environment state
-  ansible.builtin.debug:
-    msg: >-
-      {{ inventory_hostname }}: connected={{ arcaneEnvironmentState.json.data.connected | default(false) }}
-      status={{ arcaneEnvironmentState.json.data.status | default('unknown') }}
-  when: arcaneEnvironmentState is not skipped
-  tags: [arcane, verify]
+    - name: ARCANE VERIFY | Report the local environment of the manager
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: local environment
+          status={{ arcaneLocalEnvironment.json.data.status | default('unknown') }}
+      when: not ansible_check_mode
+      tags: [arcane, verify]
+
+  rescue:
+    - name: ARCANE VERIFY | Fail when the manager cannot drive its own socket
+      ansible.builtin.fail:
+        msg: >-
+          The manager on {{ inventory_hostname }} answered
+          {{ arcaneLocalEnvironment.status | default('no status') }} for
+          /api/agents/0, with status
+          '{{ arcaneLocalEnvironment.json.data.status | default('unknown') }}'.
+          The local environment is created at startup: a manager that does not
+          expose it either still runs its migrations or cannot reach
+          /var/run/docker.sock. Check `docker logs
+          {{ dockerServiceArcaneServerContainerName }}`.
+      tags: [arcane, verify]
+
+- name: ARCANE VERIFY | Check the environment of the agent of this host
+  block:
+    - name: ARCANE VERIFY | Wait for the connected environment {{ arcaneAgentEnvironmentName }}
+      ansible.builtin.uri:
+        url: '{{ arcaneManagerApiUrl }}/api/agents?limit=100'
+        method: GET
+        headers:
+          X-API-Key: '{{ arcaneAdminApiKey }}'
+      register: arcaneAgentList
+      delegate_to: localhost
+      changed_when: false
+      failed_when: false
+      retries: '{{ arcaneVerifyRetries }}'
+      delay: '{{ arcaneVerifyDelay }}'
+      until: >-
+        (arcaneAgentList.json.data | default([])
+         | selectattr('name', 'equalto', arcaneAgentEnvironmentName)
+         | map(attribute='connected', default=false)
+         | select('equalto', true) | list | length) > 0
+      when: not ansible_check_mode
+      tags: [arcane, verify]
+
+    - name: ARCANE VERIFY | Report the environment of the agent of this host
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: environment '{{ arcaneAgentEnvironmentName }}'
+          connected
+      when: not ansible_check_mode
+      tags: [arcane, verify]
+
+  rescue:
+    - name: ARCANE VERIFY | Fail when the agent of this host never enrolled
+      ansible.builtin.fail:
+        msg: >-
+          No connected environment named '{{ arcaneAgentEnvironmentName }}'
+          after {{ arcaneVerifyRetries }} attempts of
+          {{ arcaneVerifyDelay }} s. The manager knows:
+          {{ arcaneAgentList.json.data | default([]) | map(attribute='name') | list }}
+          (HTTP {{ arcaneAgentList.status | default('no status') }}).
+          An agent names its environment after the Docker hostname it reports,
+          which is why the expected name is '{{ arcaneAgentEnvironmentName }}'.
+          Check `docker logs {{ dockerServiceArcaneAgentContainerName }}`, then
+          that the enrollment token '{{ arcaneAgentTokenName }}' is still listed
+          in Agents -> Enrollment Tokens.
+      tags: [arcane, verify]
