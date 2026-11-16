@@ -91,7 +91,15 @@ dockerServiceMainSiteVolumes:
 # `docker-data-server-infra` keep an equivalent compose file as a fallback.
 # ---------------------------------------------------------------------------
 
-# The master host runs the manager, every docker host runs an agent.
+# The master host runs the manager AND an agent, like every other docker host.
+# The manager also registers its own Docker socket as a local environment (id
+# `0`), which is unavoidable; the agent is deployed on purpose, so every host is
+# driven the same way and the operator works on an agent environment rather than
+# on the local one. The two environments of the master share the name of the
+# host (the agent names itself after the Docker hostname), so they are told
+# apart by their address: `unix://var/run/docker.sock` for the local one,
+# `agent://…` for the agent.
+#
 # The manager publishes NO port: Nginx Proxy Manager is its only entry point
 # (both containers sit on `default-nw`).
 arcaneMasterHost: "{{ (groups['master'] | default([inventory_hostname]))[0] }}"
@@ -104,9 +112,22 @@ arcaneMasterHost: "{{ (groups['master'] | default([inventory_hostname]))[0] }}"
 arcaneManagerApiUrl: '{{ hostvars[arcaneMasterHost].vaultArcaneManagerApiUrl }}'
 arcaneAdminApiKey: '{{ hostvars[arcaneMasterHost].vaultArcaneAdminApiKey }}'
 
+# Name an agent enrols under, i.e. the name of its environment in the manager.
+# An agent names its environment after the Docker hostname it runs on, not
+# after its inventory name, and offers no variable to override it: this is the
+# only value that matches, because `roles/system/hostname` sets the OS hostname
+# from `serverHostname`, itself `vaultServerHostname`.
+arcaneAgentEnvironmentName: '{{ vaultServerHostname }}'
+
+# Reusable enrollment token, looked up by name and created when missing by
+# `roles/arcane/bootstrap`. It is never copied by hand and never written to a
+# var file: the manager returns the secret again on
+# `GET /api/enrollment-tokens/{id}/token`.
+arcaneAgentTokenName: 'ansible'
+
 # Docker service Arcane (manager) — hosts of the `master` group only
 dockerServiceArcaneServerContainerName: 'arcane-manager-{{ inventory_hostname }}'
-dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v2.17.3'
+dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v3.0.1'
 dockerServiceArcaneServerPorts: []
 dockerServiceArcaneServerNetworks:
   [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
@@ -123,19 +144,22 @@ dockerServiceArcaneServerVolumes:
 # inside /app/data. No bind mount, no `file` task, no dedicated git repository.
 dockerServiceArcaneServerEnvVars:
   TZ: 'Europe/Paris'
-  APP_URL: '{{ vaultArcaneServerUrl }}'
   PUID: '1000'
   PGID: '1000'
-  ENCRYPTION_KEY: '{{ vaultArcaneEncryptionKey }}'
-  ADMIN_STATIC_API_KEY: '{{ vaultArcaneAdminApiKey }}'
+  # Every Arcane setting carries the `ARCANE_` prefix since v3. A legacy name
+  # without its replacement makes the manager refuse to start: it logs the
+  # variables to rename and exits, so the container never answers /api/health.
+  ARCANE_APP_URL: '{{ vaultArcaneServerUrl }}'
+  ARCANE_ENCRYPTION_KEY: '{{ vaultArcaneEncryptionKey }}'
+  ARCANE_ADMIN_STATIC_API_KEY: '{{ vaultArcaneAdminApiKey }}'
   # Nginx Proxy Manager is the only client of the API: trust it and only it, so
   # Arcane logs the real client IP. 192.168.10.0/26 is the iprange of
   # `default-nw`, i.e. the range docker allocates container addresses from.
-  TRUSTED_PROXIES: '192.168.10.0/26'
+  ARCANE_TRUSTED_PROXIES: '192.168.10.0/26'
 
 # Docker service Arcane (agent) — every docker host
 dockerServiceArcaneAgentContainerName: 'arcane-agent-{{ inventory_hostname }}'
-dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v2.17.3'
+dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v3.0.1'
 # Named volume holding the agent identity and the projects themselves, which is
 # why it is the one that actually matters on a host carrying Arcane projects.
 dockerServiceArcaneAgentDataVolumeName: 'arcane-agent-data-{{ inventory_hostname }}'
@@ -146,13 +170,21 @@ dockerServiceArcaneAgentVolumes:
   ]
 dockerServiceArcaneAgentNetworks:
   [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
-# AGENT_TOKEN is NOT set here on purpose: it is obtained from the manager API at
-# runtime by `roles/arcane/bootstrap` and merged into the container env by
-# `playbooks/arcane/install.yaml`. The token is never written to a var file.
+# ARCANE_AGENT_TOKEN is NOT set here on purpose: it is resolved from the
+# manager API at run time by `roles/arcane/bootstrap` and merged into the
+# container env by `playbooks/arcane/install.yaml`. The token is never written
+# to a var file.
+#
+# `PORT`, `EDGE_AGENT`, `EDGE_TRANSPORT` and `AGENT_MODE` are gone in v3: the
+# polling transport was removed, so an agent only holds an outbound tunnel and
+# listens on nothing. `PORT` is worse than useless, it is a legacy name that
+# stops the container on start.
 dockerServiceArcaneAgentEnvVars:
   TZ: 'Europe/Paris'
-  MANAGER_API_URL: '{{ arcaneManagerApiUrl }}'
-  EDGE_AGENT: 'true'
-  EDGE_TRANSPORT: 'poll'
-  AGENT_MODE: 'true'
-  PORT: '3553'
+  ARCANE_AGENT: 'true'
+  # `auto` tries gRPC first and falls back to a WebSocket. The manager sits
+  # behind Nginx Proxy Manager, which terminates TLS on 443 and speaks
+  # HTTP/1.1: pin the transport that proxy carries, instead of paying a gRPC
+  # failure at every reconnect.
+  ARCANE_AGENT_TRANSPORT: 'websocket'
+  ARCANE_MANAGER_API_URL: '{{ arcaneManagerApiUrl }}'
