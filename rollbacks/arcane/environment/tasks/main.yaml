@@ -3,9 +3,14 @@
 # The environment must be removed while the manager is still alive: it owns the
 # agent token of this host. Idempotent by construction, the environment is
 # looked up by name and a 404 on deletion is accepted.
+#
+# Two environments can carry the name of a host: id `0` is the local one the
+# manager creates for its own Docker socket, and it is never removed here — a
+# manager without its local environment cannot be driven at all. That leaves
+# the agent environment, the one the operator works on.
 - name: ROLLBACK ARCANE ENVIRONMENT | List the environments known by the manager
   ansible.builtin.uri:
-    url: '{{ arcaneManagerApiUrl }}/api/environments'
+    url: '{{ arcaneManagerApiUrl }}/api/agents?limit=100'
     method: GET
     headers:
       X-API-Key: '{{ arcaneAdminApiKey }}'
@@ -17,20 +22,21 @@
   when: not ansible_check_mode
   tags: [rollback, arcane, environment]
 
-- name: ROLLBACK ARCANE ENVIRONMENT | Look for the environment named after this host
+- name: ROLLBACK ARCANE ENVIRONMENT | Look for the environment of this host
   ansible.builtin.set_fact:
     arcaneRollbackEnvironmentId: >-
       {{ (arcaneRollbackEnvironmentList.json.data | default([])
-         | selectattr('name', 'equalto', inventory_hostname) | list
+         | selectattr('name', 'equalto', arcaneAgentEnvironmentName)
+         | rejectattr('id', 'equalto', '0') | list
          | first | default({}, true)).get('id', '') }}
   when:
     - not ansible_check_mode
     - arcaneRollbackEnvironmentList.json is defined
   tags: [rollback, arcane, environment]
 
-- name: ROLLBACK ARCANE ENVIRONMENT | Remove the environment {{ inventory_hostname }}
+- name: ROLLBACK ARCANE ENVIRONMENT | Remove the environment {{ arcaneAgentEnvironmentName }}
   ansible.builtin.uri:
-    url: '{{ arcaneManagerApiUrl }}/api/environments/{{ arcaneRollbackEnvironmentId }}'
+    url: '{{ arcaneManagerApiUrl }}/api/agents/{{ arcaneRollbackEnvironmentId }}'
     method: DELETE
     headers:
       X-API-Key: '{{ arcaneAdminApiKey }}'
@@ -39,6 +45,7 @@
   when:
     - not ansible_check_mode
     - arcaneRollbackEnvironmentId | default('') | length > 0
+    - arcaneRollbackEnvironmentId | default('') != '0'
     # Deleting the environment drops the registration of this host against the
     # manager: the projects keep their data, they lose their attachment. That is
     # destructive, so it follows the same switch as the volumes.
