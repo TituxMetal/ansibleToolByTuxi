@@ -1,5 +1,8 @@
 # ansible_path/roles/arcane/verify/defaults/main.yaml
 
-# The agent polls the manager; a freshly started agent shows up within seconds.
-arcaneVerifyRetries: 30
+# An agent enrols on its first start and opens its tunnel right after. The
+# image is pulled before the container starts, so this only covers a slow
+# first start, not a 30-attempt marathon: past a minute, something is wrong and
+# the run has to say so.
+arcaneVerifyRetries: 12
 arcaneVerifyDelay: 5
