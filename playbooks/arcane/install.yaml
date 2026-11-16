@@ -1,14 +1,15 @@
 # ansible_path/playbooks/arcane/install.yaml
 ---
-# One playbook, one play: the manager and every agent are deployed by the same
-# command. Task order guarantees the manager answers before any environment is
-# created; the `when` restrictions narrow execution, they do not reorder tasks.
+# Two plays, one per container kind, deployed by the same command: the manager
+# on the master first, the agents on every other docker host second, so a
+# manager answers before an agent tries to enrol.
 #
 # Rule: `Arcane` is deployed by the generic roles (no compose file in Ansible),
-# the token is fetched from the manager API at run time (never entered by hand),
-# and the manager publishes no port (Nginx Proxy Manager is its only entry).
-- name: ARCANE INSTALL | Install the manager and the agents
-  hosts: docker
+# the enrollment token is fetched from the manager API at run time (never
+# entered by hand), and the manager publishes no port (Nginx Proxy Manager is
+# its only entry).
+- name: ARCANE INSTALL | Install the manager on the master
+  hosts: master
   gather_facts: false
   vars:
     eximDestEmail: me@lgdweb.fr
@@ -21,12 +22,8 @@
       projectAppNetworkIpamConfig: '{{ dockerServiceDefaultNetwork.ipam_config }}'
       tags: [arcane, network]
 
-    # ------------------------------------------------------------------
-    # Manager — hosts of the `master` group only
-    # ------------------------------------------------------------------
     - role: roles/docker/image
       projectAppImageName: '{{ dockerServiceArcaneServerImage }}'
-      when: inventory_hostname == arcaneMasterHost
       tags: [arcane, arcaneServer]
 
     - role: roles/docker/container
@@ -37,21 +34,29 @@
       projectAppNetworks: '{{ dockerServiceArcaneServerNetworks }}'
       projectAppPorts: '{{ dockerServiceArcaneServerPorts }}'
       projectAppRestartPolicy: 'always'
-      when: inventory_hostname == arcaneMasterHost
       # The env carries ENCRYPTION_KEY and ADMIN_STATIC_API_KEY: never printed.
       no_log: true
       tags: [arcane, arcaneServer]
 
-    # Wait for /api/health before touching the API
+    # Wait for /api/health before an agent is allowed to talk to the API
     - role: roles/arcane/health
-      when: inventory_hostname == arcaneMasterHost
       tags: [arcane, arcaneServer]
 
-    # ------------------------------------------------------------------
-    # Agents — every docker host, master included
-    # ------------------------------------------------------------------
-    # Resolves `arcaneAgentToken` per host: reused from the running container,
-    # or created / rotated through the API. The token never leaves the run.
+    # Sending Notification email
+    - role: roles/exim/sendemail
+      tags: [exim, sendemail]
+
+# The master keeps an agent like every other docker host: the manager also
+# registers its own Docker socket (the local environment, id `0`), so the
+# master ends up with two environments under the same hostname. Work happens
+# on the agent one.
+- name: ARCANE INSTALL | Install the agents on every docker host
+  hosts: docker
+  gather_facts: false
+  roles:
+    # Resolves `arcaneAgentToken` from the reusable enrollment token the
+    # manager keeps, creating it when it does not exist yet. The token never
+    # leaves the run.
     - role: roles/arcane/bootstrap
       tags: [arcane, arcaneAgent]
 
@@ -62,7 +67,7 @@
     - role: roles/docker/container
       projectAppContainerName: '{{ dockerServiceArcaneAgentContainerName }}'
       projectAppImageName: '{{ dockerServiceArcaneAgentImage }}'
-      projectAppEnvVars: '{{ dockerServiceArcaneAgentEnvVars | combine({"AGENT_TOKEN": arcaneAgentToken}) }}'
+      projectAppEnvVars: '{{ dockerServiceArcaneAgentEnvVars | combine({"ARCANE_AGENT_TOKEN": arcaneAgentToken}) }}'
       projectAppVolumes: '{{ dockerServiceArcaneAgentVolumes }}'
       projectAppNetworks: '{{ dockerServiceArcaneAgentNetworks }}'
       projectAppRestartPolicy: 'always'
@@ -72,7 +77,3 @@
     # Wait for the environment to be reported `connected`
     - role: roles/arcane/verify
       tags: [arcane, arcaneVerify]
-
-    # Sending Notification email
-    - role: roles/exim/sendemail
-      tags: [exim, sendemail]
