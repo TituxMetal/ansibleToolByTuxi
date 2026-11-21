@@ -2,65 +2,29 @@ all:
   hosts:
     homelab:
       ansible_ssh_host: 192.168.0.20 # homelab.lgdweb.ovh
-      ansible_user: root
+      ansible_user: root # Default original user from provider
     andrew:
       ansible_ssh_host: 89.233.108.164 # andrew.lgdweb.ovh
-      ansible_user: root
-    bart:
-      ansible_ssh_host: 57.128.171.245 # bart.lgdweb.ovh
-      ansible_user: debian
+      ansible_user: root # Default original user from provider
     laura:
-      ansible_ssh_host: 107.155.122.53 # laura.lgdweb.ovh
-      ansible_user: root
-    mary:
-      ansible_ssh_host: 208.87.129.64 # mary.lgdweb.ovh
-      ansible_user: root
-    # homer:
-    #   ansible_ssh_host: 193.70.113.138 # homer.lgdweb.ovh
-    #   ansible_user: debian
-    # lisa:
-    #   ansible_ssh_host: 162.19.249.202 # lisa.lgdweb.ovh
-    #   ansible_user: debian
-    # maggie:
-    #   ansible_ssh_host: 51.83.97.35 # maggie.lgdweb.ovh
-    #   ansible_user: debian
-    # marge:
-    #   ansible_ssh_host: 193.70.113.102 # marge.lgdweb.ovh
-    #   ansible_user: debian
+      ansible_ssh_host: 179.237.98.3 # laura.lgdweb.ovh
+      ansible_user: debian # Default original user from provider
   children:
     docker:
       hosts:
         homelab:
         andrew:
-        bart:
         laura:
-        mary:
-        # homer:
-        # lisa:
-        # maggie:
-        # marge:
     f2b:
       hosts:
         homelab:
         andrew:
-        bart:
         laura:
-        mary:
-        # homer:
-        # lisa:
-        # maggie:
-        # marge:
     standalone:
       hosts:
         homelab:
         andrew:
-        bart:
         laura:
-        mary:
-        # homer:
-        # lisa:
-        # maggie:
-        # marge:
     master:
       hosts:
-        andrew:
+        homelab:
