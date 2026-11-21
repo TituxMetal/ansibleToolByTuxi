@@ -24,6 +24,16 @@
   register: isRestored
   tags: [rollback, ssh-config, restore-config]
 
+- name: ROLLBACK SYSTEM SSHCONFIG | Stop forcing a listen address during the reset window
+  # No ListenAddress means sshd listens everywhere. Writing 0.0.0.0 instead
+  # would survive into the next init and collide with the drop-in address.
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*ListenAddress\s+'
+    state: absent
+  notify: Restart ssh
+  tags: [rollback, ssh-config, listen-address]
+
 - name: ROLLBACK SYSTEM SSHCONFIG | Remove the ansible ssh config
   ansible.builtin.file:
     path: /etc/ssh/sshd_config.d/ansible.conf
