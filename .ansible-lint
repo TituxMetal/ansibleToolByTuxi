@@ -1,6 +1,5 @@
 # ansible/.ansible-lint
-exclude_paths:
-  - projects/
+
 skip_list:
   - var-naming[pattern]
   - role-name[path]
