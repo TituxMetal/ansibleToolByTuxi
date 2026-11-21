@@ -57,23 +57,6 @@
     debianFileExists.stat.exists and not debianFileExists.stat.islnk and isDebianCopyed is success
   tags: [apt, apt-repository, remove-debian]
 
-- name: APT REPOSITORY | Find leftover backup files for {{ aptRepoName }}
-  ansible.builtin.find:
-    paths: ['/etc/apt/sources.list.d']
-    patterns: ['{{ aptRepoName }}.list.*~']
-    file_type: file
-  register: aptRepositoryBackupFiles
-  tags: [apt, apt-repository, cleanup-backup]
-
-- name: APT REPOSITORY | Remove leftover backup files for {{ aptRepoName }}
-  ansible.builtin.file:
-    path: '{{ item.path }}'
-    state: absent
-  loop: '{{ aptRepositoryBackupFiles.files }}'
-  loop_control:
-    label: '{{ item.path }}'
-  tags: [apt, apt-repository, cleanup-backup]
-
 - name: APT REPOSITORY | Add apt repository file
   ansible.builtin.get_url:
     url: '{{ aptRepoUrl }}'
