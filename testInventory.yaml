@@ -2,41 +2,29 @@ all:
   hosts:
     vm1:
       ansible_ssh_host: 192.168.100.10
-      ansible_user: debian
+      ansible_user: debian # Default original user from provider
     vm2:
       ansible_ssh_host: 192.168.100.11
-      ansible_user: root
-    # vm3:
-    #   ansible_ssh_host: 192.168.100.12
-    #   ansible_user: debian
-    # vm4:
-    #   ansible_ssh_host: 192.168.100.13
-    #   ansible_user: root
-    marge:
-      ansible_ssh_host: 179.237.98.3 # marge.lgdweb.ovh
-      ansible_user: debian
+      ansible_user: root # Default original user from provider
+    # marge:
+    #   ansible_ssh_host: 179.237.98.3 # marge.lgdweb.ovh
+    #   ansible_user: debian # Default original user from provider
   children:
     docker:
       hosts:
         vm1:
         vm2:
-        # vm3:
-        # vm4:
-        marge:
+        # marge:
     f2b:
       hosts:
         vm1:
         vm2:
-        # vm3:
-        # vm4:
-        marge:
+        # marge:
     standalone:
       hosts:
         vm1:
         vm2:
-        # vm3:
-        # vm4:
-        marge:
+        # marge:
     master:
       hosts:
-        marge:
+        # marge:
