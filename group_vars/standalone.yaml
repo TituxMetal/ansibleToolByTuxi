@@ -127,7 +127,7 @@ arcaneAgentTokenName: 'ansible'
 
 # Docker service Arcane (manager) — hosts of the `master` group only
 dockerServiceArcaneServerContainerName: 'arcane-manager-{{ inventory_hostname }}'
-dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v3.0.1'
+dockerServiceArcaneServerImage: 'ghcr.io/getarcaneapp/manager:v3.1.1'
 dockerServiceArcaneServerPorts: []
 dockerServiceArcaneServerNetworks:
   [{ name: '{{ dockerServiceDefaultNetwork.name }}' }]
@@ -159,7 +159,7 @@ dockerServiceArcaneServerEnvVars:
 
 # Docker service Arcane (agent) — every docker host
 dockerServiceArcaneAgentContainerName: 'arcane-agent-{{ inventory_hostname }}'
-dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v3.0.1'
+dockerServiceArcaneAgentImage: 'ghcr.io/getarcaneapp/agent:v3.1.1'
 # Named volume holding the agent identity and the projects themselves, which is
 # why it is the one that actually matters on a host carrying Arcane projects.
 dockerServiceArcaneAgentDataVolumeName: 'arcane-agent-data-{{ inventory_hostname }}'
