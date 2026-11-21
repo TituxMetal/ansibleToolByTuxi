@@ -68,5 +68,8 @@
     # 14: Ssh configuration
     - roles/system/sshConfig
 
-    # 15: Sending Notification email
+    # 15: Remove the backup files accumulated by the roles above
+    - roles/system/cleanup
+
+    # 16: Sending Notification email
     - roles/exim/sendemail
