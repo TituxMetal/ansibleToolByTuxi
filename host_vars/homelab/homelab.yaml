@@ -10,6 +10,3 @@ sshAdminUserShell: /bin/bash
 
 eximAccountEmail: '{{ vaultEximAccountEmail }}'
 eximAccountPassword: '{{ vaultEximAccountPassword }}'
-
-mongodbAdminUsername: '{{ vaultMongodbAdminUsername }}'
-mongodbAdminPassword: '{{ vaultMongodbAdminPassword }}'
