@@ -1,0 +1,27 @@
+# ansible_path/roles/system/cleanup/defaults/main.yaml
+
+# `*~` files: written by `backup: true` on every changed run, never removed.
+# Do not add `*.backup` here: sshConfig creates /etc/ssh/sshd_config.backup on
+# purpose and would see it deleted then recreated on every run.
+cleanupAnsibleBackupPaths:
+  - /etc
+  - /etc/ssh
+  - /etc/default
+  - /etc/logrotate.d
+  - /etc/exim4
+  - /etc/apt
+  - '/home/{{ sshAdminUserName }}'
+  - /root
+
+# Leftovers of the bullseye -> bookworm -> trixie migrations. Cannot match an
+# active *.list or *.sources.
+cleanupAptResiduePaths:
+  - /etc/apt
+  - /etc/apt/sources.list.d
+
+cleanupAptResiduePatterns: ['*.bak', '*.backup', '*.distUpgrade', '*.save', '*.orig']
+
+# Keep the last month of rollback material.
+cleanupBackupAge: 30d
+
+cleanupPurgeBackups: true

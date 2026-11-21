@@ -1,0 +1,47 @@
+# ansible_path/roles/system/cleanup/tasks/main.yaml
+---
+- name: SYSTEM CLEANUP | Find stale ansible backup files
+  ansible.builtin.find:
+    paths: '{{ cleanupAnsibleBackupPaths }}'
+    patterns: ['*~']
+    file_type: file
+    recurse: false
+    age: '{{ cleanupBackupAge }}'
+    # ctime, not mtime: `backup: true` preserves the source file mtime, so a
+    # backup written today can carry a 2022 mtime. ctime is when it was created.
+    age_stamp: ctime
+  register: staleAnsibleBackups
+  when: cleanupPurgeBackups | bool
+  tags: [system, cleanup]
+
+- name: SYSTEM CLEANUP | Remove stale ansible backup files
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: absent
+  loop: '{{ staleAnsibleBackups.files | default([]) }}'
+  loop_control:
+    label: '{{ item.path }}'
+  when: cleanupPurgeBackups | bool
+  tags: [system, cleanup]
+
+- name: SYSTEM CLEANUP | Find stale apt repository residues
+  ansible.builtin.find:
+    paths: '{{ cleanupAptResiduePaths }}'
+    patterns: '{{ cleanupAptResiduePatterns }}'
+    file_type: file
+    recurse: false
+    age: '{{ cleanupBackupAge }}'
+    age_stamp: ctime
+  register: staleAptResidues
+  when: cleanupPurgeBackups | bool
+  tags: [system, cleanup]
+
+- name: SYSTEM CLEANUP | Remove stale apt repository residues
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: absent
+  loop: '{{ staleAptResidues.files | default([]) }}'
+  loop_control:
+    label: '{{ item.path }}'
+  when: cleanupPurgeBackups | bool
+  tags: [system, cleanup]
