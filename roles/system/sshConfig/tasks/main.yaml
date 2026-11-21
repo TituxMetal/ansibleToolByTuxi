@@ -37,6 +37,34 @@
   notify: RestartSsh
   tags: [system, ssh, ssh-config]
 
+# Debian's unit sets RestartPreventExitStatus=255 and sshd exits 255 when it
+# cannot bind: a ListenAddress not up yet at boot left sshd dead, systemd
+# forbidden to retry it. Reset that and retry until the address exists.
+- name: SYSTEM SSHCONFIG | Create the sshd drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/ssh.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  tags: [system, ssh, ssh-config, restart-policy]
+
+- name: SYSTEM SSHCONFIG | Install the sshd restart policy
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/ssh.service.d/restart.conf
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [Unit]
+      StartLimitIntervalSec=0
+
+      [Service]
+      RestartSec=5s
+      RestartPreventExitStatus=
+  notify: RestartSsh
+  tags: [system, ssh, ssh-config, restart-policy]
+
 - name: SYSTEM SSHCONFIG | Add user authorized_keys file
   ansible.posix.authorized_key:
     user: '{{ sshAdminUserName }}'
