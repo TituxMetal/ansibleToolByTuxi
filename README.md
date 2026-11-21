@@ -53,7 +53,7 @@ playbook is in a directory that contains a main playbook and its rollback counte
 - **docker/rollback.yaml** -- Complete Docker removal
 - **webserver/mainServices.yaml** -- Deploy main web services (Fail2ban container, firewall rules)
 - **webserver/rollback.yaml** -- Rollback main web services
-- **webserver/utils.yaml** -- Deploy utility services (Docker networks, Portainer, Nginx Proxy
+- **webserver/utils.yaml** -- Deploy utility services (Docker networks, Nginx Proxy
   Manager, main site container)
 - **webserver/rollbackUtils.yaml** -- Rollback utility services
 
@@ -93,7 +93,7 @@ These roles are used for:
 
 - create the service data structure (directories, config files) from a GitHub repository
 
-Note: Individual services (Fail2ban, Nginx Proxy Manager, Portainer) are deployed using the generic
+Note: Individual services (Fail2ban, Nginx Proxy Manager) are deployed using the generic
 `docker/image` and `docker/container` roles with service-specific variables defined in group_vars.
 
 ## _**exim**_

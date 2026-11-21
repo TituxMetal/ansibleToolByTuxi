@@ -4,25 +4,6 @@
   hosts: docker:&standalone
   gather_facts: false
   roles:
-    # Stop Poratiner agent docker container
-    - {
-        role: rollbacks/docker/container,
-        projectAppContainerName: '{{ dockerServicePortainerContainerName }}'
-      }
-
-    # Remove Poratiner agent image
-    - { role: rollbacks/docker/image, projectAppImageName: '{{ dockerServicePortainerImage }}' }
-
-    # Stop portainer server docker container
-    - role: rollbacks/docker/container
-      vars:
-        projectAppContainerName: '{{ dockerServicePortainerServerContainerName }}'
-
-    # Clean portainer server docker image
-    - role: rollbacks/docker/image
-      vars:
-        projectAppImageName: '{{ dockerServicePortainerServerImage }}'
-
     # Stop Nginx Proxy Manager docker container
     - {
         role: rollbacks/docker/container,
