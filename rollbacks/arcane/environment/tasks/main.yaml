@@ -19,6 +19,7 @@
   delegate_to: localhost
   changed_when: false
   failed_when: false
+  no_log: true
   when: not ansible_check_mode
   tags: [rollback, arcane, environment]
 
@@ -42,6 +43,7 @@
       X-API-Key: '{{ arcaneAdminApiKey }}'
     status_code: [200, 202, 204, 404]
   delegate_to: localhost
+  no_log: true
   when:
     - not ansible_check_mode
     - arcaneRollbackEnvironmentId | default('') | length > 0

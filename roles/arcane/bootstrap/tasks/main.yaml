@@ -29,6 +29,7 @@
   delegate_to: localhost
   changed_when: false
   failed_when: false
+  no_log: true
   retries: '{{ arcaneBootstrapRetries }}'
   delay: '{{ arcaneBootstrapDelay }}'
   # Retrying is only useful while the answer is meaningless. A 401/403 will
