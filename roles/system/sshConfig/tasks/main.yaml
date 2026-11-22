@@ -25,6 +25,7 @@
     regexp: '^Include\s+/etc/ssh/sshd_config\.d/\*\.conf$'
     line: 'Include /etc/ssh/sshd_config.d/*.conf'
     insertbefore: BOF
+  notify: RestartSsh
   tags: [system, ssh, ssh-config, include-dropin]
 
 - name: SYSTEM SSHCONFIG | Apply sshd config template
