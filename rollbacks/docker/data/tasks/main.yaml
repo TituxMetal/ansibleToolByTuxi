@@ -1,15 +1,18 @@
 # ansible_path/rollbacks/docker/data/tasks/main.yaml
 ---
-- name: DOCKER ROLLBACK DATA | Check if the docker data directory exists
+- name: DOCKER ROLLBACK DATA | Check if a docker data directory exists
   ansible.builtin.stat:
-    path: '{{ dockerDataDirectories[0] }}'
+    path: '{{ item }}'
+  loop: '{{ dockerDataDirectories }}'
+  loop_control:
+    label: '{{ item }}'
   register: dockerDataDirectoryInfo
   tags: [rollback, docker, data]
 
 - name: DOCKER ROLLBACK DATA | Stop containers and remove docker data
   when:
     - dockerRollbackPurgeData | bool
-    - dockerDataDirectoryInfo.stat.exists
+    - (dockerDataDirectoryInfo.results | map(attribute='stat.exists') | select('equalto', true) | list | length) > 0
   tags: [rollback, docker, data]
   block:
     - name: DOCKER ROLLBACK DATA | Get the list of running docker containers

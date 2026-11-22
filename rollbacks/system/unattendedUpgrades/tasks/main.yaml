@@ -1,10 +1,17 @@
 # ansible_path/rollbacks/system/unattendedUpgrades/tasks/main.yaml
 ---
+- name: ROLLBACK SYSTEM UNATTENDEDUPGRADES | Check if the report timer exists
+  ansible.builtin.stat:
+    path: /etc/systemd/system/patch-report.timer
+  register: patchReportTimer
+  tags: [rollback, unattended-upgrades, report]
+
 - name: ROLLBACK SYSTEM UNATTENDEDUPGRADES | Stop and disable the report timer
   ansible.builtin.systemd_service:
     name: patch-report.timer
     enabled: false
     state: stopped
+  when: patchReportTimer.stat.exists
   tags: [rollback, unattended-upgrades, report]
 
 - name: ROLLBACK SYSTEM UNATTENDEDUPGRADES | Remove the report units and timer overrides
