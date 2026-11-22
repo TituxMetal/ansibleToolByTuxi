@@ -2,6 +2,8 @@
 
 serverHostname: '{{ vaultServerHostname }}'
 
+defaultScriptPath: '/home/{{ sshAdminUserName }}/bin'
+
 systemAptPackages:
   [
     'curl',
@@ -17,7 +19,7 @@ systemAptPackages:
 
 utilsAptPackages: ['chrony', 'mailutils', 'bash-completion', 'git', 'vim', 'ufw', 'exim4']
 
-defaultAptPackages: ['wget', 'duf', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip']
+defaultAptPackages: ['wget', 'duf', 'tree', 'htop', 'lsb-release', 'rsync', 'zip', 'unzip', 'unattended-upgrades']
 
 # Rollback behaviour, single switch.
 #

@@ -1,0 +1,5 @@
+# ansible_path/roles/system/unattendedUpgrades/handlers/main.yaml
+---
+- name: ReloadSystemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
