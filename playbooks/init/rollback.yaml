@@ -23,3 +23,6 @@
 
     # 6: Restore default ssh configuration
     - rollbacks/system/sshConfig
+
+    # 7: Remove unattended security upgrades
+    - rollbacks/system/unattendedUpgrades

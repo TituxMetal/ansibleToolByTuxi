@@ -1,0 +1,3 @@
+# ansible_path/rollbacks/system/unattendedUpgrades/defaults/main.yaml
+
+patchReportBin: '{{ defaultScriptPath }}'
