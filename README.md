@@ -25,8 +25,8 @@ Change **$hostName** to your corresponding host name in the inventory file.
 # **Folders structure**
 
 The folders structure is organized as recommended in the [Ansible documentation]. Separating
-variables declaration by group and host in folders, a folder for: playbooks, projects, roles,
-rollbacks, variables to protect specific to each project.
+variables declaration by group and host in folders, a folder for: playbooks, roles, rollbacks,
+and encrypted variables.
 
 # **_/group_vars_**
 
@@ -46,24 +46,19 @@ This directory contains the playbooks for server installation, configuration and
 playbook is in a directory that contains a main playbook and its rollback counterpart:
 
 - **init/init.yaml** -- Initial server setup (apt repos, packages, firewall, users, SSH hardening,
-  timezone, hostname, logrotate, chrony, locales, exim, admin user)
+  automatic security upgrades, backup cleanup, timezone, hostname, logrotate, chrony, locales,
+  exim, admin user)
 - **init/rollback.yaml** -- Undo all init operations
 - **init/clean-reset.yaml** -- Complete server reset (removes admin user and groups)
-- **docker/install.yaml** -- Docker installation (repository, GPG key, packages, firewall ports)
+- **docker/install.yaml** -- Docker installation (repository, GPG key, packages)
 - **docker/rollback.yaml** -- Complete Docker removal
 - **webserver/mainServices.yaml** -- Deploy main web services (Fail2ban container, firewall rules)
 - **webserver/rollback.yaml** -- Rollback main web services
 - **webserver/utils.yaml** -- Deploy utility services (Docker networks, Nginx Proxy
   Manager, main site container)
 - **webserver/rollbackUtils.yaml** -- Rollback utility services
-
-# **_/projects_**
-
-This directory contains the playbooks for projects deployment and reset. Each playbook is in a
-directory that contains two main files:
-
-- one to deploy the project
-- one to rollback the project
+- **arcane/install.yaml** -- Deploy the Arcane manager and its agents
+- **arcane/rollback.yaml** -- Unregister the environments and remove Arcane
 
 # **_/roles/_**
 
@@ -96,6 +91,14 @@ These roles are used for:
 Note: Individual services (Fail2ban, Nginx Proxy Manager) are deployed using the generic
 `docker/image` and `docker/container` roles with service-specific variables defined in group_vars.
 
+## _**arcane**_
+
+These roles are used for:
+
+- bootstrap (resolve the enrollment token from the manager API)
+- health (wait for the manager API)
+- verify (check that an agent environment is connected)
+
 ## _**exim**_
 
 These roles are used for:
@@ -117,9 +120,11 @@ These roles are used for all the system configuration like:
 - chrony (time synchronization via NTP)
 - hostname (hostname and /etc/hosts configuration)
 - locales (system localization)
+- cleanup (prune old Ansible backups and apt residues)
 - logrotate (log rotation for Docker, Fail2ban, Nginx)
 - sshConfig (SSH daemon hardening)
 - timezone (system timezone)
+- unattendedUpgrades (automatic security upgrades and their report)
 
 ## _**users**_
 
@@ -151,6 +156,8 @@ These roles are used for:
 - properly shut down a docker container
 - remove an images with docker
 - remove a docker network
+- remove a docker volume
+- remove docker data directories (optional purge)
 
 ## _**dockerServices**_
 
@@ -175,6 +182,7 @@ These roles are used for:
 These roles are used for:
 
 - reset ssh configuration
+- remove the unattended upgrade configuration
 
 ## _**users**_
 
@@ -185,10 +193,11 @@ These roles are used for:
 - remove a group
 - remove a user
 
-# **_/vault/_**
+## _**arcane**_
 
-This folder is a mirror of the projects folder. Each project has its own sensible variables file,
-that must be encrypted with the ansible-vault command.
+This role is used for:
+
+- unregister the environment of a host from the Arcane manager
 
 # **_.vault_**
 
@@ -209,18 +218,16 @@ from the ansible.cfg file by removing the "inventory" line.
 
 ## Encrypt files
 
-Encrypt all files named "vault.yaml" present in all sub-directories of the ./vault folder, with this
-command:
+Encrypt all vault files present in the host_vars sub-directories, with this command:
 
 ```
-ansible-vault encrypt ./vault/*/vault.yaml
+ansible-vault encrypt host_vars/*/vault_*.yaml
 ```
 
-Decrypt all files named "vault.yaml" present in all sub-directories of the ./vault folder, with this
-command:
+Decrypt all vault files present in the host_vars sub-directories, with this command:
 
 ```
-ansible-vault decrypt ./vault/*/vault.yaml
+ansible-vault decrypt host_vars/*/vault_*.yaml
 ```
 
 Launch the init playbook with a custom variable that overwrite the default one, with this command:
