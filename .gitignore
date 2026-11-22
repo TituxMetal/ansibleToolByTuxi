@@ -1,3 +1,2 @@
 .vault
-vault/**/vault.yaml
 host_vars/**/vault_*.yaml
