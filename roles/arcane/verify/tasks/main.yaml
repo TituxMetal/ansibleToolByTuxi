@@ -23,6 +23,7 @@
       delegate_to: localhost
       changed_when: false
       failed_when: false
+      no_log: true
       retries: '{{ arcaneVerifyRetries }}'
       delay: '{{ arcaneVerifyDelay }}'
       until: arcaneLocalEnvironment.json.data.status | default('') == 'online'
@@ -63,6 +64,7 @@
       delegate_to: localhost
       changed_when: false
       failed_when: false
+      no_log: true
       retries: '{{ arcaneVerifyRetries }}'
       delay: '{{ arcaneVerifyDelay }}'
       until: >-
