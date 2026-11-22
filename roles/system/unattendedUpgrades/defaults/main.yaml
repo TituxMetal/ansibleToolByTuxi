@@ -1,0 +1,29 @@
+# ansible_path/roles/system/unattendedUpgrades/defaults/main.yaml
+
+unattendedUpgradesConfigUri:
+  [
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/apt/22ansible-auto-upgrades,
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/apt/52ansible-unattended-upgrades,
+  ]
+
+unattendedUpgradesTimers:
+  [
+    {
+      uri: https://raw.githubusercontent.com/TituxMetal/cffa/main/systemd/apt-daily-timer.conf,
+      dest: /etc/systemd/system/apt-daily.timer.d/schedule.conf,
+    },
+    {
+      uri: https://raw.githubusercontent.com/TituxMetal/cffa/main/systemd/apt-daily-upgrade-timer.conf,
+      dest: /etc/systemd/system/apt-daily-upgrade.timer.d/schedule.conf,
+    },
+  ]
+
+patchReportScriptUri: https://raw.githubusercontent.com/TituxMetal/cffa/main/scripts/patch-report
+
+patchReportBin: '{{ defaultScriptPath }}'
+
+patchReportUnitUri:
+  [
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/systemd/patch-report.service,
+    https://raw.githubusercontent.com/TituxMetal/cffa/main/systemd/patch-report.timer,
+  ]

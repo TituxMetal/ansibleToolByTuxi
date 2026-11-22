@@ -68,8 +68,11 @@
     # 14: Ssh configuration
     - roles/system/sshConfig
 
-    # 15: Remove the backup files accumulated by the roles above
+    # 15: Unattended security upgrades
+    - roles/system/unattendedUpgrades
+
+    # 16: Remove the backup files accumulated by the roles above
     - roles/system/cleanup
 
-    # 16: Sending Notification email
+    # 17: Sending Notification email
     - roles/exim/sendemail

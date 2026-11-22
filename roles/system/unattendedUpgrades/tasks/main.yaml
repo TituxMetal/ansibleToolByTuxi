@@ -1,0 +1,73 @@
+# ansible_path/roles/system/unattendedUpgrades/tasks/main.yaml
+---
+- name: SYSTEM UNATTENDEDUPGRADES | Copy the periodic and origin configuration
+  ansible.builtin.get_url:
+    url: '{{ item }}'
+    dest: /etc/apt/apt.conf.d/
+    mode: '0644'
+    group: root
+    owner: root
+    backup: true
+  with_items: '{{ unattendedUpgradesConfigUri }}'
+  tags: [system, unattended-upgrades, apt-config]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Create the apt timer override directories
+  ansible.builtin.file:
+    path: '{{ item.dest | dirname }}'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items: '{{ unattendedUpgradesTimers }}'
+  tags: [system, unattended-upgrades, schedule]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Move the apt timers off the 06:00 default
+  ansible.builtin.get_url:
+    url: '{{ item.uri }}'
+    dest: '{{ item.dest }}'
+    mode: '0644'
+    group: root
+    owner: root
+    backup: true
+  with_items: '{{ unattendedUpgradesTimers }}'
+  notify: ReloadSystemd
+  tags: [system, unattended-upgrades, schedule]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Create the admin user bin directory
+  ansible.builtin.file:
+    path: '{{ patchReportBin }}'
+    state: directory
+    owner: '{{ sshAdminUserName }}'
+    group: '{{ sshAdminUserGroup }}'
+    mode: '0755'
+  tags: [system, unattended-upgrades, report]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Install the report script
+  ansible.builtin.get_url:
+    url: '{{ patchReportScriptUri }}'
+    dest: '{{ patchReportBin }}/patch-report'
+    mode: '0755'
+    owner: '{{ sshAdminUserName }}'
+    group: '{{ sshAdminUserGroup }}'
+    backup: true
+  tags: [system, unattended-upgrades, report]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Install the report timer units
+  ansible.builtin.get_url:
+    url: '{{ item }}'
+    dest: /etc/systemd/system/
+    mode: '0644'
+    group: root
+    owner: root
+    backup: true
+  with_items: '{{ patchReportUnitUri }}'
+  notify: ReloadSystemd
+  tags: [system, unattended-upgrades, report]
+
+- name: SYSTEM UNATTENDEDUPGRADES | Enable the report timer
+  ansible.builtin.systemd_service:
+    name: patch-report.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  tags: [system, unattended-upgrades, report]
